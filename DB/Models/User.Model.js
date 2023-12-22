@@ -7,19 +7,16 @@ const UserSchema = new Schema({
         required:true,
         lowercase:true,
         unique:true,
-
     },
     Email:{
         type:String,
         unique:true,
         required:true,
         lowercase:true,
-
     },
     Password:{
         type:String,
         required:true,
-
     },
     ConfirmPassword:{
         type:String,
@@ -31,9 +28,8 @@ const UserSchema = new Schema({
     },
     Gender:{
         type:String,
-        lowercase:true,
-        enum:['female','male','not specified'],
-        default:'not specified',
+        enum:[SystemRoles.Female,SystemRoles.Male,SystemRoles.Not_Specified],
+        default:SystemRoles.Not_Specified,
     },
     isConfirmed:{
         type:Boolean,
@@ -65,9 +61,19 @@ const UserSchema = new Schema({
         type:Date
     },
     QuizMarks:[{
-        Topic:String,
-        Mark:Number,
+            QuizId:{
+                type:Schema.Types.ObjectId,
+                ref:"Quiz"
+            },
+            QuizName:String,
+            Mark:Number,
+
     }],
+    status:{
+        type:String,
+        default:'Offline',
+        enum:['Online','Offline']
+    },
     Age:Number,
     FirstName:String,
     LastName:String,

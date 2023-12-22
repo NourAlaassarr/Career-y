@@ -1,10 +1,12 @@
 import { UserModel } from "../../../DB/Models/User.Model.js";
-import pkg from 'bcrypt'
+import pkg, { compareSync } from 'bcrypt'
 import {generateToken,VerifyToken}from'../../utils/TokenFunction.js'
 import { sendmailService } from '../../Services/SendEmailService.js'
 import { emailTemplate } from '../../utils/EmailTemplate.js'
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken library
 
+
+//SignUp
 export const SignUp = async (req, res, next) => {
     const{
         UserName,
@@ -73,3 +75,109 @@ export const SignUp = async (req, res, next) => {
 
     
 }
+
+
+//confirm Email
+export const ConfirmEmail = async (req,res,next)=>{
+    const{
+        token
+    }=req.params
+    const decoded  = VerifyToken({token,signature:process.env.CONFIRMATION_EMAIL_TOKEN})
+    const User= await UserModel.findOneAndUpdate({Email:decoded.Email,isConfirmed:false},
+        {
+        isConfirmed:true},
+        {
+            new:true
+        })
+        if (!User) {
+            return next(new Error('Already Confirmed', { cause: 400 }))
+        }
+        res.status(200).json({ message: 'Successfully confirmed,Try to log in' })
+    }
+    
+
+//SignIn
+export const SignIn = async(req,res,next)=>{
+    const {
+        Email,
+        Password,
+    }=req.body
+    console.log(req.body);
+    const is_User_Exist=await UserModel.findOne({Email})
+    if(!is_User_Exist){
+        return next(new Error('Invalid credentials', { cause: 400 }))
+    }
+    console.log('xxxxxxxxxxxxxxxxxxxxxxxxx');
+    console.log(is_User_Exist.Password);
+    console.log('====================================');
+    const Password_Corerct=pkg.compareSync(Password,is_User_Exist.Password)
+    console.log(Password_Corerct);
+    if(!Password_Corerct){
+        return next(new Error('Invalid credentials', { cause: 400 }))
+    }
+    // const pac_=await UserModel.findOne({Password})
+    const token = generateToken({
+        payload:{
+        
+            Email,
+            _id:is_User_Exist._id,
+            role:is_User_Exist.role
+        },
+        signature:process.env.SIGN_IN_TOKEN_SECRET,
+        expiresIn: '1h',
+    })
+    const user = await UserModel.findOneAndUpdate({ Email }, {
+        token,
+        status: 'Online',
+    }, { new: true })
+    res.status(200).json({ Message: "successfully Logged IN", user })
+        
+    
+
+}
+//change pass
+export const ChangePassword=async(req,res,next)=>{
+    const{
+        OldPassword,
+        NewPassword,
+        ConfirmNewPassword,
+    }=req.body
+    
+    const UserId=req.authUser
+    const User_exist= await UserModel.findById({_id:UserId._id})
+
+    if(!User_exist){
+        return next(new Error("User Not Found",{cause:404}))
+    }
+    const UserOldpass=compareSync(OldPassword,User_exist.Password)
+
+    if(!UserOldpass){
+        return next(new Error('incorrect password', { cause: 400 }))
+    }
+    if (NewPassword != ConfirmNewPassword) {
+        return next(new Error('Password doesn\'t match', { cause: 400 }))
+    }
+    const newpass=pkg.hashSync(NewPassword,+process.env.SALT_ROUNDS)
+    
+    const updatedPass = await UserModel.findOneAndUpdate({_id:UserId},
+        {Password:newpass,
+        ConfirmPassword:newpass},{
+            new:true
+        })
+    
+    res.status(200).json({ Message: " Password successfully Changed", updatedPass })
+
+}
+
+//forget pass
+export const ForgetPassword= async(req,res,next)=>{
+
+}
+
+//reset pass
+
+
+
+
+
+

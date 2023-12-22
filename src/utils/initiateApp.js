@@ -14,7 +14,7 @@ export const initiateApp=(App,express)=>{
     DBconnection()
     
     App.use('/Auth',router.AuthRoutes)
-    
+    App.use('/Quiz',router.QuizRoutes)
     App.all('*',(req,res,next)=> res.status(404).json({Message:'404  URL Not Found'}))
 
     App.use(GlobalResponse)
