@@ -1,4 +1,4 @@
-# Careery
+# Career-y
 
 Welcome to our Computer Science Career Guidance Website! This platform is designed to provide tailored advice, resources, learning roadmaps, and recommendations to individuals interested in computer science careers. By leveraging Node.js, React, and Neo4j, we aim to offer a comprehensive solution for career development and learning in the field of computer science.
 
