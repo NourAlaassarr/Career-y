@@ -60,6 +60,10 @@ const UserSchema = new Schema({
     ChangePassAt:{
         type:Date
     },
+    Skills:[{
+        type:String,
+    }],
+    CareerGoal:String,
     QuizMarks:[{
             QuizId:{
                 type:Schema.Types.ObjectId,
@@ -67,7 +71,6 @@ const UserSchema = new Schema({
             },
             QuizName:String,
             Mark:Number,
-
     }],
     status:{
         type:String,
@@ -80,6 +83,9 @@ const UserSchema = new Schema({
     professionalheadline:String,
 },{timestamps:true}
 )
+
+
+//Hooks
 UserSchema.pre("save",function(next,hash){
     this.Password=pkg.hashSync(this.Password,+process.env.SALT_ROUNDS)
     this.ConfirmPassword=this.Password

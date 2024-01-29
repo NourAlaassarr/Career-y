@@ -9,6 +9,7 @@ const router = Router()
 router.post('/SignUp',asyncHandler(AuthControllers.SignUp))
 router.get('/Confirm/:token',asyncHandler(AuthControllers.ConfirmEmail))
 router.post('/SignIn',asyncHandler(AuthControllers.SignIn))
+router.post('/LogOut',isAuth(),asyncHandler(AuthControllers.LogOut))
 router.patch('/ChangePassword',isAuth(),asyncHandler(AuthControllers.ChangePassword))
 
 

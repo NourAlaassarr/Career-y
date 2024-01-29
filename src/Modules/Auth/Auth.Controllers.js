@@ -107,9 +107,7 @@ export const SignIn = async(req,res,next)=>{
     if(!is_User_Exist){
         return next(new Error('Invalid credentials', { cause: 400 }))
     }
-    console.log('xxxxxxxxxxxxxxxxxxxxxxxxx');
     console.log(is_User_Exist.Password);
-    console.log('====================================');
     const Password_Corerct=pkg.compareSync(Password,is_User_Exist.Password)
     console.log(Password_Corerct);
     if(!Password_Corerct){
@@ -133,6 +131,21 @@ export const SignIn = async(req,res,next)=>{
     res.status(200).json({ Message: "successfully Logged IN", user })
         
     
+
+}
+
+//LogOut
+export const LogOut= async(req,res,next)=>{
+const UserId = req.authUser
+console.log(UserId)
+const findifOnlineUser= await UserModel.findByIdAndUpdate({_id:UserId._id},{
+    status:'Offline'
+})
+console.log(findifOnlineUser)
+if(!findifOnlineUser){
+    return next(new Error('Error', { cause: 404 }))
+}
+res.status(200).json({ Message: "successfully Logged Out" })
 
 }
 //change pass
@@ -175,6 +188,13 @@ export const ForgetPassword= async(req,res,next)=>{
 }
 
 //reset pass
+
+
+//Add skills
+
+
+//Add CareerGoal
+
 
 
 
