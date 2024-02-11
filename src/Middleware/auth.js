@@ -2,7 +2,7 @@ import { UserModel } from '../../DB/Models/User.Model.js'
 
 import Jwt  from "jsonwebtoken"
 import { VerifyToken, generateToken } from '../utils/TokenFunction.js'
-
+import{Neo4jConnection} from'../../DB/Neo4j/Neo4j.js'
 
 export const isAuth = (roles)=>{
     
@@ -17,19 +17,37 @@ export const isAuth = (roles)=>{
         }
         try{
         const decoded= VerifyToken({token:tokens,signature:process.env.SIGN_IN_TOKEN_SECRET})
-
-        // console.log({decoded})
-        if(!decoded || !decoded._id)
+        if(!decoded || !decoded._id )
         {
             return res.status(400).json({Message:'error invalid token!'})
         }
-        const findUser = await UserModel.findById(decoded._id,
-            'email userName role');
-            // console.log(findUser)
-        if(!findUser)
-        {
-            return res.status(400).json({Message:'Please Sign Up!'})
+        // console.log(decoded)
+        // const findUser = await UserModel.findById(decoded._id,
+        //     'email userName role');
+        //     // console.log(findUser)
+        // if(!findUser)
+        // {
+        //     return res.status(400).json({Message:'Please Sign Up!'})
+        // }
+        
+        let session;
+
+        const driver = await Neo4jConnection();
+        session = driver.session()
+        const result = await session.run(
+            'MATCH (u:User) WHERE u._id = $_id RETURN u._id  AS _id, u.Email AS Email, u.name AS name, u.role AS role',
+            { _id : decoded._id }
+        );
+        if (result.records.length === 0) {
+            return res.status(400).json({ Message: 'Please Sign Up!' });
         }
+        const findUser = {
+            _id: result.records[0].get('_id'),
+            Email: result.records[0].get('Email'),
+            name: result.records[0].get('name'),
+            role: result.records[0].get('role'),
+        }
+        // console.log(findUser)
         // if(parseInt(decoded.ChangePassAt.GetTime()/1000)>decoded.iat)
         // {
         //     return res.status(400).json({Message:'token expired after change password'})
@@ -75,81 +93,3 @@ catch(error)
         }
 
     }}
-
-
-
-export const isAuthQl = async(tokens,roles)=>{
-            try{
-            
-            // console.log(tokens)
-            if(!tokens)
-            {
-                return new Error('No token provided.',{cause:400})
-            }
-            try{
-            const decoded=VerifyToken({token:tokens,signature:process.env.SIGN_IN_TOKEN_SECRET})
-            // console.log({decoded})
-            if(!decoded || !decoded._id)
-            {
-                return res.status(400).json({Message:'error invalid token!'})
-            }
-            const findUser = await UserModel.findById(decoded._id,
-                'email userName role');
-                // console.log(findUser)
-            if(!findUser)
-            {
-                return new Error('Please Sign Up!',{cause:400})
-            }
-            if(!roles.includes(findUser.role)){
-                return new Error('unauthorizes user',{cause :400})
-            }
-            // if(parseInt(decoded.ChangePassAt.GetTime()/1000)>decoded.iat)
-            // {
-            //     return res.status(400).json({Message:'token expired after change password'})
-            // }
-            // console.log(roles)
-            // console.log(findUser.role)
-            // if (!roles.includes(findUser.role))
-            // {
-            //     return next(new Error('unauthorized to acceess this api',{cause:401}))
-            // }
-            return {
-                code:200,
-                findUser
-            }
-        }
-        catch(error){
-            if(error == 'TokenExpiredError: jwt expired')
-            {
-                const user = await UserModel.findOne({tokens})
-                if(!user)
-                {
-                    return new Error('errror token',{cause:500})
-                }
-                console.log(user)
-                //generate new token
-            const  userToken = generateToken({payload:{name:user.userName,_id:user._id},
-                signature:process.env.SIGN_IN_TOKEN_SECRET
-            },{expiresIn:'1h'})  
-            // user.token= userToken
-            // await user.save()
-            if(!userToken){
-                return new Error('token generation failed,patload cannot be empty.',{cause:400})
-            }
-            await UserModel.findOneAndUpdate({
-                tokens},{
-                token:userToken  
-                })
-            return res.status(200).json({ message: 'Token refreshed', userToken })
-            }
-            console.log(error)
-        return  new Error('invalid tokenn',{cause:500})
-            }
-        }
-    catch(error)
-            {
-                new Error('error in auth',{cause:500})
-                console.log(error)
-            }
-    
-        }

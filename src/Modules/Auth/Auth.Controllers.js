@@ -190,10 +190,7 @@ export const ForgetPassword= async(req,res,next)=>{
 //reset pass
 
 
-//Add skills
 
-
-//Add CareerGoal
 
 
 

@@ -2,53 +2,85 @@ import { UserModel } from "../../../DB/Models/User.Model.js";
 import { QuizModel } from '../../../DB/Models/Quiz.Model.js';
 import { isAuth } from "../../Middleware/auth.js";
 
-// Add Quiz
-// export const Add=async (req,res,next)=>{
-//     const { Quizname} = req.body; 
-//     console.log(req.body)
-//     const newQuiz = new QuizModel({
-//         Quizname:Quizname,
-//         questions:[req.body]
-//     })
-//     const quiznew=await newQuiz.save()
-//     res.status(200).json({ Message: "Created Successfully", quiznew })
-// }
-
-export const Add = async (req, res, next) => {
+//Add Quiz 
+export const AddQuizNode = async (req, res, next) => {
+    let session;
     try {
-        const { Quizname, questions } = req.body;
-        const Check_Quiz = await QuizModel.findOne({ Quizname })
-        if (Check_Quiz) {
-            return next(new Error("Quiz ALready exists", { cause: 400 }))
-        }
-        if (!Array.isArray(questions) || questions.length === 0) {
-            return res.status(400).json({ Message: 'Questions array is required and cannot be empty.' });
+        const { QuizName } = req.body;
+        const driver = await Neo4jConnection();
+        session = driver.session();
+
+        // Check if the quiz already exists
+        const result = await session.run(
+            "MATCH (q:Quiz {name: $quizname}) RETURN q",
+            { quizname: QuizName }
+        );
+
+        if (result.records.length > 0) {
+            return next(new Error("Quiz already exists", { cause: 400 }));
         }
 
-        const newQuiz = new QuizModel({
-            Quizname,
-            questions
-        });
+        // Create a new quiz node in Neo4j
+        const NewQuiz = await session.run(
+            "CREATE (q:Quiz {name: $QuizName}) RETURN q",
+            { QuizName }
+        );
+        const NewQuizNode = NewQuiz.records[0].get("q").properties;
 
-        const quiznew = await newQuiz.save();
-        res.status(200).json({ Message: 'Created Successfully', quiznew });
+        res.status(200).json({ success: true, message: 'Created Successfully', Quiz: NewQuizNode });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ Message: 'Internal Server Error' });
+        next(error);
+    } finally {
+        if (session) {
+            await session.close();
+        }
     }
 };
 
-//Get quiz
-export const Get = async (req, res, next) => {
+//Add Questions
+export const AddQuestionsToNode = async (req, res, next) => {
+    let session;
+    let tx;
 
-    const { Quizname } = req.body;
-    const Check_Quiz = await QuizModel.findOne({ Quizname })
-    if (!Check_Quiz) {
-        return next(new Error("Quiz doesn't exist", { cause: 400 }))
+    const { QuizName, Questions } = req.body;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    tx = session.beginTransaction();
+
+    const QuizResult = await tx.run(
+        "MATCH (q:Quiz {name: $quizname}) RETURN q",
+        { quizname: QuizName }
+    );
+
+    if (QuizResult.records.length === 0) {
+        return next(new Error("Quiz Doesn't exist", { cause: 404 }));
     }
-    console.log(Check_Quiz)
-    res.status(200).json({ Message: 'Done', Check_Quiz });
+
+    if (!Array.isArray(Questions) || Questions.length === 0) {
+        return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
+    }
+
+    const addedQuestions = await Promise.all(Questions.map(async (question) => {
+        const { questionText, answer, options } = question; 
+        const result = await tx.run(
+            'MATCH (q:Quiz {name: $QuizName}) ' +
+            'CREATE (q)-[:CONTAINS]->(question:Question {questionText: $questionText, answer: $answer, options: $options}) RETURN question',
+            { QuizName, questionText, answer, options: Array.isArray(options) ? options : [options] }
+        );
+        return result.records[0].get('question').properties;
+    }));
+
+    await tx.commit();
+
+    res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
+
+    if (session) {
+        await session.close();
+    }
 }
+
+//Get quiz
+
 
 
 // export const solve = async (req, res, next) => {
@@ -102,8 +134,7 @@ export const solve = async (req, res, next) => {
     if(CheckIfExamed){
         return next(new Error("You have already taken this quiz", { cause: 400 }))
     }
-    const quizLen=Check_Quiz.questions.length
-    console.log(quizLen)
+
     for (let i =0 ; i<quizLen;i++){
             if(Check_Quiz.questions[i].answer==answer[i]){
                 {
