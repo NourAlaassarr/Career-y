@@ -65,7 +65,7 @@ Visit [http://localhost:3000](http://localhost:3000) to access the website.
 
 ## Contributors
 
-- [Nour](https://github.com/itsalaassar)
+- [Nour]([https://github.com/itsalaassar](https://github.com/NourAlaassarr))
 - [Another Contributor](https://github.com/another-contributor)
 
 Feel free to contribute, report issues, or provide feedback to enhance the functionality and features of this project.
