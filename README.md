@@ -8,7 +8,7 @@ This project encompasses various features to assist users in their career journe
 
 ### 1. User Profiling and Skills Assessment
 
-- Allow users to create profiles with educational background, skills, interests, and career goals.
+- Allow users to create profiles with , skills, interests, and career goals.
 
 ### 2. Personalized Learning Roadmap
 
@@ -18,8 +18,7 @@ This project encompasses various features to assist users in their career journe
 ### 3. Continuous Learning Updates
 
 - Keep the learning roadmap up-to-date with the latest advancements and emerging fields in computer science.
-- Utilize data from reliable sources, industry trends, and user feedback to update the roadmap and notify users of new topics.
-
+- Utilize data from reliable sources, industry trends, and user feedback to update the roadmap.
 ### 4. Career Guidance and Job Matching
 
 - Provide guidance and recommendations on potential career paths within computer science.
