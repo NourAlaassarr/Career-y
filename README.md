@@ -47,8 +47,8 @@ This project encompasses various features to assist users in their career journe
 
 To run the project locally, follow these steps:
 
-1. Clone the repository: `git clone https://github.com/your-username/your-repository.git`
-2. Install dependencies: `cd your-repository && npm install`
+1. Clone the repository: `[https://github.com/NourAlaassarr/Career-y.git]`
+2. Install dependencies: `cd Career-y && npm install`
 3. Configure Neo4j connections in the respective configuration files.
 4. Start the backend server: `npm run server`
 5. Start the frontend development server: `npm run client`
