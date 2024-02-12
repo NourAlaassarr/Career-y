@@ -1,8 +1,11 @@
-import { UserModel } from "../../../DB/Models/User.Model.js";
-import { QuizModel } from '../../../DB/Models/Quiz.Model.js';
-import { isAuth } from "../../Middleware/auth.js";
 
-//Add Quiz 
+import { QuizModel } from '../../../DB/Models/Quiz.Model.js';
+import {generateToken,VerifyToken}from'../../utils/TokenFunction.js'
+import { v4 as uuidv4 } from 'uuid';
+import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
+
+
+//Add Quiz Neo4j
 export const AddQuizNode = async (req, res, next) => {
     let session;
     try {
@@ -37,7 +40,7 @@ export const AddQuizNode = async (req, res, next) => {
     }
 };
 
-//Add Questions
+//Add Questions neo4j
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
@@ -78,79 +81,82 @@ export const AddQuestionsToNode = async (req, res, next) => {
         await session.close();
     }
 }
+// Get QuizTopicQuiz neo4j
+export const GetQuiz = async (req, res, next) => {
+    const { QuizName } = req.body;
+    let session;
 
-//Get quiz
+        const driver = await Neo4jConnection();
+        session = driver.session();
 
+        const quizResult = await session.run(
+            "MATCH (q:Quiz {QuizName: $QuizName})-[:CONTAINS]->(question:Question) RETURN q, COLLECT(question) AS questions",
+            { QuizName }
+        );
 
+        if (quizResult.records.length === 0) {
+            return next(new Error("Quiz Not found", { cause: 404 }));
+        }
 
-// export const solve = async (req, res, next) => {
-//     const { Quizname,answer } = req.body
-//     let ans=0;
-//     // console.log('====================================');
-//     // console.log(req.body);
-//     // console.log('====================================');
-//     // console.log('====================================');
-//     const Check_Quiz = await QuizModel.findOne({ Quizname })
-//     if (!Check_Quiz) {
-//         return next(new Error("Quiz doesn't exist", { cause: 400 }))
-//     }
-//     // console.log('====================================');
-//     // console.log(Check_Quiz.questions);
-//     // console.log('====================================');
-//     // console.log('====================================');
-//     // console.log(Check_Quiz.questions[0]);
-//     // console.log('====================================')
-//     if(Check_Quiz.questions[0]){
-//         if(Check_Quiz.questions[0].answer==answer[0]){
-//             console.log("yes")
-//             ans++
-//         }
-//     }
-//     if(Check_Quiz.questions[1]){
-//         if(Check_Quiz.questions[1].answer==answer[1]){
-//             console.log("yes")
-//             ans++
-//         }
-//         console.log("no")
-//     }
-//     res.status(200).json({ Message: 'Your grade is', ans });
-// }
+        const quiz = quizResult.records[0].get("q").properties;
+        const questions = quizResult.records[0].get("questions").map(question => question.properties);
 
-//slove
-export const solve = async (req, res, next) => {
-    const { Quizname,answer } = req.body
-    const UserId= req.authUser._id
-    const User_exist= await UserModel.findById({_id:UserId})
-    if(!User_exist){
-        return next(new Error("User Not Found",{cause:404}))
+        res.status(200).json({ Message: 'Done', Quiz: quiz, Questions: questions });
+    
+        if (session) {
+            await session.close();
+        }
+};
+//Get allTopicQuizzes neo4j
+export const GetAllQuizzes = async (req, res, next) => {
+    let session;
+
+        const driver = await Neo4jConnection();
+        session = driver.session();
+
+        const AllQuizzes = await session.run("MATCH (q:Quiz) RETURN q",)
+
+        if (AllQuizzes.records.length === 0) {
+            return next(new Error("No Quizzes Found", { cause: 404 }));
+        }
+
+        const quiz = AllQuizzes.records[0].get("q").properties;
+
+        res.status(200).json({ Message: 'Done', Quizzes: quiz });
+    
+        if (session) {
+            await session.close();
+        }
+};
+
+//DeleteNode
+export const DeleteNode = async (req, res, next) => {
+    const { QuizName } = req.body;
+    let session;
+
+    try {
+        const driver = await Neo4jConnection();
+        session = driver.session();
+
+        // Execute a READ query to check if the node with the specified QuizName exists
+        const readResult = await session.run("MATCH (n:Quiz {QuizName: $QuizName}) RETURN n", { QuizName });
+
+        if (readResult.records.length === 0) {
+            return res.status(404).json({ success: false, message: 'Node not found' });
+        }
+
+        // Execute the DELETE query
+        await session.run("MATCH (n:Quiz {QuizName: $QuizName}) DETACH DELETE n", { QuizName });
+
+        // Respond with success message or appropriate response
+        res.status(200).json({ success: true, message: 'Node deleted successfully' });
+    } catch (error) {
+        // Handle errors
+        next(error);
+    } finally {
+        // Close the session
+        if (session) {
+            await session.close();
+        }
     }
-    let Grade=0;
-    const Quizes=[]
-    const Check_Quiz = await QuizModel.findOne({ Quizname })
-    if (!Check_Quiz) {
-        return next(new Error("Quiz doesn't exist", { cause: 400 }))
-    }
-    const CheckIfExamed=await UserModel.findOne({'QuizMarks.QuizName': Quizname})
-    if(CheckIfExamed){
-        return next(new Error("You have already taken this quiz", { cause: 400 }))
-    }
-
-    for (let i =0 ; i<quizLen;i++){
-            if(Check_Quiz.questions[i].answer==answer[i]){
-                {
-                    Grade++
-                }
-    }
-    }
-    const QuizMarksOb={
-        QuizId:Check_Quiz._id,
-        QuizName:Quizname,
-        Mark:Grade,
-    }
-    Quizes.push(QuizMarksOb)
-    await UserModel.findByIdAndUpdate(UserId,{
-        QuizMarks:Quizes
-    })
-
-    res.status(200).json({ Message: 'Your grade is',Grade });
-}
+};

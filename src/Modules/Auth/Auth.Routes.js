@@ -7,9 +7,12 @@ import  {isAuth} from'../../Middleware/auth.js'
 const router = Router()
 
 router.post('/SignUp',asyncHandler(AuthControllers.SignUp))
-router.get('/Confirm/:token',asyncHandler(AuthControllers.ConfirmEmail))
-router.post('/SignIn',asyncHandler(AuthControllers.SignIn))
+
+router.post('/SignIn',asyncHandler(AuthControllers.signIn))
 router.post('/LogOut',isAuth(),asyncHandler(AuthControllers.LogOut))
+
+
+router.get('/Confirm/:token',asyncHandler(AuthControllers.ConfirmEmail))
 router.patch('/ChangePassword',isAuth(),asyncHandler(AuthControllers.ChangePassword))
 
 
