@@ -13,6 +13,9 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 //SignUP in Neo4j
 export const SignUp = async (req, res, next) => {
     const { UserName, Email, password, ConfirmPassword } = req.body;
+    if (!UserName || !Email || !password || !ConfirmPassword) {
+        return next(new Error("All fields must be filled out", { cause: 400 }));
+    }
     let session;
 
     const driver = await Neo4jConnection();
@@ -63,7 +66,7 @@ export const SignUp = async (req, res, next) => {
         return next(new Error("Failed to send Confirmation Email", { cause: 400 }));
     }
     const result = await session.run(
-        'CREATE (u:User {_id: $UserId, UserName: $UserName, Email: $Email, password: $password, ConfirmPassword: $ConfirmPassword, role:"user"})RETURN u',
+        'CREATE (u:User {_id: $UserId, UserName: $UserName, Email: $Email, password: $password, ConfirmPassword: $ConfirmPassword, role:"user", isConfirmed: false}) RETURN u',
         { UserId, UserName, Email, password: hashed, ConfirmPassword: hashed }
     );
     
@@ -155,30 +158,39 @@ export const LogOut = async (req, res, next) => {
     }
 };
 
-
-
+    
+    export const ConfirmEmail = async (req, res, next) => {
+        const { token } = req.params;
+        const decoded = VerifyToken({ token, signature: process.env.CONFIRMATION_EMAIL_TOKEN });
+    
+        let session;
+        const driver = await Neo4jConnection();
+        session = driver.session(); 
+    
+        const result = await session.run(
+            'MATCH (u:User {Email: $Email, isConfirmed: false}) SET u.isConfirmed = true RETURN u',
+            { Email: decoded.Email }
+        );
+    
+        const user = result.records[0]?.get("u")?.properties;
+    
+        if (!user) {
+            return next(new Error('Already Confirmed', { cause: 400 }));
+        }
+    
+        res.status(200).json({ message: 'Successfully confirmed, try to log in' });
+    
+        if (session) {
+            await session.close();
+        }
+    };
+    
 
 
 
 
 //To be Updated isa
-//confirm Email
-export const ConfirmEmail = async (req,res,next)=>{
-    const{
-        token
-    }=req.params
-    const decoded  = VerifyToken({token,signature:process.env.CONFIRMATION_EMAIL_TOKEN})
-    const User= await UserModel.findOneAndUpdate({Email:decoded.Email,isConfirmed:false},
-        {
-        isConfirmed:true},
-        {
-            new:true
-        })
-        if (!User) {
-            return next(new Error('Already Confirmed', { cause: 400 }))
-        }
-        res.status(200).json({ message: 'Successfully confirmed,Try to log in' })
-    }
+
     
 
 //change pass
