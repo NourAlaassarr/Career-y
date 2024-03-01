@@ -11,7 +11,6 @@ router.post('/SignUp',asyncHandler(AuthControllers.SignUp))
 router.post('/SignIn',asyncHandler(AuthControllers.signIn))
 router.post('/LogOut',isAuth(),asyncHandler(AuthControllers.LogOut))
 
-
 router.get('/Confirm/:token',asyncHandler(AuthControllers.ConfirmEmail))
 router.patch('/ChangePassword',isAuth(),asyncHandler(AuthControllers.ChangePassword))
 

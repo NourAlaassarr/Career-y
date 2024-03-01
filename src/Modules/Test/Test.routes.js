@@ -17,5 +17,5 @@ router.get('/Quiz',asyncHandler(TestControllers.GetQuiz))
 router.get('/AllQuizzes',asyncHandler(TestControllers.GetAllQuizzes))
 // router.post('/Solve',isAuth(),asyncHandler(TestControllers.Solve))
 // router.get('/AllSolved',isAuth(),asyncHandler(TestControllers.GetALLMarksAndGrades))
-
+router.get('/GetRoadmap',asyncHandler(TestControllers.GetRoadmap))
 export default router

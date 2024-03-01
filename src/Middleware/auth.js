@@ -8,7 +8,7 @@ export const isAuth = (roles)=>{
     
     return async(req,res,next)=>{
 
-        try{
+    try{
         const tokens = req.headers.token
         // console.log(tokens)
         if(!tokens)
@@ -64,24 +64,31 @@ export const isAuth = (roles)=>{
     catch(error){
         if(error == 'TokenExpiredError: jwt expired')
         {
-            const user = await UserModel.findOne({tokens})
-            if(!user)
-            {
-                return next (new Error('errror token',{cause:500}))
+            const result = await session.run(
+                'MATCH (user:User {token: $token}) RETURN user',
+                { token: tokens }
+            );
+        
+            // Check if the user exists
+            const user = result.records[0].get('user');
+            if (!user) {
+                return next(new Error('Error token', { cause: 500 }));
             }
             console.log(user)
-            //generate
-        const  userToken = generateToken({payload:{name:user.UserName,_id:user._id},
-            signature:process.env.SIGN_IN_TOKEN_SECRET
-        },{expiresIn:'1h'})  
-        // user.token= userToken
-        // await user.save()
-        await UserModel.findOneAndUpdate({
-            tokens},{
-            token:userToken  
-            })
-        return res.status(200).json({ message: 'Token refreshed', userToken })
-        }
+            //generate NewToken
+            const newToken = generateToken({
+                payload: {
+                    name: user.properties.UserName, 
+                    _id: user.properties._id
+                },
+                signature: process.env.SIGN_IN_TOKEN_SECRET
+            }, { expiresIn: '1h' });
+            await session.run(
+        'MATCH (user:User {token: $oldToken}) SET user.token = $newToken RETURN user',
+        { oldToken: tokens, newToken: newToken }
+    );
+    return res.status(200).json({ message: 'Token refreshed', userToken: newToken });
+            }
         console.log(error)
     return next (new Error('invalid tokenn',{cause:500}))
         }
@@ -91,5 +98,10 @@ catch(error)
             next (new Error('error',{cause:500}))
             console.log(error)
         }
+finally{
+    if (session) {
+        await session.close();
+    }
+}
 
     }}

@@ -159,7 +159,7 @@ export const LogOut = async (req, res, next) => {
 };
 
     
-    export const ConfirmEmail = async (req, res, next) => {
+export const ConfirmEmail = async (req, res, next) => {
         const { token } = req.params;
         const decoded = VerifyToken({ token, signature: process.env.CONFIRMATION_EMAIL_TOKEN });
     
@@ -189,10 +189,13 @@ export const LogOut = async (req, res, next) => {
 
 
 
-//To be Updated isa
+
+
+
+
 
     
-
+//To be Updated isa
 //change pass
 export const ChangePassword=async(req,res,next)=>{
     const{

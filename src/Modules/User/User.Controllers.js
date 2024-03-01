@@ -97,12 +97,6 @@ if (session) {
 }
 
 
-
-
-
-
-
-
 // //Add skills
 // export const AddSkills = async (req,res,next)=>{
 //     const {Skills}=req.body
@@ -124,6 +118,8 @@ if (session) {
 //     res.status(200).json({ Message: " successfully Added", updatedUser })
 // }
 
+//Recommend GapSkillsin each track
+
 // //Add CareerGoal
 // export const AddCareerGoal = async (req,res,next)=>{
 //     const {CareerGoal}=req.body
@@ -142,3 +138,4 @@ if (session) {
 //     }
 //     res.status(200).json({ Message: " successfully Added", updatedUser })
 // }
+

@@ -81,6 +81,7 @@ export const AddQuestionsToNode = async (req, res, next) => {
         await session.close();
     }
 }
+
 // Get QuizTopicQuiz neo4j
 export const GetQuiz = async (req, res, next) => {
     const { QuizName } = req.body;
@@ -128,6 +129,13 @@ export const GetAllQuizzes = async (req, res, next) => {
             await session.close();
         }
 };
+
+//FullTrackQuiz
+
+
+
+
+
 
 //DeleteNode
 export const DeleteNode = async (req, res, next) => {

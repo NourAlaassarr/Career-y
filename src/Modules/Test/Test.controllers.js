@@ -1,4 +1,5 @@
-
+import { session } from "neo4j-driver";
+import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
 //add quiz 
 export const AddQuizNode = async (req, res, next) => {
@@ -120,7 +121,131 @@ export const DeleteNode = async (req, res, next) => {
     }
 };
 
+//Get Roadmaps
+export const GetRoadmap = async (req, res, next) => {
+    const { TrackName } = req.body;
+    const driver = await Neo4jConnection();
+    let session = driver.session();
 
+    // Check if track exists
+    const TrackCheckResult = await session.run(
+        'MATCH (job:Job) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job',
+        { name: TrackName }
+    );
+
+    if (TrackCheckResult.records.length === 0) {
+        return next(new Error("Track Doesn't exist", { cause: 404 }));
+    }
+    const JobContainsOtherJobsResult = await session.run(
+        'MATCH (job:Job)-[:Has_Job]->(nestedJob:Job)-[:Has_Component]->(component:Component)-[:Includes]->(skill:Skill) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job, COLLECT(DISTINCT nestedJob) AS nestedJobs',
+        { name: TrackName }
+    );
+    
+    const nestedJobNodes = JobContainsOtherJobsResult.records[0]?.get('nestedJobs')?.map(nestedJob => nestedJob.properties);
+    
+    if (nestedJobNodes && nestedJobNodes.length > 0) {
+        // Extract data from the result
+        const jobNode = JobContainsOtherJobsResult.records[0]?.get('job')?.properties;
+    
+        // Extract skills and components for each nested job
+        const nestedJobDetails = await Promise.all(nestedJobNodes.map(async nestedJob => {
+            const nestedJobName = nestedJob.name;
+    
+
+            const nestedSession = driver.session();
+    
+            // Extract components for the nested job
+            const nestedJobComponents = await nestedSession.run(
+                'MATCH (nestedJob:Job)-[:Has_Component]->(component:Component)-[:Includes]->(skill:Skill) WHERE trim(toLower(nestedJob.name)) = trim(toLower($nestedJobName)) RETURN component, skill',
+                { nestedJobName }
+            );
+    
+            
+            const componentsMap = {};
+    
+            // Process the nested job components and skills
+            nestedJobComponents.records.forEach(record => {
+                const component = record.get('component')?.properties;
+                const skill = record.get('skill')?.properties;
+    
+                // Check if the component already exists in the map
+                if (componentsMap[component.name]) {
+                    // Add the new skill to this component array
+                    componentsMap[component.name].skills.push({
+                        name: skill.name,
+                        resources: skill.resources
+                    });
+                } else {
+                    
+                    componentsMap[component.name] = {
+                        name: component.name,
+                        skills: [{
+                            name: skill.name,
+                            resources: skill.resources
+                        }]
+                    };
+                }
+            });
+    
+            
+            nestedSession.close();
+    
+            return {
+                name: nestedJobName,
+                components: Object.values(componentsMap)
+            };
+        }));
+    
+    
+        const response = {
+            Message: 'Track exists',
+            Job: jobNode,
+            ContainsJobs: nestedJobDetails
+        };
+    
+        
+        res.status(200).json(response);
+    }
+    else{
+    const Roadmaps = await session.run(
+        'MATCH (job:Job)-[:Has_Component]->(component:Component)-[:Includes]->(skill:Skill) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job, component, skill',
+        { name: TrackName }
+    );
+
+    
+    const jobNode = Roadmaps.records[0].get('job').properties;
+
+
+    const componentsMap = {};
+
+
+    Roadmaps.records.forEach(record => {
+        const component = record.get('component').properties;
+        const skill = record.get('skill').properties;
+
+    
+        if (componentsMap[component.name]) {
+            // Add the new skill to array
+            componentsMap[component.name].skills.push(skill);
+        } else {
+            
+            componentsMap[component.name] = { ...component, skills: [skill] };
+        }
+    });
+
+    // Convert the components map to an array format
+    const componentNodes = Object.values(componentsMap);
+
+    
+    const response = {
+        Message: 'Track exists',
+        Job: jobNode,
+        Components: componentNodes
+    };
+
+    res.status(200).json(response);
+}
+};
 
 //CareerGuidance=>assessment=>acording to grade=>job=>course
 //Get AllTrackquizzes
