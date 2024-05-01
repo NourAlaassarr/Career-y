@@ -1,75 +1,325 @@
-import { UserModel } from "../../../DB/Models/User.Model.js";
-import pkg from 'bcrypt'
+
 import {generateToken,VerifyToken}from'../../utils/TokenFunction.js'
 import { sendmailService } from '../../Services/SendEmailService.js'
 import { emailTemplate } from '../../utils/EmailTemplate.js'
 import jwt from 'jsonwebtoken'; // Import jsonwebtoken library
+import { asyncHandler } from "../../utils/ErrorHandling.js";
+import pkg, { compareSync } from "bcrypt";
 
+
+import { v4 as uuidv4 } from 'uuid';
+import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
+import { nanoid } from 'nanoid';
+
+//SignUP in Neo4j
 export const SignUp = async (req, res, next) => {
-    const{
-        UserName,
-        Email,
-        Password,
-        ConfirmPassword,
-        Gender,
-        Address,
-        Age,
-        FirstName,
-        LastName
+    const { UserName, Email, password, ConfirmPassword } = req.body;
+    if (!UserName || !Email || !password || !ConfirmPassword) {
+        return next(new Error("All fields must be filled out", { cause: 400 }));
+    }
+    let session;
 
-    }=req.body
+    const driver = await Neo4jConnection();
+    session = driver.session(); // Create a new session
+    const UserId = uuidv4();
+    console.log("Query Parameter:", { Email });
+    //CheckEmail
+    const checkUser = await session.run(
+        "MATCH (u:User {Email: $Email}) RETURN u",
+        { Email }
+    );
+    if (checkUser.records.length > 0) {
+        return next(new Error("Email is Already Exist", { cause: 400 }));
+    }
 
-    console.log(Email)
-    //check if user Exists
-    const Check_Email= await UserModel.findOne({Email})
-    console.log(Check_Email)
-    const check_Username= await UserModel.findOne({UserName})
-    if(Check_Email){
-        return next(new Error('Email is Already Exsit', { cause: 400 }))
+    //UsernameCheck
+    const UsernameCheck = await session.run(
+        "MATCH (u:User {UserName: $UserName}) RETURN u",
+        { UserName }
+    );
+    if (UsernameCheck.records.length > 0) {
+        return next(new Error("UserName Already Exists", { cause: 400 }));
     }
-    if(check_Username){
-        return next(new Error('Username is Already Exsit', { cause: 400 }))
+
+    if (password != ConfirmPassword) {
+        return next(new Error("Password doesn't match", { cause: 400 }));
     }
-    if (Password != ConfirmPassword) {
-        return next(new Error('Password doesn\'t match', { cause: 400 }))
-    }
-    // const hashed = pkg.hashSync(Password,+process.env.SALT_ROUNDS)
-    const token=generateToken({
-        payload:{
+    const hashed = pkg.hashSync(password, +process.env.SALT_ROUNDS);
+    const token = generateToken({
+        payload: {
             Email,
         },
-        signature:process.env.CONFIRMATION_EMAIL_TOKEN,
-        expiresIn:'1d'
-    })
-    const ConfirmLink = `${req.protocol}://${req.headers.host}/Auth/Confirm/${token}`
+        signature: process.env.CONFIRMATION_EMAIL_TOKEN,
+        expiresIn: "1d",
+    });
+    const ConfirmLink = `${req.protocol}://${req.headers.host}/Auth/Confirm/${token}`;
     const isEmailSent = sendmailService({
         to: Email,
-        subject: 'Confirmation Email',
+        subject: "Confirmation Email",
         message: emailTemplate({
             link: ConfirmLink,
-            linkData: 'Click here to Confirm',
-            subject: 'Confirmation Email'
-        })
+            linkData: "Click here to Confirm",
+            subject: "Confirmation Email",
+        }),
         // `<a href=${ConfirmLink}>Click here to Confirm </a>`,
-    })
+    });
+    console.log(isEmailSent)
     if (!isEmailSent) {
-        return next(new Error('Failed to send Confirmation Email', { cause: 400 }))
+        return next(new Error("Failed to send Confirmation Email", { cause: 400 }));
+    }
+    const result = await session.run(
+        'CREATE (u:User {_id: $UserId, UserName: $UserName, Email: $Email, password: $password, ConfirmPassword: $ConfirmPassword, role:"user", isConfirmed: false}) RETURN u',
+        { UserId, UserName, Email, password: hashed, ConfirmPassword: hashed }
+    );
+    
+    const userResult = result.records[0].get("u").properties;
+    
+    res.status(201).json({ Message: "Created Successfully ", userResult });
+    if (session) {
+        await session.close();
+    }
+};
+
+//SignIn in Neo4j
+export const signIn = async (req, res, next) => {
+    let session;
+
+    const driver = await Neo4jConnection();
+    session = driver.session();
+
+    const { Email, Password } = req.body;
+
+    // Check if the user exists
+    const result = await session.run("MATCH (u:User {Email: $Email}) RETURN u", {
+        Email,
+    });
+
+    if (result.records.length === 0) {
+         res
+            .status(401)
+            .json({ message: "Invalid credentials" });
+    }
+    const userNode = result.records[0].get("u");
+    const userProperties = userNode.properties;
+    
+    const isPasswordValid = pkg.compareSync(Password, userProperties.password);
+console.log(isPasswordValid)
+    if (!isPasswordValid) {
+         res.status(401).json({  message: "Invalid credentials" });
     }
 
-    const User = new UserModel({
-        UserName,
-        Password,
-        ConfirmPassword,
-        Gender,
-        Address,
-        Age,
+    const token = generateToken({
+        payload: {
+            Email,
+            _id: userProperties._id,
+            role: userProperties.role,
+        },
+        signature: process.env.SIGN_IN_TOKEN_SECRET,
+        expiresIn: "1h",
+    });
+    const updatedUserResult=await session.run(
+        'MATCH (u:User) WHERE u._id = $_id SET u.token = $token, u.status = $status RETURN u',
+        { _id:userProperties._id, token, status: 'Online' }
+    );
+
+
+    const updatedUserNode = updatedUserResult.records[0].get("u").properties;
+    res.status(200).json({message: "Authentication successful",updatedUserNode,});
+
+    if (session) {
+        await session.close();
+    }
+};
+
+//LogOut in Neo4j
+export const LogOut = async (req, res, next) => {
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    const UserId = req.authUser._id;
+    const result = await session.run(
+        "MATCH (u:User) WHERE u._id = $UserId SET u.status = $status RETURN u",
+        {UserId, status: "Offline" }
+    );
+
+    const updatedUser = result.records[0].get("u").properties;
+
+    if (!updatedUser) {
+        return next(new Error("Error", { cause: 404 }));
+    }
+
+    res.status(200).json({ Message: "Successfully Logged Out" });
+    if (session) {
+        await session.close();
+    }
+};
+
+//Confirm Email
+export const ConfirmEmail = async (req, res, next) => {
+        const { token } = req.params;
+        const decoded = VerifyToken({ token, signature: process.env.CONFIRMATION_EMAIL_TOKEN });
+    
+        let session;
+        const driver = await Neo4jConnection();
+        session = driver.session(); 
+    
+        const result = await session.run(
+            'MATCH (u:User {Email: $Email, isConfirmed: false}) SET u.isConfirmed = true RETURN u',
+            { Email: decoded.Email }
+        );
+    
+        const user = result.records[0]?.get("u")?.properties;
+    
+        if (!user) {
+            return next(new Error('Already Confirmed', { cause: 400 }));
+        }
+    
+        res.status(200).json({ message: 'Successfully confirmed, try to log in' });
+    
+        if (session) {
+            await session.close();
+        }
+    };
+    
+//Change Password
+export const ChangePassword=async(req,res,next)=>{
+        const UserId = req.authUser._id
+        let session;
+        const{
+                OldPassword,
+                NewPassword,
+                ConfirmNewPassword,
+            }=req.body
+
+    const driver = await Neo4jConnection();
+    session = driver.session();
+const result = await session.run("MATCH (u:User {_id: $UserId}) RETURN u", {
+    UserId,
+    });
+
+    if (result.records.length === 0) {
+        return next(new Error("User Not Found",{cause:404}))
+    }
+    const Passwordcheck = pkg.compareSync(OldPassword, result.records[0].get("u").properties.password);
+    if (!Passwordcheck) {
+        return next(new Error('incorrect password', { cause: 400 }))
+    }
+    if (NewPassword != ConfirmNewPassword) {
+            return next(new Error('Password doesn\'t match', { cause: 400 }))
+                }
+
+        const newpass=pkg.hashSync(NewPassword,+process.env.SALT_ROUNDS)
+        
+        const NewPass = await  session.run(
+            'MATCH (u:User {_id: $userId}) SET u.password = $newpass  ConfirmPassword: $ConfirmPassword, RETURN u',
+            { userId: UserId, newpass }
+        );
+
+        const updatedUser = result.records[0].get('u').properties;
+        
+        res.status(200).json({ message: 'Successfully Changed Password', updatedUser });
+        await session.close();
+    
+}
+
+//forget pass
+export const ForgetPassword= async(req,res,next)=>{
+    const {Email}=req.body
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session(); 
+
+    const result = await session.run(
+        'MATCH (u:User {Email: $Email}) RETURN u',
+        { Email }
+    );
+
+    if (result.records.length === 0) {
+        return next(new Error("User Not Found",{cause:404}))
+}
+const Code =nanoid()
+const HashedCode = pkg.hashSync(Code,+process.env.SALT_ROUNDS)
+const token = generateToken({
+    payload: {
         Email,
-        FirstName,
-        LastName
+        sentCode: HashedCode,
+    },
+    signature: process.env.RESET_PASS_TOKEN,
+    expiresIn: '1h',
+})
+const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+    const isEmailSent = sendmailService({
+        to: Email,
+        subject: 'Reset Password',
+        message: emailTemplate({
+            link: ResetPasswordLink,
+            linkData: 'Click here to Reset Password',
+            subject: 'Reset Password'
+        })
     })
-    const SavedUser= await User.save()
-    res.status(201).json({ Message: 'Created Successfully ', SavedUser })
+    if (!isEmailSent) {
+        return next(new Error('Failed to send Reset Password Email', { cause: 400 }))
+    }
+    
+    session = driver.session();
+    const updateuser = await session.run(
+    'MATCH (u:User {Email: $email}) ' +
+    'SET u.Code = $hashedCode ' +
+    'RETURN u',
+    { email:Email, hashedCode: HashedCode }
+);
+
+const updatedUser = result.records[0].get('u').properties;
+
+session.close();
+
+
+res.status(200).json({ Message: 'Done', updatedUser, ResetPasswordLink })
+}
+
+
+//reset pass
+
+export const reset = async (req, res, next) => {
+    const { token } = req.params;
+    const { NewPassword } = req.body;
+    const decoded = VerifyToken({ token, signature: process.env.RESET_PASS_TOKEN });
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session(); 
 
 
     
-}
+    const user = await session.run(
+        'MATCH (u:User {Email: $email, Code: $code}) RETURN u',
+        { email: decoded?.Email, code: decoded?.sentCode }
+    );
+    
+    if (user.records.length === 0) {
+        // User not found
+        return next(new Error('you already rest your password, try to login', { cause: 400 }))
+    }
+    const NewPasswordHashed = pkg.hashSync(NewPassword, +process.env.SALT_ROUNDS);
+    const ResetPassword = await session.run(
+        'MATCH (u:User {Email: $email, Code: $code}) ' +
+        'SET u.password = $newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
+        'RETURN u',
+        {
+            email: decoded?.Email,
+            code: decoded?.sentCode,
+            newPassword: NewPasswordHashed,
+            changePassAt: Date.now()
+        }
+    );
+    
+    
+    session.close(); // Close the Neo4j session
+    res.status(200).json({ Message: 'Password Reset Successful'});
+};
+
+
+
+
+
+
+

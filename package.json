@@ -1,33 +1,30 @@
 {
-  "name": "graduationproject",
+  "name": "career-y",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "type": "module",
-  "engines": {
-    "node": "18.16.0"
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "author": "",
+  "license": "ISC",
   "dependencies": {
+    "axios": "^1.6.7",
     "bcrypt": "^5.1.1",
     "cloudinary": "^1.41.0",
     "cors": "^2.8.5",
-    "crons": "^1.1.1-alpha.0",
-    "daemon": "^1.1.0",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "http-status-codes": "^2.3.0",
-    "init": "^0.1.2",
+    "joi": "^17.13.0",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.0.2",
+    "moment-timezone": "^0.5.43",
+    "mongoose": "^8.0.3",
+    "nanoid": "^5.0.4",
+    "neo4j-driver": "^5.17.0",
     "node-schedule": "^2.1.1",
     "nodemailer": "^6.9.7",
-    "nodemon": "^3.0.2",
-    "qrcode": "^1.5.3"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
-  },
-  "author": "nour",
-  "license": "ISC"
+    "uuid": "^9.0.1"
+  }
 }

@@ -16,13 +16,13 @@ const Transporter = nodemailer.createTransport({
     auth:{
         //credentials
         user:'nonaalaassar@gmail.com',
-        pass:'vewvyksxkesulkge',
+        pass:'pljr ycoh bwqn awta',
     }
 
 })
 
 const emailInfo = await Transporter.sendMail({
-from:'"nour route 👻"<nonaalaassar@gmail.com>',
+from:'"Nour Alaassar 👻"<nonaalaassar@gmail.com>',
 to: to ? to : '',
 subject: subject ? subject :'hello',
 html:message?message :'',
