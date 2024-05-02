@@ -11,6 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import { nanoid } from 'nanoid';
 
+
+
 //SignUP in Neo4j
 export const SignUp = async (req, res, next) => {
     const { UserName, Email, password, ConfirmPassword } = req.body;
@@ -318,10 +320,3 @@ export const reset = async (req, res, next) => {
     session.close(); // Close the Neo4j session
     res.status(200).json({ Message: 'Password Reset Successful'});
 };
-
-
-
-
-
-
-

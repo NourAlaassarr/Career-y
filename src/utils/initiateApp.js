@@ -20,6 +20,7 @@ export const initiateApp= async(App,express)=>{
     App.use('/Quiz',router.QuizRoutes)
     App.use('/Job',router.JobRoutes)
     App.use('/User',router.UserRoutes)
+    App.use('/Roadmap',router.RoadmapsRoutes)
     App.use('/Test',router.TestRoutes)
     App.all('*',(req,res,next)=> res.status(404).json({Message:'404  URL Not Found'}))
 

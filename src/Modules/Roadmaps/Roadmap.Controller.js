@@ -1,11 +1,10 @@
-
+import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 //Get Roadmap of Specific Track
 export const GetRoadmap = async (req, res, next) => {
     const { TrackName } = req.body;
+    let session;
     const driver = await Neo4jConnection();
-    let session = driver.session();
-
- 
+    session = driver.session(); 
         // Check if track exists
         const TrackCheckResult = await session.run(
             'MATCH (job:Job) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job',
@@ -77,8 +76,9 @@ export const GetRoadmap = async (req, res, next) => {
 
 //Get AllTracks
 export const GetAllTracks= async(req,res,next)=>{
+    let session;
     const driver = await Neo4jConnection();
-    let session = driver.session();
+    session = driver.session(); 
 
         const result = await session.run(
             'MATCH (job:Job) RETURN job'
