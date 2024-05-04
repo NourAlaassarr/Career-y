@@ -75,11 +75,9 @@ export const SignUp = async (req, res, next) => {
     );
     
     const userResult = result.records[0].get("u").properties;
-    
+    await session.close();
     res.status(201).json({ Message: "Created Successfully ", userResult });
-    if (session) {
-        await session.close();
-    }
+   
 };
 
 //SignIn in Neo4j
@@ -97,9 +95,7 @@ export const signIn = async (req, res, next) => {
     });
 
     if (result.records.length === 0) {
-         res
-            .status(401)
-            .json({ message: "Invalid credentials" });
+        return next(new Error("Invalid credentials", { cause: 400 }));
     }
     const userNode = result.records[0].get("u");
     const userProperties = userNode.properties;
@@ -107,7 +103,7 @@ export const signIn = async (req, res, next) => {
     const isPasswordValid = pkg.compareSync(Password, userProperties.password);
 console.log(isPasswordValid)
     if (!isPasswordValid) {
-         res.status(401).json({  message: "Invalid credentials" });
+        return next(new Error("Invalid credentials", { cause: 400 }));
     }
 
     const token = generateToken({
@@ -126,11 +122,9 @@ console.log(isPasswordValid)
 
 
     const updatedUserNode = updatedUserResult.records[0].get("u").properties;
+    await session.close();
     res.status(200).json({message: "Authentication successful",updatedUserNode,});
 
-    if (session) {
-        await session.close();
-    }
 };
 
 //LogOut in Neo4j
@@ -149,11 +143,9 @@ export const LogOut = async (req, res, next) => {
     if (!updatedUser) {
         return next(new Error("Error", { cause: 404 }));
     }
-
+    session.close();
     res.status(200).json({ Message: "Successfully Logged Out" });
-    if (session) {
-        await session.close();
-    }
+
 };
 
 //Confirm Email
@@ -175,12 +167,10 @@ export const ConfirmEmail = async (req, res, next) => {
         if (!user) {
             return next(new Error('Already Confirmed', { cause: 400 }));
         }
-    
+        await session.close();
         res.status(200).json({ message: 'Successfully confirmed, try to log in' });
     
-        if (session) {
-            await session.close();
-        }
+        
     };
     
 //Change Password
@@ -220,9 +210,9 @@ const result = await session.run("MATCH (u:User {_id: $UserId}) RETURN u", {
         );
 
         const updatedUser = NewPass.records[0].get('u').properties;
-        
-        res.status(200).json({ message: 'Successfully Changed Password', updatedUser });
         await session.close();
+        res.status(200).json({ message: 'Successfully Changed Password', updatedUser });
+        
     
 }
 
@@ -283,7 +273,6 @@ res.status(200).json({ Message: 'Done', updatedUser, ResetPasswordLink })
 
 
 //reset pass
-
 export const reset = async (req, res, next) => {
     const { token } = req.params;
     const { NewPassword } = req.body;
