@@ -9,13 +9,13 @@ const router = Router()
 
 router.post('/Solve',isAuth(),asyncHandler(UserContollers.Solve))
 router.get('/AllSolved',isAuth(),asyncHandler(UserContollers.GetALLMarksAndGrades))
-
-
-
+router.post('/AddCareerGoal',isAuth(),asyncHandler(UserContollers.AddCareerGoal))
+router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
+router.get('/GapSkills',isAuth(),asyncHandler(UserContollers.GapSkills))
 
 
 
 // router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
-// router.post('/AddCareerGoal',isAuth(),asyncHandler(UserContollers.AddCareerGoal))
+
 
 export default router

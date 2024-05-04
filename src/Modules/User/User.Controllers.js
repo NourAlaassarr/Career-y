@@ -1,4 +1,5 @@
-
+import { session } from "neo4j-driver";
+import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 //UserSolveQuiz(any quiz) in Neo4j
 export const Solve=async(req,res,next)=>{
     const{answer}=req.body
@@ -91,50 +92,152 @@ res.status(200).json({Message:"DONE",user,takenQuizzes})
 if (session) {
     await session.close();
 }
+}
 
+
+//Add CareerGoal
+export const AddCareerGoal = async (req,res,next)=>{
+    const {CareerGoalId}=req.body
+    const UserId = req.authUser._id
+    let session
+    const driver = await Neo4jConnection();
+    session = driver.session(); 
+    // Check if career goal exists
+    const CheckTrackExist = await session.run(
+        `MATCH (c:Job { Nodeid: $careerGoalId })
+        RETURN COUNT(c) AS count, c.name AS jobName`,
+        { careerGoalId: CareerGoalId }
+    );
+    
+    const count = CheckTrackExist.records[0].get('count').toNumber();
+    if (count === 0) {
+        return res.status(404).json({ error: 'Career goal not found' });
+    }
+    
+    const jobName = CheckTrackExist.records[0].get('jobName');
+    
+    // Update the user node with the career goal
+    const userCareer = await session.run(
+        `MATCH (u:User { _id: $userId, status: 'Online' })
+        SET u.CareerGoal = [$jobName, $careerGoalId]
+        RETURN u`,
+        { userId: UserId, jobName: jobName, careerGoalId: CareerGoalId }
+    );
+    
+        // Access the first record (assuming only one record is returned)
+        const updatedUser = userCareer.records[0].get('u').properties;
+        
+        await session.close();
+        // Return the updated user
+        return res.status(200).json({ message: 'Career goal updated successfully', user: updatedUser });
+    }
+
+//Add skills
+export const AddSkills = async (req, res, next) => {
+    const { Skills } = req.body;
+    const UserId = req.authUser._id;
+
+        // Create a new session
+        const driver = await Neo4jConnection();
+        const session = driver.session(); 
+
+        // Check if Skills array is empty
+        if (!Skills || Skills.length === 0) {
+            return res.status(400).json({ error: 'Skills array is empty' });
+        }
+
+        // Query to check if all NodeIds exist in the database
+        const checkNodeIdsQuery = await session.run(
+            `
+            MATCH (s:Skill)
+            WHERE s.Nodeid IN $skillNodeIds
+            RETURN COUNT(s) AS count
+            `,
+            { skillNodeIds: Skills } // Use the Skills array directly
+        );
+
+        const count = checkNodeIdsQuery.records[0].get('count').toNumber();
+
+        if (count !== Skills.length) {
+            return res.status(404).json({ error: 'One or more NodeIds not found in the database' });
+        }
+ // Fetch names of skills
+        const fetchSkillsQuery = await session.run(
+            `
+            MATCH (s:Skill)
+            WHERE s.Nodeid IN $skillNodeIds
+            RETURN s.Nodeid AS Nodeid, s.name AS name
+            `,
+            { skillNodeIds: Skills }
+        );
+
+        const skillsWithName = fetchSkillsQuery.records.map(record => {
+            return {
+                Nodeid: record.get('Nodeid'),
+                name: record.get('name')
+            };
+        });
+        console.log(skillsWithName);
+        const skillNames = skillsWithName.map(skill => skill.name);
+
+        // Add skills array to the user node as an array of objects
+        const addUserSkillsQuery = await session.run(
+            `
+            MATCH (u:User { _id: $userId, status: 'Online' })
+            SET u.skills = $skillNames
+            WITH u
+            UNWIND $skills AS skill
+            MATCH (s:Skill { Nodeid: skill.Nodeid })
+            MERGE (u)-[:HAS_SKILL]->(s)
+            `,
+            { userId: UserId, skillNames: skillNames, skills: skillsWithName }
+        );
+
+        // Close the session
+        await session.close();
+        
+        // Handle the result as needed
+        res.status(200).json({ message: 'Skills added successfully' });
+    
+}
+
+
+//Recommend GapSkills in CareerGoal
+export const GapSkills = async (req,res,next)=>{
+    const UserId = req.authUser._id
+    let session
+    const driver = await Neo4jConnection();
+    session = driver.session()
+
+    const GapSkillsQuery = await session.run(`
+    MATCH (u:User {_id: $userId})-[:HAS_SKILL]->(userSkill)
+MATCH (job:Job {Nodeid: u.CareerGoal[1]})-[:REQUIRES]->(Skill)
+WHERE NOT (u)-[:HAS_SKILL]->(Skill)
+RETURN DISTINCT Skill.name AS gapSkill, 
+                CASE WHEN EXISTS((job)-[:REQUIRES {mandatory: true}]->(Skill))
+                     THEN true
+                     ELSE false
+                END AS mandatory
+
+`, { userId: UserId });
+
+// Extract gap skills from the query result
+// const gapSkills = GapSkillsQuery.records.map(record => record.get('gapSkill'));
+const gapSkills = GapSkillsQuery.records.map(record => {
+    return {
+        Skill: record.get('gapSkill'),
+        mandatory: record.get('mandatory') === true // Convert to boolean
+    };
+});
+
+await session.close();
+
+// Return the gap skills as JSON
+res.status(200).json({ gapSkills });
 
 }
 
 
-// //Add skills
-// export const AddSkills = async (req,res,next)=>{
-//     const {Skills}=req.body
-//     // console.log (req.body)
-//     const UserId = req.authUser._id
-//     const updatedUser = await UserModel.findOneAndUpdate(
-//         { _id: UserId, status: 'Online' },
-//         {
-//         $push: {
-//             Skills: Skills,
-//         },
-//         },
-//         { new: true } 
-//     );
 
-//     if (!updatedUser) {
-//         return res.status(400).json({ error: 'Please SignIn to continue' });
-//     }
-//     res.status(200).json({ Message: " successfully Added", updatedUser })
-// }
-
-//Recommend GapSkillsin each track
-
-// //Add CareerGoal
-// export const AddCareerGoal = async (req,res,next)=>{
-//     const {CareerGoal}=req.body
-//     // console.log (req.body)
-//     const UserId = req.authUser._id
-//     const updatedUser = await UserModel.findOneAndUpdate(
-//         { _id: UserId, status: 'Online' },
-//         {
-//         CareerGoal:CareerGoal,
-//         },
-//         { new: true } 
-//     );
-
-//     if (!updatedUser) {
-//         return res.status(400).json({ error: 'Please SignIn to continue' });
-//     }
-//     res.status(200).json({ Message: " successfully Added", updatedUser })
-// }
-
+//Get All UserSkills
+//Recommend GapSkills in each track
