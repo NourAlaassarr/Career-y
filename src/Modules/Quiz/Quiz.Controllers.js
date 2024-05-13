@@ -133,10 +133,6 @@ export const GetAllQuizzes = async (req, res, next) => {
 
 
 
-
-
-
-
 //DeleteNode
 export const DeleteNode = async (req, res, next) => {
     const { QuizName } = req.body;
