@@ -73,7 +73,6 @@ export const GetRoadmap = async (req, res, next) => {
     
 };
 
-
 //Get AllTracks
 export const GetAllTracks= async(req,res,next)=>{
     let session;
@@ -105,3 +104,8 @@ export const GetSkillResources = async (req, res, next) => {
         session.close();
     
 };
+
+//UpdateRoadmap
+
+
+//RoadmapEmailUpdate

@@ -236,8 +236,36 @@ await session.close();
 res.status(200).json({ gapSkills });
 
 }
+//recommend tracks According to the user skills 
+export const RecommendTracks = async (req, res, next) => {
+    const userId = req.authUser._id; // Ensure consistent naming convention
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+
+    try {
+        const result = await session.run(`
+            MATCH (user:User {_id: $userId})-[:HAS_SKILL]->(skill:Skill)
+            MATCH (job:Job)-[:REQUIRES]->(skill)
+            RETURN DISTINCT job
+        `, { userId: userId });
+
+        const jobs = result.records.map(record => record.get('job').properties);
+
+        if (jobs.length === 0) {
+            return res.status(404).json({ message: "No jobs found requiring the user's skills." });
+        }
+
+        res.json(jobs);
+    } catch (error) {
+        console.error("Error executing RecommendTracksQuery:", error);
+        next(error); // Pass the error to the error handling middleware
+    } finally {
+        session.close(); // Close the session in the finally block
+    }
+};
 
 
 
 //Get All UserSkills
-//Recommend GapSkills in each track
+//Recommend GapSkills in each track interestes user

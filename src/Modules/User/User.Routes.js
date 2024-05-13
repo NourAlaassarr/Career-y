@@ -12,7 +12,7 @@ router.get('/AllSolved',isAuth(),asyncHandler(UserContollers.GetALLMarksAndGrade
 router.post('/AddCareerGoal',isAuth(),asyncHandler(UserContollers.AddCareerGoal))
 router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
 router.get('/GapSkills',isAuth(),asyncHandler(UserContollers.GapSkills))
-
+router.get('/RecommendTracks',isAuth(),asyncHandler(UserContollers.RecommendTracks))
 
 
 // router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
