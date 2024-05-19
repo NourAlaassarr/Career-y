@@ -1,5 +1,4 @@
 
-import { QuizModel } from '../../../DB/Models/Quiz.Model.js';
 import {generateToken,VerifyToken}from'../../utils/TokenFunction.js'
 import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
@@ -40,63 +39,72 @@ export const AddQuizNode = async (req, res, next) => {
     }
 };
 
-//Add Questions neo4j
+
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
-    const {QuizId}=req.query
-    const {Questions } = req.body;
+    const { QuizId } = req.query;
+    const { Questions } = req.body;
     const driver = await Neo4jConnection();
     session = driver.session();
     tx = session.beginTransaction();
 
-   // Check if the quiz exists by QuizId
-    const QuizResult = await tx.run(
-    "MATCH (q:Quiz {id: $QuizId}) RETURN q",
-    { QuizId }
-);
+    try {
+        // Check if the quiz exists by QuizId
+        const QuizResult = await tx.run(
+            "MATCH (q:Quiz {id: $QuizId}) RETURN q",
+            { QuizId }
+        );
 
-if (QuizResult.records.length === 0) {
-    await tx.rollback();
-    return next(new Error("Quiz Doesn't exist", { cause: 404 }));
-}
+        if (QuizResult.records.length === 0) {
+            await tx.rollback();
+            return next(new Error("Quiz Doesn't exist", { cause: 404 }));
+        }
 
-if (!Array.isArray(Questions) || Questions.length === 0) {
-    await tx.rollback();
-    return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
-}
+        if (!Array.isArray(Questions) || Questions.length === 0) {
+            await tx.rollback();
+            return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
+        }
 
-const addedQuestions = await Promise.all(Questions.map(async (question) => {
-    const { questionText, answer, options } = question;
-    const questionId = uuidv4(); // Generate UUID for each question
+        const addedQuestions = await Promise.all(Questions.map(async (question, index) => {
+            const { questionText, answer, options } = question;
+            const questionId = uuidv4(); // Generate UUID for each question
+            const order = index + 1; // Set the order based on the index
+
             const result = await tx.run(
                 'MATCH (q:Quiz {id: $QuizId}) ' +
-                'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options}) RETURN question',
-                { QuizId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options] }
+                'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options, order: $order}) RETURN question',
+                { QuizId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options], order }
             );
+
             return result.records[0].get('question').properties;
         }));
 
-await tx.commit();
-res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
-
-    if (session) {
-        await session.close();
+        await tx.commit();
+        res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
+    } catch (error) {
+        await tx.rollback();
+        next(error);
+    } finally {
+        if (session) {
+            await session.close();
+        }
     }
+};
 
-    
-}
 
 // Get QuizTopicQuiz neo4j
+// Get QuizTopicQuiz neo4j
 export const GetQuiz = async (req, res, next) => {
-    const {QuizId}=req.query
+    const { QuizId } = req.query;
     let session;
 
+    try {
         const driver = await Neo4jConnection();
         session = driver.session();
 
         const quizResult = await session.run(
-            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options}) AS questions",
+            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) WITH q, question ORDER BY question.order RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options, order: question.order}) AS questions",
             { QuizId }
         );
 
@@ -106,15 +114,17 @@ export const GetQuiz = async (req, res, next) => {
 
         const quiz = quizResult.records[0].get("q").properties;
         const questions = quizResult.records[0].get("questions").map(question => question);
-        // questions.forEach(question => {
-        //     console.log(question.questionText);
-        // });
+        
         res.status(200).json({ Message: 'Done', Quiz: quiz, Questions: questions });
-    
+    } catch (error) {
+        next(error);
+    } finally {
         if (session) {
             await session.close();
         }
+    }
 };
+
 //Get allTopicQuizzes neo4j
 export const GetAllQuizzes = async (req, res, next) => {
     let session;
@@ -168,5 +178,7 @@ export const DeleteNode = async (req, res, next) => {
         }
     }
 };
+
+
 
 //FullTrackQuiz

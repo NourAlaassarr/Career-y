@@ -4,7 +4,6 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
 
 
-
 //Solve Quiz
 export const Solve = async (req, res, next) => {
     const { answer } = req.body;
@@ -12,7 +11,7 @@ export const Solve = async (req, res, next) => {
     const UserId = req.authUser._id;
 
     let session;
-    try {
+
         const driver = await Neo4jConnection();
         session = driver.session();
 
@@ -34,7 +33,6 @@ export const Solve = async (req, res, next) => {
         if (quizAttemptsCount > 0) {
             return res.status(400).json({ Message: 'You have already taken this quiz' });
         }
-        
 
         // Get Quiz information
         const quizInfoResult = await session.run(
@@ -44,36 +42,35 @@ export const Solve = async (req, res, next) => {
         const quizInfoRecord = quizInfoResult.records[0];
         const QuizName = quizInfoRecord ? quizInfoRecord.get("QuizName") : '';
 
-        // Calculate Grade
-        const quizAnswersResult = await session.run(
-            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) RETURN COLLECT(question.answer) AS answers",
+        // Retrieve questions and answers ordered by 'order' attribute
+        const quizQuestionsResult = await session.run(
+            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) RETURN question.answer AS answer ORDER BY question.order",
             { QuizId }
         );
-        const quizAnswers = quizAnswersResult.records[0].get("answers");
+        const quizQuestions = quizQuestionsResult.records.map(record => record.get("answer"));
 
+        // Calculate Grade by comparing answers with questions
         let Grade = 0;
-        for (let i = 0; i < quizAnswers.length; i++) {
-            if (quizAnswers[i] === answer[i]) {
+        for (let i = 0; i < answer.length; i++) {
+            if (quizQuestions[i] === answer[i]) {
                 Grade++;
             }
         }
 
+        const totalQuestions = quizQuestions.length;
+
         // Update user node with quiz results and create relationship
         await session.run(
             'MATCH (u:User {_id: $UserId}), (q:Quiz {id: $QuizId}) ' +
-            'CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade }]->(q)',
-            { UserId, QuizId, QuizName, Grade }
+            'CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions }]->(q)',
+            { UserId, QuizId, QuizName, Grade, totalQuestions }
         );
-
-        res.status(200).json({ Message: 'Your grade is', Grade });
-    } catch (error) {
-        next(error);
-    } finally {
+        res.status(200).json({ Message: 'Your grade is', Grade, grades, TotalQuestions: totalQuestions });
         if (session) {
             await session.close();
         }
     }
-};
+
 
 //UserGet All Grades+QuizName Neo4j
 export const GetALLMarksAndGrades=async(req,res,next)=>{
@@ -242,6 +239,7 @@ res.status(200).json({ gapSkills });
 //recommend tracks According to the user skills 
 export const RecommendTracks = async (req, res, next) => {
     const userId = req.authUser._id; // Ensure consistent naming convention
+
     let session;
     const driver = await Neo4jConnection();
     session = driver.session();
@@ -253,12 +251,10 @@ export const RecommendTracks = async (req, res, next) => {
         `, { userId: userId });
 
         const jobs = result.records.map(record => record.get('job').properties);
-
         if (jobs.length === 0) {
             return next(new Error( 'No jobs found requiring the user\s skills' ),{cause:404});
         }
-
-    
+        res.status(200).json({Message:"done",jobs})
         session.close(); // Close the session in the finally block
 }
 //Get All User Profile Skills

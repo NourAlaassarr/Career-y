@@ -63,7 +63,8 @@ export const isAuth = (roles)=>{
         next()
     }
     catch(error){
-        
+        const driver = await Neo4jConnection();
+        session = driver.session()
         if(error == 'TokenExpiredError: jwt expired')
         {
             const result = await session.run(
@@ -96,9 +97,9 @@ export const isAuth = (roles)=>{
         }
     }
 catch(error)
-        {
-            next (new Error('error',{cause:500}))
-            console.log(error)
+        {   console.log({"error":error.stack})
+            return next (new Error('error',{cause:500}))
+            
         }
 finally{
     if (session) {
