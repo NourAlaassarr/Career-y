@@ -22,11 +22,11 @@ export const AddQuizNode = async (req, res, next) => {
         if (result.records.length > 0) {
             return next(new Error("Quiz already exists", { cause: 400 }));
         }
-
+        const QuizId = uuidv4();
         // Create a new quiz node in Neo4j
         const NewQuiz = await session.run(
-            "CREATE (q:Quiz {name: $QuizName}) RETURN q",
-            { QuizName }
+            "CREATE (q:Quiz {id: $QuizId, name: $QuizName}) RETURN q",
+            { QuizId, QuizName }
         );
         const NewQuizNode = NewQuiz.records[0].get("q").properties;
 
@@ -44,55 +44,60 @@ export const AddQuizNode = async (req, res, next) => {
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
-
-    const { QuizName, Questions } = req.body;
+    const {QuizId}=req.query
+    const {Questions } = req.body;
     const driver = await Neo4jConnection();
     session = driver.session();
     tx = session.beginTransaction();
 
+   // Check if the quiz exists by QuizId
     const QuizResult = await tx.run(
-        "MATCH (q:Quiz {name: $quizname}) RETURN q",
-        { quizname: QuizName }
-    );
+    "MATCH (q:Quiz {id: $QuizId}) RETURN q",
+    { QuizId }
+);
 
-    if (QuizResult.records.length === 0) {
-        return next(new Error("Quiz Doesn't exist", { cause: 404 }));
-    }
+if (QuizResult.records.length === 0) {
+    await tx.rollback();
+    return next(new Error("Quiz Doesn't exist", { cause: 404 }));
+}
 
-    if (!Array.isArray(Questions) || Questions.length === 0) {
-        return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
-    }
+if (!Array.isArray(Questions) || Questions.length === 0) {
+    await tx.rollback();
+    return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
+}
 
-    const addedQuestions = await Promise.all(Questions.map(async (question) => {
-        const { questionText, answer, options } = question; 
-        const result = await tx.run(
-            'MATCH (q:Quiz {name: $QuizName}) ' +
-            'CREATE (q)-[:CONTAINS]->(question:Question {questionText: $questionText, answer: $answer, options: $options}) RETURN question',
-            { QuizName, questionText, answer, options: Array.isArray(options) ? options : [options] }
-        );
-        return result.records[0].get('question').properties;
-    }));
+const addedQuestions = await Promise.all(Questions.map(async (question) => {
+    const { questionText, answer, options } = question;
+    const questionId = uuidv4(); // Generate UUID for each question
+            const result = await tx.run(
+                'MATCH (q:Quiz {id: $QuizId}) ' +
+                'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options}) RETURN question',
+                { QuizId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options] }
+            );
+            return result.records[0].get('question').properties;
+        }));
 
-    await tx.commit();
-
-    res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
+await tx.commit();
+res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
 
     if (session) {
         await session.close();
     }
+
+    
 }
 
 // Get QuizTopicQuiz neo4j
 export const GetQuiz = async (req, res, next) => {
-    const { QuizName } = req.body;
+    const {QuizId}=req.query
     let session;
 
         const driver = await Neo4jConnection();
         session = driver.session();
 
         const quizResult = await session.run(
-            "MATCH (q:Quiz {QuizName: $QuizName})-[:CONTAINS]->(question:Question) RETURN q, COLLECT(question) AS questions",
-            { QuizName }
+            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options}) AS questions",
+            { QuizId }
         );
 
         if (quizResult.records.length === 0) {
@@ -100,8 +105,10 @@ export const GetQuiz = async (req, res, next) => {
         }
 
         const quiz = quizResult.records[0].get("q").properties;
-        const questions = quizResult.records[0].get("questions").map(question => question.properties);
-
+        const questions = quizResult.records[0].get("questions").map(question => question);
+        // questions.forEach(question => {
+        //     console.log(question.questionText);
+        // });
         res.status(200).json({ Message: 'Done', Quiz: quiz, Questions: questions });
     
         if (session) {
@@ -129,9 +136,6 @@ export const GetAllQuizzes = async (req, res, next) => {
             await session.close();
         }
 };
-
-
-
 
 //DeleteNode
 export const DeleteNode = async (req, res, next) => {
