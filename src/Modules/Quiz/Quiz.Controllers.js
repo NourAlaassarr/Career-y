@@ -5,45 +5,45 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
 
 //Add Quiz Neo4j
-export const AddQuizNode = async (req, res, next) => {
-    let session;
-    try {
-        const { QuizName } = req.body;
-        const driver = await Neo4jConnection();
-        session = driver.session();
+// export const AddQuizNode = async (req, res, next) => {
+//     let session;
+//     try {
+//         const { QuizName } = req.body;
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
 
-        // Check if the quiz already exists
-        const result = await session.run(
-            "MATCH (q:Quiz {name: $quizname}) RETURN q",
-            { quizname: QuizName }
-        );
+//         // Check if the quiz already exists
+//         const result = await session.run(
+//             "MATCH (q:Quiz {name: $quizname}) RETURN q",
+//             { quizname: QuizName }
+//         );
 
-        if (result.records.length > 0) {
-            return next(new Error("Quiz already exists", { cause: 400 }));
-        }
-        const QuizId = uuidv4();
-        // Create a new quiz node in Neo4j
-        const NewQuiz = await session.run(
-            "CREATE (q:Quiz {id: $QuizId, name: $QuizName}) RETURN q",
-            { QuizId, QuizName }
-        );
-        const NewQuizNode = NewQuiz.records[0].get("q").properties;
+//         if (result.records.length > 0) {
+//             return next(new Error("Quiz already exists", { cause: 400 }));
+//         }
+//         const QuizId = uuidv4();
+//         // Create a new quiz node in Neo4j
+//         const NewQuiz = await session.run(
+//             "CREATE (q:Quiz {id: $QuizId, name: $QuizName}) RETURN q",
+//             { QuizId, QuizName }
+//         );
+//         const NewQuizNode = NewQuiz.records[0].get("q").properties;
 
-        res.status(200).json({ success: true, message: 'Created Successfully', Quiz: NewQuizNode });
-    } catch (error) {
-        next(error);
-    } finally {
-        if (session) {
-            await session.close();
-        }
-    }
-};
+//         res.status(200).json({ success: true, message: 'Created Successfully', Quiz: NewQuizNode });
+//     } catch (error) {
+//         next(error);
+//     } finally {
+//         if (session) {
+//             await session.close();
+//         }
+//     }
+// };
 
 
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
-    const { QuizId } = req.query;
+    const { SkillId } = req.query;
     const { Questions } = req.body;
     const driver = await Neo4jConnection();
     session = driver.session();
@@ -51,14 +51,14 @@ export const AddQuestionsToNode = async (req, res, next) => {
 
     try {
         // Check if the quiz exists by QuizId
-        const QuizResult = await tx.run(
-            "MATCH (q:Quiz {id: $QuizId}) RETURN q",
-            { QuizId }
+        const QuestionResults = await tx.run(
+            "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q",
+            { SkillId }
         );
 
-        if (QuizResult.records.length === 0) {
+        if (QuestionResults.records.length === 0) {
             await tx.rollback();
-            return next(new Error("Quiz Doesn't exist", { cause: 404 }));
+            return next(new Error("Skill Doesn't exist", { cause: 404 }));
         }
 
         if (!Array.isArray(Questions) || Questions.length === 0) {
@@ -72,9 +72,9 @@ export const AddQuestionsToNode = async (req, res, next) => {
             const order = index + 1; // Set the order based on the index
 
             const result = await tx.run(
-                'MATCH (q:Quiz {id: $QuizId}) ' +
+                'MATCH (q:Skill {Nodeid: $SkillId}) ' +
                 'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options, order: $order}) RETURN question',
-                { QuizId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options], order }
+                { SkillId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options], order }
             );
 
             return result.records[0].get('question').properties;
@@ -92,11 +92,9 @@ export const AddQuestionsToNode = async (req, res, next) => {
     }
 };
 
-
-// Get QuizTopicQuiz neo4j
 // Get QuizTopicQuiz neo4j
 export const GetQuiz = async (req, res, next) => {
-    const { QuizId } = req.query;
+    const { SkillId } = req.query;
     let session;
 
     try {
@@ -104,18 +102,18 @@ export const GetQuiz = async (req, res, next) => {
         session = driver.session();
 
         const quizResult = await session.run(
-            "MATCH (q:Quiz {id: $QuizId})-[:CONTAINS]->(question:Question) WITH q, question ORDER BY question.order RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options, order: question.order}) AS questions",
-            { QuizId }
+            "MATCH (q:Skill {Nodeid: $SkillId})-[:CONTAINS]->(question:Question) WITH q, question ORDER BY question.order RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options, order: question.order}) AS questions",
+            { SkillId }
         );
 
         if (quizResult.records.length === 0) {
-            return next(new Error("Quiz Not found", { cause: 404 }));
+            return next(new Error("Skill Not found", { cause: 404 }));
         }
 
         const quiz = quizResult.records[0].get("q").properties;
         const questions = quizResult.records[0].get("questions").map(question => question);
         
-        res.status(200).json({ Message: 'Done', Quiz: quiz, Questions: questions });
+        res.status(200).json({ Message: 'Done',QuizName:quiz.name,  Questions: questions });
     } catch (error) {
         next(error);
     } finally {
@@ -128,20 +126,24 @@ export const GetQuiz = async (req, res, next) => {
 //Get allTopicQuizzes neo4j
 export const GetAllQuizzes = async (req, res, next) => {
     let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
 
-        const driver = await Neo4jConnection();
-        session = driver.session();
+    // Match all skills that have a "CONTAINS" relationship and return their names
 
-        const AllQuizzes = await session.run("MATCH (q:Quiz) RETURN q",)
-
-        if (AllQuizzes.records.length === 0) {
-            return next(new Error("No Quizzes Found", { cause: 404 }));
-        }
-
-        const quiz = AllQuizzes.records[0].get("q").properties;
-
-        res.status(200).json({ Message: 'Done', Quizzes: quiz });
+        const AllQuizzes = await session.run(
+            "MATCH (s:Skill)-[:CONTAINS]->(:Question) RETURN DISTINCT s.name AS name"
+        );
     
+
+    if (AllQuizzes.records.length === 0) {
+        return next(new Error("No Quizzes Found", { cause: 404 }));
+    }
+
+    // Extract the name property of all skills
+    const quizzes = AllQuizzes.records.map(record => record.get("name"));
+
+    res.status(200).json({ Message: 'Done', Quizzes: quizzes });
         if (session) {
             await session.close();
         }

@@ -14,7 +14,8 @@ router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
 router.get('/GapSkills',isAuth(),asyncHandler(UserContollers.GapSkills))
 router.get('/RecommendTracks',isAuth(),asyncHandler(UserContollers.RecommendTracks))
 router.get('/GetUserDetails',isAuth(),asyncHandler(UserContollers.GetUserDetails))
-
+router.get('/CareerGuidanceMatching',isAuth(),asyncHandler(UserContollers.CareerGuidanceMatching))
+router.get('/CareerGoalUserProgress',isAuth(),asyncHandler(UserContollers.CareerGoalUserProgress))
 // router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
 
 
