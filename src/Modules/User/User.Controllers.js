@@ -129,6 +129,7 @@ export const AddCareerGoal = async (req, res, next) => {
     const { CareerGoalId } = req.query;
     const UserId = req.authUser._id;
     let session;
+    
     const driver = await Neo4jConnection();
     session = driver.session();
     // Check if career goal exists
