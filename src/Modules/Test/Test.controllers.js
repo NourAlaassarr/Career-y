@@ -1,43 +1,45 @@
 import { session } from "neo4j-driver";
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
-
+import { sendmailService } from '../../Services/SendEmailService.js'
+import { emailTemplate } from '../../utils/EmailTemplate.js'
+import { GetRoadmap } from '../Roadmaps/Roadmap.Controller.js'
 //add quiz 
 export const AddQuizNode = async (req, res, next) => {
     let session;
     const QuizId = uuidv4();
-        const { QuizName } = req.body;
-        const driver = await Neo4jConnection();
-        session = driver.session();
+    const { QuizName } = req.body;
+    const driver = await Neo4jConnection();
+    session = driver.session();
 
-        // Check if the quiz already exists
-        const result = await session.run(
-            "MATCH (q:Quiz {QuizName: $quizname}) RETURN q",
-            { quizname: QuizName }
-        );
+    // Check if the quiz already exists
+    const result = await session.run(
+        "MATCH (q:Quiz {QuizName: $quizname}) RETURN q",
+        { quizname: QuizName }
+    );
 
-        if (result.records.length > 0) {
-            return next(new Error("Quiz already exists", { cause: 400 }));
-        }
+    if (result.records.length > 0) {
+        return next(new Error("Quiz already exists", { cause: 400 }));
+    }
 
-        // Create a new quiz node in Neo4j
-        const NewQuiz = await session.run(
-            "CREATE (q:Quiz {QuizName: $QuizName,_id:$QuizId}) RETURN q",
-            { QuizName,QuizId }
-        );
-        const NewQuizNode = NewQuiz.records[0].get("q").properties;
+    // Create a new quiz node in Neo4j
+    const NewQuiz = await session.run(
+        "CREATE (q:Quiz {QuizName: $QuizName,_id:$QuizId}) RETURN q",
+        { QuizName, QuizId }
+    );
+    const NewQuizNode = NewQuiz.records[0].get("q").properties;
 
-        res.status(200).json({ Message: 'Created Successfully', Quiz: NewQuizNode });
-        if (session) {
-            await session.close();
-        }
-    
+    res.status(200).json({ Message: 'Created Successfully', Quiz: NewQuizNode });
+    if (session) {
+        await session.close();
+    }
+
 };
 
 //Add Questions
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
-    
+
 
     const { QuizName, Questions } = req.body;
     const driver = await Neo4jConnection();
@@ -68,7 +70,7 @@ export const AddQuestionsToNode = async (req, res, next) => {
 
     const addedQuestions = await Promise.all(Questions.map(async (question, index) => {
         const { questionText, answer, options, Level } = question;
-        const questionId = uuidv4(); 
+        const questionId = uuidv4();
         const result = await tx.run(
             'MATCH (q:Quiz {QuizName: $QuizName}) ' +
             'CREATE (q)-[:CONTAINS {order: $order}]->(question:Question {_id: $questionId, questionText: $questionText, options: $options, answer: $answer, Level: $Level}) RETURN question',
@@ -76,7 +78,7 @@ export const AddQuestionsToNode = async (req, res, next) => {
         );
         return result.records[0].get('question').properties;
     }));
-    
+
 
     await tx.commit();
 
@@ -86,8 +88,6 @@ export const AddQuestionsToNode = async (req, res, next) => {
         await session.close();
     }
 }
-
-
 
 // DeleteNodeQuizByname
 export const DeleteNode = async (req, res, next) => {
@@ -123,87 +123,210 @@ export const DeleteNode = async (req, res, next) => {
 
 
 
-// GetAllSkills
-export const GetSkills = async (req, res, next) => {
+
+
+
+
+//     const { TrackName } = req.body;
+//     const { Nodeid } = req.params
+//     const driver = await Neo4jConnection();
+//     let session = driver.session();
+
+
+//     // Check if track exists
+//     const TrackCheckResult = await session.run(
+//         'MATCH (job:Job) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job',
+//         { name: TrackName }
+//     );
+
+//     if (TrackCheckResult.records.length === 0) {
+//         return next(new Error("Track Doesn't exist", { cause: 404 }));
+//     }
+
+//     // Query to get other jobs connected to the track
+//     const JobContainsOtherJobsResult = await session.run(
+//         'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.name = $name RETURN otherJob',
+//         { name: TrackName }
+//     );
+
+//     let skills = [];
+
+//     if (JobContainsOtherJobsResult.records.length > 0) {
+//         // If there are other jobs connected to the track, get their names
+//         const otherJobNames = JobContainsOtherJobsResult.records.map(record => record.get('otherJob').properties.name);
+
+//         // Query to get skills associated with the other jobs
+//         for (const otherJobName of otherJobNames) {
+//             const skillsResult = await session.run(
+//                 'MATCH (job:Job {name: $name})-[:REQUIRES]->(skill:Skill) ' +
+//                 'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
+//                 'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
+//                 { name: otherJobName }
+//             );
+
+//             const jobSkills = skillsResult.records.map(record => {
+//                 const skillNode = record.get('skill');
+//                 return {
+//                     name: skillNode.properties.name,
+//                     properties: skillNode.properties,
+//                     mandatory: record.get('mandatory')
+//                 };
+//             });
+
+//             skills.push({
+//                 job: otherJobName,
+//                 skills: jobSkills
+//             });
+//         }
+//     } else {
+//         // If there are no other jobs connected to the track, get the skills of the track itself
+//         const RoadMap = await session.run(
+//             'MATCH (job:Job {name: $name})-[:REQUIRES]->(skill:Skill) ' +
+//             'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
+//             'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
+//             { name: TrackName }
+//         );
+
+//         skills = RoadMap.records.map(record => {
+//             const skillNode = record.get('skill');
+//             return {
+//                 name: skillNode.properties.name,
+//                 properties: skillNode.properties,
+//                 mandatory: record.get('mandatory')
+//             };
+//         });
+//     }
+//     res.json({ Message: 'Success', RoadMap: skills });
+//     session.close();
+
+// };
+
+
+
+
+
+//Update Resources + Send Notification for the Updation
+export const UpdateResource = async (req, res, next) => {
+    const { Skillid } = req.query;
+    const { reading_resource, video_resource } = req.body
     const driver = await Neo4jConnection();
     let session = driver.session();
-
-    try {
-        const result = await session.run(
-            'MATCH (skill:Skill) RETURN skill'
-        );
-
-        const skills = result.records.map(record => record.get('skill').properties);
-        res.json({ Message: 'Success', Skills: skills });
-    } catch (error) {
-        return next(error);
-    } finally {
-        session.close();
+    // Check if Skill exists
+    const SkillCheckResult = await session.run(
+        'MATCH (s:Skill {Nodeid:$Skillid}) RETURN s',
+        { Skillid }
+    );
+    if (SkillCheckResult.records.length === 0) {
+        return next(new Error("Skill Doesn't exist", { cause: 404 }));
     }
-};
 
-export const GetRoadmap = async (req, res, next) => {
-    const { TrackName } = req.body;
-    const{Nodeid}=req.params
+    // Ensure resources are arrays and convert them to strings with new lines
+    const readingResourceString = Array.isArray(reading_resource) ? reading_resource.join('\n') : reading_resource;
+    const videoResourceString = Array.isArray(video_resource) ? video_resource.join('\n') : video_resource;
+
+    // Update the reading_resource and video_resource properties
+    const updateQuery = `
+     MATCH (s:Skill {Nodeid: $Skillid})
+     SET s.reading_resource = coalesce(s.reading_resource, '') + '\n' + $readingResourceString,
+         s.video_resource = coalesce(s.video_resource, '') + '\n' + $videoResourceString
+     RETURN s
+ `;
+    const updateResult = await session.run(updateQuery, {
+        Skillid,
+        readingResourceString,
+        videoResourceString
+    });
+    const timestampQuery = `
+            MATCH (j:Job)-[:REQUIRES]->(s:Skill {Nodeid: $Skillid})
+            SET j.date_modified = apoc.date.format(timestamp(), 'ms', 'yyyy-MM-dd HH:mm:ss')
+            WITH j
+            OPTIONAL MATCH (Job)-[:REQUIRES]->(j)
+            SET Job.date_modified = apoc.date.format(timestamp(), 'ms', 'yyyy-MM-dd HH:mm:ss')
+            RETURN j, Job
+        `;
+    const timestampResult = await session.run(timestampQuery, { Skillid });
+
+
+    //Send Email to users that have this skill/Roadmap // Query users whose CareerGoal property matches JobId or any parent JobId
+    const usersQuery = `
+    MATCH (j:Job {Nodeid: $JobId})
+    OPTIONAL MATCH (j)-[:REQUIRES*]->(parentJob:Job)
+    WITH COLLECT(j.Nodeid) + COLLECT(parentJob.Nodeid) AS jobIds
+    MATCH (u:User)
+    WHERE ANY(goal IN u.CareerGoal WHERE goal IN jobIds)
+    RETURN DISTINCT u.Email AS email
+`;
+    const JobId = timestampResult.records[0].get('j').properties.Nodeid; // Assuming JobId is a property of the Job node
+    const usersResult = await session.run(usersQuery, { JobId });
+
+    // Collect all email addresses
+    const emails = usersResult.records.map(record => record.get('email'));
+    
+    const RoadMapLink = `${req.protocol}://${req.headers.host}/Test/UpdatedRoadMap/${JobId}`;
+    if (emails.length > 0) {
+        for (let i = 0; i < emails.length; i++) {
+        
+        // Send email to the group of users
+        const subject = 'Update on CareerGoal Roadmap';
+        const message = emailTemplate({
+            link: RoadMapLink,  // Adjust the link as needed
+            linkData: "CareerGoal Roadmap",
+            subject: "There has been an update to the resources related to your career goal Roadmap."
+        });
+
+        const isEmailSent = await sendmailService({
+            to: emails[i],
+            subject: subject,
+            message: message
+        });
+
+        if (!isEmailSent) {
+            return next(new Error("Failed to Send Email", { cause: 400 }));
+        }
+    }
+    }
+
+    // Return the updated Skill node
+    const updatedSkill = updateResult.records[0].get('s').properties;
+    res.status(200).json(updatedSkill);
+}
+
+export const GetUpdatedRoadMap= async (req, res, next) => {
+    const {JobId} = req.params;
+    console.log(JobId);
     const driver = await Neo4jConnection();
     let session = driver.session();
+    const TrackCheckResult = await session.run(
+        'MATCH (job:Job {Nodeid: $JobId}) RETURN job',
+        { JobId }
+    );
 
- 
-        // Check if track exists
-        const TrackCheckResult = await session.run(
-            'MATCH (job:Job) WHERE trim(toLower(job.name)) = trim(toLower($name)) RETURN job',
-            { name: TrackName }
-        );
+    if (TrackCheckResult.records.length === 0) {
+        return next(new Error("Track Doesn't exist", { cause: 404 }));
+    }
 
-        if (TrackCheckResult.records.length === 0) {
-            return next(new Error("Track Doesn't exist", { cause: 404 }));
-        }
+    // Query to get other jobs connected to the track
+    const JobContainsOtherJobsResult = await session.run(
+        'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.Nodeid = $JobId RETURN otherJob',
+        { JobId }
+    );
 
-        // Query to get other jobs connected to the track
-        const JobContainsOtherJobsResult = await session.run(
-            'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.name = $name RETURN otherJob',
-            { name: TrackName }
-        );
+    let skills = [];
 
-        let skills = [];
-
-        if (JobContainsOtherJobsResult.records.length > 0) {
-            // If there are other jobs connected to the track, get their names
-            const otherJobNames = JobContainsOtherJobsResult.records.map(record => record.get('otherJob').properties.name);
-            
-            // Query to get skills associated with the other jobs
-            for (const otherJobName of otherJobNames) {
-                const skillsResult = await session.run(
-                    'MATCH (job:Job {name: $name})-[:REQUIRES]->(skill:Skill) ' +
-                    'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
-                    'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
-                    { name: otherJobName }
-                );
-            
-                const jobSkills = skillsResult.records.map(record => {
-                    const skillNode = record.get('skill');
-                    return {
-                        name: skillNode.properties.name,
-                        properties: skillNode.properties,
-                        mandatory: record.get('mandatory')
-                    };
-                });
-            
-                skills.push({
-                    job: otherJobName,
-                    skills: jobSkills
-                });
-            }
-        } else {
-            // If there are no other jobs connected to the track, get the skills of the track itself
-            const RoadMap = await session.run(
-                'MATCH (job:Job {name: $name})-[:REQUIRES]->(skill:Skill) ' +
+    if (JobContainsOtherJobsResult.records.length > 0) {
+        // If there are other jobs connected to the track, get their names
+        const otherJobNames = JobContainsOtherJobsResult.records.map(record => record.get('otherJob').properties.name);
+        
+        // Query to get skills associated with the other jobs
+        for (const otherJobName of otherJobNames) {
+            const skillsResult = await session.run(
+                'MATCH (job:Job {Nodeid: $JobId})-[:REQUIRES]->(skill:Skill) ' +
                 'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
                 'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
-                { name: TrackName }
+                { JobId }
             );
-            
-            skills = RoadMap.records.map(record => {
+        
+            const jobSkills = skillsResult.records.map(record => {
                 const skillNode = record.get('skill');
                 return {
                     name: skillNode.properties.name,
@@ -211,20 +334,33 @@ export const GetRoadmap = async (req, res, next) => {
                     mandatory: record.get('mandatory')
                 };
             });
+        
+            skills.push({
+                job: otherJobName,
+                skills: jobSkills
+            });
         }
-        res.json({ Message: 'Success', RoadMap: skills });
-        session.close();
-    
-};
-
-
-
-
-
-
-
-
-
+    } else {
+        // If there are no other jobs connected to the track, get the skills of the track itself
+        const RoadMap = await session.run(
+            'MATCH (job:Job {Nodeid: $JobId})-[:REQUIRES]->(skill:Skill) ' +
+            'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
+            'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
+            { JobId }
+        );
+        
+        skills = RoadMap.records.map(record => {
+            const skillNode = record.get('skill');
+            return {
+                name: skillNode.properties.name,
+                properties: skillNode.properties,
+                mandatory: record.get('mandatory')
+            };
+        });
+    }
+    res.json({ Message: 'Success', RoadMap: skills });
+    session.close();
+}
 
 
 
@@ -261,11 +397,6 @@ export const AddId = async (req, res, next) => {
 
 
 //CareerGuidance=>assessment=>acording to grade=>job=>course
-//Get AllTrackquizzes
-
-//gettrackquiz
-
-
 
 //AddJobs
 //Addcourses

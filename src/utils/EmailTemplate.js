@@ -13,8 +13,8 @@ export const emailTemplate = ({ link, linkData, subject }) => {
     <table border="0" width="100%">
     <tr>
     <td>
-    <h1>
-        <img width="100px" src="https://res.cloudinary.com/ddajommsw/image/upload/v1670702280/Group_35052_icaysu.png"/>
+    <h1 width="100px">
+        
         Careery
     </h1>
     </td>
@@ -94,3 +94,4 @@ export const emailTemplate = ({ link, linkData, subject }) => {
     </body>
     </html>`;
 };
+// <img width="100px" src="https://res.cloudinary.com/ddajommsw/image/upload/v1670702280/Group_35052_icaysu.png"/>
