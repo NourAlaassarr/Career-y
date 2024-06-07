@@ -23,6 +23,7 @@ router.delete('/delete',asyncHandler(TestControllers.DeleteNode))
 // router.get('/SkillResources',asyncHandler(TestControllers.GetSkillResources))
 router.post('/AddId',asyncHandler(TestControllers.AddId))
 router.put('/Update',asyncHandler(TestControllers.UpdateResource))
-router.get('/UpdatedRoadMap/:JobId', asyncHandler(TestControllers.GetUpdatedRoadMap));
+router.get('/UpdatedSkill/:Skillid',asyncHandler(TestControllers.GetUpdatedSkill))
+// router.get('/UpdatedRoadMap/:JobId', asyncHandler(TestControllers.GetUpdatedRoadMap));
 
 export default router
