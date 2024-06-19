@@ -34,7 +34,7 @@ export const isAuth = (roles)=>{
         const driver = await Neo4jConnection();
         session = driver.session()
         const result = await session.run(
-            'MATCH (u:User) WHERE u._id = $_id RETURN u._id  AS _id, u.Email AS Email, u.name AS name, u.role AS role',
+            'MATCH (u:User) WHERE u._id = $_id RETURN u._id  AS _id, u.Email AS Email, u.UserName AS name, u.role AS role',
             { _id : decoded._id }
         );
         // console.log(result)
@@ -52,13 +52,14 @@ export const isAuth = (roles)=>{
         // {
         //     return res.status(400).json({Message:'token expired after change password'})
         // }
-        // console.log(roles)
-        // console.log(findUser.role)
-        // if (!roles.includes(findUser.role))
-        // {
-        //     return next(new Error('unauthorized to acceess this api',{cause:401}))
-        // }
-        // console.log("finduser",findUser)
+        
+        console.log(roles)
+        console.log(findUser.role)
+        if (!roles.includes(findUser.role))
+        {
+            return next(new Error('unauthorized to acceess this api',{cause:401}))
+        }
+        console.log("finduser",findUser)
         req.authUser=findUser
         next()
     }

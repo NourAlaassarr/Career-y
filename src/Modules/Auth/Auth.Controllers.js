@@ -12,6 +12,73 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import { nanoid } from 'nanoid';
 
 
+//AdminSignUp
+export const AdminSignUp = async (req, res, next) => {
+    const { UserName, Email, password, ConfirmPassword} = req.body;
+    if (!UserName || !Email || !password || !ConfirmPassword) {
+        return next(new Error("All fields must be filled out", { cause: 400 }));
+    }
+    let session;
+
+    const driver = await Neo4jConnection();
+    session = driver.session(); // Create a new session
+    const UserId = uuidv4();
+    console.log("Query Parameter:", { Email });
+    //CheckEmail
+    const checkUser = await session.run(
+        "MATCH (u:User {Email: $Email}) RETURN u",
+        { Email }
+    );
+    if (checkUser.records.length > 0) {
+        return next(new Error("Email is Already Exist", { cause: 400 }));
+    }
+
+    //UsernameCheck
+    const UsernameCheck = await session.run(
+        "MATCH (u:User {UserName: $UserName}) RETURN u",
+        { UserName }
+    );
+    if (UsernameCheck.records.length > 0) {
+        return next(new Error("UserName Already Exists", { cause: 400 }));
+    }
+
+    if (password != ConfirmPassword) {
+        return next(new Error("Password doesn't match", { cause: 400 }));
+    }
+    const hashed = pkg.hashSync(password, +process.env.SALT_ROUNDS);
+    const token = generateToken({
+        payload: {
+            Email,
+        },
+        signature: process.env.CONFIRMATION_EMAIL_TOKEN,
+        expiresIn: "1d",
+    });
+    const ConfirmLink = `${req.protocol}://${req.headers.host}/Auth/Confirm/${token}`;
+    const isEmailSent = sendmailService({
+        to: Email,
+        subject: "Confirmation Email",
+        message: emailTemplate({
+            link: ConfirmLink,
+            linkData: "Click here to Confirm",
+            subject: "Confirmation Email",
+        }),
+        // `<a href=${ConfirmLink}>Click here to Confirm </a>`,
+    });
+    console.log(isEmailSent)
+    if (!isEmailSent) {
+        return next(new Error("Failed to send Confirmation Email", { cause: 400 }));
+    }
+    const result = await session.run(
+        'CREATE (u:User {_id: $UserId, UserName: $UserName, Email: $Email, password: $password, ConfirmPassword: $ConfirmPassword, role:"admin", isConfirmed: false}) RETURN u',
+        { UserId, UserName, Email, password: hashed, ConfirmPassword: hashed }
+    );
+    
+    const userResult = result.records[0].get("u").properties;
+    await session.close();
+    res.status(201).json({ Message: "Created Successfully ", userResult });
+
+};
+
 
 //SignUP in Neo4j
 export const SignUp = async (req, res, next) => {

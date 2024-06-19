@@ -13,7 +13,7 @@ export const AddQuizNode = async (req, res, next) => {
 
     // Check if the quiz already exists
     const result = await session.run(
-        "MATCH (q:Quiz {QuizName: $quizname}) RETURN q",
+        "MATCH (q:TrackQuiz {QuizName: $quizname}) RETURN q",
         { quizname: QuizName }
     );
 
@@ -23,7 +23,7 @@ export const AddQuizNode = async (req, res, next) => {
 
     // Create a new quiz node in Neo4j
     const NewQuiz = await session.run(
-        "CREATE (q:Quiz {QuizName: $QuizName,_id:$QuizId}) RETURN q",
+        "CREATE (q:TrackQuiz {QuizName: $QuizName,Nodeid:$QuizId}) RETURN q",
         { QuizName, QuizId }
     );
     const NewQuizNode = NewQuiz.records[0].get("q").properties;
@@ -122,7 +122,7 @@ export const DeleteNode = async (req, res, next) => {
 };
 
 
-//Update Resources + Send Notification for the Updation
+//Update ResourcesAdmin + Send Notification for the Updation
 export const UpdateResource = async (req, res, next) => {
     const { Skillid } = req.query;
     const { reading_resource, video_resource } = req.body
