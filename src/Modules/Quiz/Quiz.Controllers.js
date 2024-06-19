@@ -40,6 +40,7 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 // };
 
 
+
 export const AddQuestionsToNode = async (req, res, next) => {
     let session;
     let tx;
@@ -71,10 +72,32 @@ export const AddQuestionsToNode = async (req, res, next) => {
             const questionId = uuidv4(); // Generate UUID for each question
             const order = index + 1; // Set the order based on the index
 
+            const optionsWithIds = options.map(optionText => ({
+                option_id: uuidv4(),
+                option_text: optionText,
+                correct: optionText === answer  // Mark correct if option matches answer
+            }));
+
+
+            // Create question node and its relationships in Neo4j
             const result = await tx.run(
-                'MATCH (q:Skill {Nodeid: $SkillId}) ' +
-                'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options, order: $order}) RETURN question',
-                { SkillId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options], order }
+                `MATCH (s:Skill {Nodeid: $SkillId})
+                CREATE (s)-[:HAS_QUESTION]->(question:Question {
+                    id: $questionId,
+                    questionText: $questionText,
+                    answer: $answer,
+                    order: $order
+                })
+                WITH question
+                UNWIND $optionsWithIds AS optionData
+                CREATE (question)-[:HAS_OPTION {
+                    correct: optionData.correct  // Add Correct property to HAS_OPTION relationship
+                }]->(option:Option {
+                    id: optionData.option_id,
+                    optionText: optionData.option_text
+                })
+                RETURN question`,
+                { SkillId, questionId, questionText, answer, optionsWithIds, order }
             );
 
             return result.records[0].get('question').properties;
@@ -91,6 +114,57 @@ export const AddQuestionsToNode = async (req, res, next) => {
         }
     }
 };
+// export const AddQuestionsToNode = async (req, res, next) => {
+//     let session;
+//     let tx;
+//     const { SkillId } = req.query;
+//     const { Questions } = req.body;
+//     const driver = await Neo4jConnection();
+//     session = driver.session();
+//     tx = session.beginTransaction();
+
+//     try {
+//         // Check if the quiz exists by QuizId
+//         const QuestionResults = await tx.run(
+//             "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q",
+//             { SkillId }
+//         );
+
+//         if (QuestionResults.records.length === 0) {
+//             await tx.rollback();
+//             return next(new Error("Skill Doesn't exist", { cause: 404 }));
+//         }
+
+//         if (!Array.isArray(Questions) || Questions.length === 0) {
+//             await tx.rollback();
+//             return res.status(400).json({ Message: "Questions array is required and cannot be empty." });
+//         }
+
+//         const addedQuestions = await Promise.all(Questions.map(async (question, index) => {
+//             const { questionText, answer, options } = question;
+//             const questionId = uuidv4(); // Generate UUID for each question
+//             const order = index + 1; // Set the order based on the index
+
+//             const result = await tx.run(
+//                 'MATCH (q:Skill {Nodeid: $SkillId}) ' +
+//                 'CREATE (q)-[:CONTAINS]->(question:Question {id: $questionId, questionText: $questionText, answer: $answer, options: $options, order: $order}) RETURN question',
+//                 { SkillId, questionId, questionText, answer, options: Array.isArray(options) ? options : [options], order }
+//             );
+
+//             return result.records[0].get('question').properties;
+//         }));
+
+//         await tx.commit();
+//         res.status(200).json({ message: 'Created Successfully', questions: addedQuestions });
+//     } catch (error) {
+//         await tx.rollback();
+//         next(error);
+//     } finally {
+//         if (session) {
+//             await session.close();
+//         }
+//     }
+// };
 
 // Get QuizTopicQuiz neo4j
 export const GetQuiz = async (req, res, next) => {
@@ -102,7 +176,17 @@ export const GetQuiz = async (req, res, next) => {
         session = driver.session();
 
         const quizResult = await session.run(
-            "MATCH (q:Skill {Nodeid: $SkillId})-[:CONTAINS]->(question:Question) WITH q, question ORDER BY question.order RETURN q, COLLECT({id: question.id, questionText: question.questionText, options: question.options, order: question.order}) AS questions",
+            "MATCH (q:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question) " +
+            "WITH q, question ORDER BY question.order " +
+            "RETURN q.name AS quizName, COLLECT({ " +
+            "   id: question.id, " +
+            "   questionText: question.questionText, " +
+            "   options: [(question)-[:HAS_OPTION]->(option:Option) | { " +
+            "       id: option.id, " +
+            "       optionText: option.optionText " +
+            "   }], " +
+            "   order: question.order " +
+            "}) AS questions",
             { SkillId }
         );
 
@@ -110,10 +194,10 @@ export const GetQuiz = async (req, res, next) => {
             return next(new Error("Skill Not found", { cause: 404 }));
         }
 
-        const quiz = quizResult.records[0].get("q").properties;
-        const questions = quizResult.records[0].get("questions").map(question => question);
+        const quizName = quizResult.records[0].get("quizName");
+        const questions = quizResult.records[0].get("questions");
         
-        res.status(200).json({ Message: 'Done',QuizName:quiz.name,  Questions: questions });
+        res.status(200).json({ Message: 'Done',QuizName:quizName,  Questions: questions });
     } catch (error) {
         next(error);
     } finally {
@@ -132,7 +216,7 @@ export const GetAllQuizzes = async (req, res, next) => {
     // Match all skills that have a "CONTAINS" relationship and return their names
 
         const AllQuizzes = await session.run(
-            "MATCH (s:Skill)-[:CONTAINS]->(:Question) RETURN DISTINCT s.name AS name"
+            "MATCH (s:Skill)-[:HAS_QUESTION]->(:Question) RETURN DISTINCT s.name AS name"
         );
     
 
@@ -180,7 +264,3 @@ export const DeleteNode = async (req, res, next) => {
         }
     }
 };
-
-
-
-//FullTrackQuiz

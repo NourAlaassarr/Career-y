@@ -2,21 +2,22 @@ import { Router } from "express";
 import * as UserContollers from './User.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
-
+import { ValidationCoreFunction } from "../../middleware/validation.js";
+import {UserApiRoles}from './User.endpoints.js'
 
 const router = Router()
 
 
-router.post('/Solve',isAuth(),asyncHandler(UserContollers.Solve))
-router.get('/AllSolved',isAuth(),asyncHandler(UserContollers.GetALLMarksAndGrades))
-router.post('/AddCareerGoal',isAuth(),asyncHandler(UserContollers.AddCareerGoal))
-router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
-router.get('/GapSkills',isAuth(),asyncHandler(UserContollers.GapSkills))
-router.get('/RecommendTracks',isAuth(),asyncHandler(UserContollers.RecommendTracks))
-router.get('/GetUserDetails',isAuth(),asyncHandler(UserContollers.GetUserDetails))
-router.get('/CareerGuidanceMatching',isAuth(),asyncHandler(UserContollers.CareerGuidanceMatching))
-router.get('/CareerGoalUserProgress',isAuth(),asyncHandler(UserContollers.CareerGoalUserProgress))
-// router.post('/AddSkills',isAuth(),asyncHandler(UserContollers.AddSkills))
+router.post('/Solve',isAuth(UserApiRoles.Solve),asyncHandler(UserContollers.Solve))
+router.get('/AllSolved',isAuth(UserApiRoles.GetALLMarksAndGrades),asyncHandler(UserContollers.GetALLMarksAndGrades))
+router.post('/AddCareerGoal',isAuth(UserApiRoles.AddCareerGoal),asyncHandler(UserContollers.AddCareerGoal))
+router.post('/AddSkills',isAuth(UserApiRoles.AddSkills),asyncHandler(UserContollers.AddSkills))
+router.get('/GapSkills',isAuth(UserApiRoles.GapSkills),asyncHandler(UserContollers.GapSkills))
+router.get('/RecommendTracks',isAuth(UserApiRoles.RecommendTracks),asyncHandler(UserContollers.RecommendTracks))
+router.get('/GetUserDetails',isAuth(UserApiRoles.GetUserDetails),asyncHandler(UserContollers.GetUserDetails))
+router.get('/CareerGuidanceMatching',isAuth(UserApiRoles.CareerGuidanceMatching),asyncHandler(UserContollers.CareerGuidanceMatching))
+router.get('/CareerGoalUserProgress',isAuth(UserApiRoles.CareerGoalUserProgress),asyncHandler(UserContollers.CareerGoalUserProgress))
+
 
 
 export default router

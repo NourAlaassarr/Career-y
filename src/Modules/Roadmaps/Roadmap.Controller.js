@@ -183,6 +183,3 @@ export const GetSkillResources = async (req, res, next) => {
 };
 
 //UpdateRoadmap TOBE IMPLEMENTED
-
-
-//RoadmapEmailUpdate TOBE IMPLEMENTED

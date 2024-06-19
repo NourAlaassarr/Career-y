@@ -6,13 +6,14 @@ import * as Validator from './Auth.Validator.js'
 import { ValidationCoreFunction } from "../../middleware/validation.js";
 const router = Router()
 
-router.post('/SignUp',ValidationCoreFunction(Validator.signUp),asyncHandler(AuthControllers.SignUp))
+router.post('/AdminSignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.AdminSignUp))
+router.post('/SignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.SignUp))
 router.post('/SignIn',ValidationCoreFunction(Validator.SignIn),asyncHandler(AuthControllers.signIn))
-router.post('/LogOut',isAuth(),asyncHandler(AuthControllers.LogOut))
-router.patch('/ChangePassword',isAuth(),asyncHandler(AuthControllers.ChangePassword))
-router.get('/Confirm/:token',asyncHandler(AuthControllers.ConfirmEmail))
-router.patch('/ForgetPassword',asyncHandler(AuthControllers.ForgetPassword))
-router.patch('/reset/:token',asyncHandler(AuthControllers.reset))
+router.post('/LogOut',isAuth(),ValidationCoreFunction(Validator.LogOut),asyncHandler(AuthControllers.LogOut))
+router.patch('/ChangePassword',isAuth(),ValidationCoreFunction(Validator.ChangePassword),asyncHandler(AuthControllers.ChangePassword))
+router.get('/Confirm/:token',ValidationCoreFunction(Validator.ConfirmEmail),asyncHandler(AuthControllers.ConfirmEmail))
+router.patch('/ForgetPassword',ValidationCoreFunction(Validator.ForgetPassword),asyncHandler(AuthControllers.ForgetPassword))
+router.patch('/reset/:token',ValidationCoreFunction(Validator.reset),asyncHandler(AuthControllers.reset))
 
 
 

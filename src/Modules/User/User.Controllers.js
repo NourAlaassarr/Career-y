@@ -2,12 +2,12 @@ import { session } from "neo4j-driver";
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from "axios";
 
-//Solve Quiz
+//Solve TopicQuiz
 export const Solve = async (req, res, next) => {
     const { answer } = req.body;
     const { SkillId } = req.query;
     const UserId = req.authUser._id;
-
+console.log(answer)
     let session;
 
     const driver = await Neo4jConnection();
@@ -35,8 +35,6 @@ export const Solve = async (req, res, next) => {
     //         .status(400)
     //         .json({ Message: "You have already taken this quiz" });
     // }
-
-    // Get Quiz information
     const quizInfoResult = await session.run(
         "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q.name AS QuizName",
         { SkillId }
@@ -44,59 +42,61 @@ export const Solve = async (req, res, next) => {
     const quizInfoRecord = quizInfoResult.records[0];
     const QuizName = quizInfoRecord ? quizInfoRecord.get("QuizName") : "";
 
-    // Retrieve questions and answers ordered by 'order' attribute
+    // Get Quiz information
     const quizQuestionsResult = await session.run(
-        "MATCH (q:Skill {Nodeid: $SkillId})-[:CONTAINS]->(question:Question) RETURN question.answer AS answer ORDER BY question.order",
+        `
+        MATCH (q:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question)
+        OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+        WHERE rel.correct = true
+        RETURN question.id AS questionId, option.id AS answerId
+        ORDER BY question.order
+        `,
         { SkillId }
     );
-    const quizQuestions = quizQuestionsResult.records.map((record) =>
-        record.get("answer")
-    );
+    
+    const quizQuestions = quizQuestionsResult.records.map(record => ({
+        questionId: record.get("questionId"),
+        answerId: record.get("answerId")
+    }));
+    console.log("Quiz Name:", QuizName);
+    console.log("Quiz Questions with Correct Answers:", quizQuestions);
 
-    // Calculate Grade by comparing answers with questions
     let Grade = 0;
     for (let i = 0; i < answer.length; i++) {
-        if (quizQuestions[i] === answer[i]) {
+        const userAnswer = answer[i];
+        const correctAnswer = quizQuestions.find(q => q.questionId === userAnswer.questionId);
+        if (correctAnswer && userAnswer.answerId === correctAnswer.answerId) {
             Grade++;
         }
     }
     const totalQuestions = quizQuestions.length;
-    var Pass = true;
-    if (Grade <= totalQuestions / 2) {
-        Pass = false;
-    }
-    console.log("Grade:", Grade);
-    console.log("Pass:", Pass);
-    
-    
-    //pdate user node with quiz results and create relationship
-    let query =
-    "MATCH (u:User {_id: $UserId}), (q:Skill {Nodeid: $SkillId}) " +
-    "CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass }]->(q)";
+    const Pass = Grade > totalQuestions / 2;
 
-if (Pass) {
-    query +=
-        " MERGE (u)-[:HAS_SKILL]->(q)"; // Add HAS_SKILL relationship if Pass is true
-}
-    await session.run(query, {
-        UserId,
-        SkillId,
-        QuizName,
-        Grade,
-        totalQuestions,
-        Pass,
-    });
-    
-    res.status(200).json({
-        Message: "Your grade is",
-        Grade,
-        TotalQuestions: totalQuestions,
-    });
-    if (session) {
-        await session.close();
-    }
-};
+        // Update user node with quiz results and create relationship
+        let query =
+            "MATCH (u:User {_id: $UserId}), (q:Skill {Nodeid: $SkillId}) " +
+            "CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass }]->(q)";
 
+        if (Pass) {
+            query +=
+                " MERGE (u)-[:PASSED]->(q)"; // Add PASSED relationship if Pass is true
+        }
+        
+        await session.run(query, {
+            UserId,
+            SkillId,
+            QuizName,
+            Grade,
+            totalQuestions,
+            Pass,
+        });
+
+        res.status(200).json({
+            Message: "Your grade is",
+            Grade,
+            TotalQuestions: totalQuestions,
+        });
+    }
 //UserGet All Grades+QuizName Neo4j
 export const GetALLMarksAndGrades = async (req, res, next) => {
     const UserId = req.authUser._id;
@@ -428,3 +428,7 @@ export const CareerGuidanceMatching = async (req, res, next) => {
 //Recommend GapSkills in each track interestes user
 
 //Retake Quiz
+
+
+
+//admin get user and delete userlist

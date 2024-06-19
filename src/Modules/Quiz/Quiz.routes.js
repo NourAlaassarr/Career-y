@@ -2,18 +2,21 @@ import { Router } from "express";
 import * as QuizControllers from './Quiz.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
-import * as SystemRoles from "../../utils/SystemRoles.js";
-
-
-
+import {QuizApiRoles} from './Quiz.endpoints.js'
+import { ValidationCoreFunction } from "../../middleware/validation.js";
+import * as QuizValidation from './Quiz.Validator.js'
 
 const router = Router()
 
-router.post('/AddQuiz',asyncHandler(QuizControllers.AddQuizNode))
-router.post('/AddQuestions',asyncHandler(QuizControllers.AddQuestionsToNode))
+// router.post('/AddQuiz',asyncHandler(QuizControllers.AddQuizNode))
 
-router.delete('/delete',asyncHandler(QuizControllers.DeleteNode))
-router.get('/Quiz',asyncHandler(QuizControllers.GetQuiz))
-router.get('/AllQuizzes',asyncHandler(QuizControllers.GetAllQuizzes))
+//Admin Only
+router.post('/AddQuestions',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(QuizValidation.AddQuestionsToNode),asyncHandler(QuizControllers.AddQuestionsToNode))
+//Admin Only
+router.delete('/delete',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(QuizValidation.DeleteNode),asyncHandler(QuizControllers.DeleteNode))
+
+router.get('/Quiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
+router.get('/TrackQuiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
+router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 
 export default router 
