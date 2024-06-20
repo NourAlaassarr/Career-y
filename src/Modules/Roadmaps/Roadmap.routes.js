@@ -9,5 +9,7 @@ const router =Router()
 router.get('/GetRoadmap',ValidationCoreFunction(Validator.GetRoadmap),asyncHandler(RoadmapControllers.GetRoadmap))
 router.get('/GetAllTracks',ValidationCoreFunction(Validator.GetAllTracks),asyncHandler(RoadmapControllers.GetAllTracks))
 router.get('/SkillResources',ValidationCoreFunction(Validator.GetSkillResources),asyncHandler(RoadmapControllers.GetSkillResources))
+router.get('/AllSkills',ValidationCoreFunction(Validator.GetAllSkills),asyncHandler(RoadmapControllers.GetAllSkills))
+
 
 export default router;

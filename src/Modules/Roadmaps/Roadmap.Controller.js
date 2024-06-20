@@ -1,9 +1,5 @@
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
-
-
-
-
 ////Get Roadmap of Specific Track by name
 // export const GetRoadmap = async (req, res, next) => {
 //     const { TrackName } = req.body;
@@ -177,9 +173,23 @@ export const GetSkillResources = async (req, res, next) => {
         );
         // console.log(result.records.map(record => record.get('skill').properties))
         const skills = result.records.map(record => record.get('skill').properties);
-        res.json({ Message: 'Success', Skills: skills });
+        res.status(200).json({ Message: 'Success', Skills: skills });
         session.close();
     
 };
+
+export const GetAllSkills= async(req,res,next)=>{
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+
+    const result = await session.run(`
+        MATCH (skill:Skill) RETURN skill
+    `);
+    
+    const skills = result.records.map(record => record.get('skill').properties);
+    
+    res.status(200).json({ Message: 'Skills', Skills: skills });
+}
 
 //UpdateRoadmap TOBE IMPLEMENTED

@@ -306,7 +306,7 @@ export const GetUserDetails = async (req, res, next) => {
     MATCH (u:User {id: $UserID})
     OPTIONAL MATCH (u)-[r:HAS_SKILL]->(s:Skill)
     RETURN u, collect(s) as skills;
-  `;
+`;
 
     const result = await session.run(query, { UserID });
 
@@ -322,7 +322,7 @@ export const GetUserDetails = async (req, res, next) => {
     res.status(200).json(userDetails);
 };
 
-//Track User's Progress Only Mandatoury
+//Track User's Progress Only Mandatoury Skills
 export const CareerGoalUserProgress = async (req, res, next) => {
     const userId = req.authUser._id;
     let session;
@@ -360,9 +360,9 @@ export const CareerGoalUserProgress = async (req, res, next) => {
         totalCount,
     };
 
-    console.log(results);
+    // console.log(results);
     const userSkillCountNodes = await session.run(
-        `MATCH (u:User { _id: $userId })-[:HAS_SKILL]->(s:Skill)<-[:REQUIRES]-(j:Job { Nodeid: $careerGoalId })
+        `MATCH (u:User { _id: $userId })-[:PASSED]->(s:Skill)<-[:REQUIRES]-(j:Job { Nodeid: $careerGoalId })
         RETURN count(s) AS userSkillCount`,
         { userId, careerGoalId }
     );
@@ -373,6 +373,17 @@ export const CareerGoalUserProgress = async (req, res, next) => {
     console.log(userProgress);
     res.status(200).json({ "Your Progress is" : userProgress +"%"});
 };
+
+
+
+
+
+
+
+
+
+
+
 
 //Career-Guidance-Matching TOBE IMPLEMENTED
 export const CareerGuidanceMatching = async (req, res, next) => {

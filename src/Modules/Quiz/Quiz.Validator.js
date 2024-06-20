@@ -63,3 +63,29 @@ export const DeleteNode = {
   }).required()
 }
 
+export const GetTrackQuiz = {
+  body: joi.object().required()
+    .keys({
+    }).required(),
+  query: joi.object().keys({
+/// uuid
+jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
+SkillId:joi.string().guid({ version: ['uuidv4'] }).required(),
+  }).required(),
+  params: joi.object().keys({
+
+  }).required()
+}
+
+export const getSpecificTrackSkill = {
+  body: joi.object().required()
+    .keys({
+    }).required(),
+  query: joi.object().keys({
+/// uuid
+jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
+  }).required(),
+  params: joi.object().keys({
+
+  }).required()
+}
