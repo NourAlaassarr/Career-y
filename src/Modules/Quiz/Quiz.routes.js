@@ -18,5 +18,6 @@ router.delete('/delete',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(Qui
 router.get('/Quiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
 router.get('/TrackQuiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
 router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
-
+router.get('/SpecificFramework',ValidationCoreFunction(QuizValidation.getSpecificTrackSkill),asyncHandler(QuizControllers.getSpecificTrackSkill))
+router.get('/GetTrackQuiz',asyncHandler(QuizControllers.GetTrackQuiz))
 export default router 
