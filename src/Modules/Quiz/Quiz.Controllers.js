@@ -78,6 +78,7 @@ export const AddQuestionsToNode = async (req, res, next) => {
         }
     }
 };
+
 // export const AddQuestionsToNode = async (req, res, next) => {
 //     let session;
 //     let tx;
@@ -338,6 +339,7 @@ export const DeleteNode = async (req, res, next) => {
 
 
 
+//Career Guidance
 export const getSpecificTrackSkill= async (req, res, next) => {
     const { jobId } = req.query;
     let session;
@@ -353,69 +355,98 @@ export const getSpecificTrackSkill= async (req, res, next) => {
     res.status(200).json({ Message: 'Skills Retrieved Successfully', Skills: skills });
 }
 
+
+//Career guide
 export const GetTrackQuiz = async (req, res, next) => {
-    const { jobId ,SkillId} = req.query; 
-    const {answer}=req.body
+    const { jobId, SkillId } = req.query;
     let session;
-    let driver; 
+    let driver;
 
         driver = await Neo4jConnection();
         session = driver.session();
-        
-        const result = await session.run(
-            `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(skill:Skill)-[:HAS_QUESTION]->(question:Question)
-             OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
-             WITH job, skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
-             OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
-             RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
-            { jobId }
-        );
-        const skillResult = await session.run(
-            `MATCH (skill:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question)
-             OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
-             WITH skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
-             OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
-             RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
-            { SkillId }
-        );
 
         const skillsMap = new Map();
 
-        // Process the result query for mandatory skills
-        result.records.forEach(record => {
-            const skillName = record.get('skillName');
-            const questionId = record.get('questionId');
-            const question = record.get('question').properties;
-            const correctAnswerId = record.get('correctAnswerId');
-            const options = record.get('options').map(option => ({
-                id: option.id,
-                optionText: option.optionText,
-                correct: option.correct
-            }));
+        if (jobId) {
+            
+            // If jobId is provided, run the query for mandatory skills
+            const result = await session.run(
+                `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(skill:Skill)-[:HAS_QUESTION]->(question:Question)
+                 OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+                 WITH job, skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
+                 OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
+                 RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
+                { jobId }
+            );
 
-            if (!skillsMap.has(skillName)) {
-                skillsMap.set(skillName, []);
-            }
-            skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
-        });
+            
 
-        // Process the skillResult query for the specific SkillId
-        skillResult.records.forEach(record => {
-            const skillName = record.get('skillName');
-            const questionId = record.get('questionId');
-            const question = record.get('question').properties;
-            const correctAnswerId = record.get('correctAnswerId');
-            const options = record.get('options').map(option => ({
-                id: option.id,
-                optionText: option.optionText,
-                correct: option.correct
-            }));
+            // Process the result query for mandatory skills
+            result.records.forEach(record => {
+                const skillName = record.get('skillName');
+                const questionId = record.get('questionId');
+                const question = record.get('question').properties;
+                const correctAnswerId = record.get('correctAnswerId');
+                const options = record.get('options').map(option => ({
+                    id: option.id,
+                    optionText: option.optionText,
+                    correct: option.correct
+                }));
 
-            if (!skillsMap.has(skillName)) {
-                skillsMap.set(skillName, []);
-            }
-            skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
-        });
+                if (!skillsMap.has(skillName)) {
+                    skillsMap.set(skillName, []);
+                }
+                skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
+            });
+            req.session.skillId = SkillId;
+           
+        }
+
+        if (SkillId) {  
+            const result = await session.run(
+            `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES]->(skill:Skill {Nodeid: $SkillId})
+             RETURN COUNT(*) AS count`,
+            { jobId, SkillId }
+        );
+
+        const record = result.records[0];
+        const count = record.get('count').toNumber();
+
+        if (count === 0) {
+            return next(Error('Skill is not in this track', { cause: 404 }));
+        }
+        
+            // If SkillId is provided, run the query for the specific SkillId
+            const skillResult = await session.run(
+                `MATCH (skill:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question)
+                 OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+                 WITH skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
+                 OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
+                 RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
+                { SkillId }
+            );
+
+            
+
+            // Process the skillResult query for the specific SkillId
+            skillResult.records.forEach(record => {
+                const skillName = record.get('skillName');
+                const questionId = record.get('questionId');
+                const question = record.get('question').properties;
+                const correctAnswerId = record.get('correctAnswerId');
+                const options = record.get('options').map(option => ({
+                    id: option.id,
+                    optionText: option.optionText,
+                    correct: option.correct
+                }));
+
+                if (!skillsMap.has(skillName)) {
+                    skillsMap.set(skillName, []);
+                }
+                skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
+            });
+            req.session.SkillId = SkillId;
+        }
 
         // Function to get random elements from an array
         const getRandomElements = (arr, count) => {
@@ -427,7 +458,7 @@ export const GetTrackQuiz = async (req, res, next) => {
         const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
 
         skillsMap.forEach((questions) => {
-            const selectedQuestions = getRandomElements(questions, 3); 
+            const selectedQuestions = getRandomElements(questions, 3);
             randomQuestions.push(...selectedQuestions);
 
             selectedQuestions.forEach(question => {
@@ -436,11 +467,13 @@ export const GetTrackQuiz = async (req, res, next) => {
                 if (correctAnswer) {
                     questionIdsAndCorrectIds.push({
                         questionId: question.id,
-                        correctId: correctAnswer.id 
+                        correctId: correctAnswer.id
                     });
                 }
             });
         });
+
+        
 
         // Format questions as required in the output
         const formattedQuestions = randomQuestions.map((question, index) => ({
@@ -454,24 +487,299 @@ export const GetTrackQuiz = async (req, res, next) => {
             Level: question.Level
         }));
 
-        // res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
+        // Store data in session
+        req.session.quiz = formattedQuestions;
+        req.session.answers = questionIdsAndCorrectIds;
+        req.session.randomQuestions = randomQuestions;
+
+        res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
+
+};
+
+export const SubmitQuiz = async (req, res, next) => {
+    const { answer } = req.body;
+    const { jobId } = req.query;
+    let session;
+    let driver;
+
+    try {
+        driver = await Neo4jConnection();
+        session = driver.session();
 
         let Grade = 0;
+
+        // Retrieve quiz and correct answers from the session
+        const quiz = req.session.quiz;
+        const correctAnswers = req.session.answers;
+        const randomQuestions = req.session.randomQuestions;
+        const SkillId =req.session.SkillId
+        console.log(SkillId)
+        // console.log("Quiz from session:", quiz);
+        // console.log("Correct answers from session:", correctAnswers);
+
+        if (!quiz || !correctAnswers) {
+            return res.status(400).json({ error: 'Quiz session not found.' });
+        }
+
         answer.forEach(userAnswer => {
-            const correctAnswer = questionIdsAndCorrectIds.find(q => q.questionId === userAnswer.questionId);
+            const correctAnswer = correctAnswers.find(q => q.questionId === userAnswer.questionId);
             if (correctAnswer && userAnswer.answerId === correctAnswer.correctId) {
                 Grade++;
             }
         });
 
+        console.log("Grade:", Grade);
+
         // Determine pass status based on grade
         const totalQuestions = randomQuestions.length;
         const Pass = Grade > totalQuestions / 2;
 
-        res.status(200).json({ Message: 'Quiz Results', Questions: formattedQuestions, Grade: Grade, TotalQuestions: totalQuestions, Pass: Pass });
+        let query = `
+            MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(mandatorySkill:Skill)
+            OPTIONAL MATCH (job)-[:REQUIRES {mandatory: false}]->(specificSkill:Skill)
+        `;
+        let params = { jobId };
 
-            session.close();
+        if (SkillId) {
+            query += `
+                WHERE specificSkill.Nodeid = $SkillId
+            `;
+            params.SkillId = SkillId;
+        }
+
+        query += `
+            RETURN 
+                COLLECT(DISTINCT { 
+                    skillId: ID(mandatorySkill), 
+                    Nodeid: mandatorySkill.Nodeid,
+                    skill: mandatorySkill 
+                }) AS mandatorySkills,
+                CASE WHEN specificSkill IS NOT NULL THEN { 
+                    skillId: ID(specificSkill), 
+                    Nodeid: specificSkill.Nodeid,
+                    skill: specificSkill 
+                } ELSE null END AS specificSkill
+        `;
+
+        const result = await session.run(query, params);
+
+        const record = result.records[0];
+        console.log("Neo4j query result:", result.records);
+
+        const mandatorySkills = record.get('mandatorySkills').map(skill => ({
+            Nodeid: skill.Nodeid,
+            ...skill.skill.properties
+        }));
+
+        let specificSkill = null;
+        if (SkillId) {
+            const specificSkillRecord = record.get('specificSkill');
+            specificSkill = specificSkillRecord ? {
+                Nodeid: specificSkillRecord.Nodeid,
+                ...specificSkillRecord.skill.properties
+            } : null;
+        }
+
+        console.log("Mandatory skills:", mandatorySkills);
+        console.log("Specific skill:", specificSkill);
+
+        res.status(200).json({
+            grade: Grade,
+            pass: Pass,
+            mandatorySkills: mandatorySkills,
+            specificSkill: specificSkill
+        });
+
+    } catch (error) {
+        next(error);
+    } 
+};
+
+
+// export const GetTrackQuiz = async (req, res, next) => {
+//     const { jobId ,SkillId} = req.query; 
+//     let session;
+//     let driver; 
+
+//         driver = await Neo4jConnection();
+//         session = driver.session();
         
         
-    }
+//         const result = await session.run(
+//             `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(skill:Skill)-[:HAS_QUESTION]->(question:Question)
+//              OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+//              WITH job, skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
+//              OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
+//              RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
+//             { jobId }
+//         );
+//         const skillResult = await session.run(
+//             `MATCH (skill:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question)
+//              OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+//              WITH skill, question, option, rel, ID(question) AS questionId, option.id AS optionUUID
+//              OPTIONAL MATCH (question)-[correctRel:HAS_OPTION {correct: true}]->(correctOption:Option)
+//              RETURN questionId, skill.name AS skillName, question, COLLECT({ id: optionUUID, optionText: option.optionText, correct: rel.correct }) AS options, correctOption.id AS correctAnswerId`,
+//             { SkillId }
+//         );
 
+//         const skillsMap = new Map();
+
+//         // Process the result query for mandatory skills
+//         result.records.forEach(record => {
+//             const skillName = record.get('skillName');
+//             const questionId = record.get('questionId');
+//             const question = record.get('question').properties;
+//             const correctAnswerId = record.get('correctAnswerId');
+//             const options = record.get('options').map(option => ({
+//                 id: option.id,
+//                 optionText: option.optionText,
+//                 correct: option.correct
+//             }));
+
+//             if (!skillsMap.has(skillName)) {
+//                 skillsMap.set(skillName, []);
+//             }
+//             skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
+//         });
+
+//         // Process the skillResult query for the specific SkillId
+//         skillResult.records.forEach(record => {
+//             const skillName = record.get('skillName');
+//             const questionId = record.get('questionId');
+//             const question = record.get('question').properties;
+//             const correctAnswerId = record.get('correctAnswerId');
+//             const options = record.get('options').map(option => ({
+//                 id: option.id,
+//                 optionText: option.optionText,
+//                 correct: option.correct
+//             }));
+
+//             if (!skillsMap.has(skillName)) {
+//                 skillsMap.set(skillName, []);
+//             }
+//             skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
+//         });
+
+//         // Function to get random elements from an array
+//         const getRandomElements = (arr, count) => {
+//             const shuffled = arr.sort(() => 0.5 - Math.random());
+//             return shuffled.slice(0, count);
+//         };
+
+//         const randomQuestions = [];
+//         const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
+
+//         skillsMap.forEach((questions) => {
+//             const selectedQuestions = getRandomElements(questions, 3); 
+//             randomQuestions.push(...selectedQuestions);
+
+//             selectedQuestions.forEach(question => {
+//                 // Find correct option id
+//                 const correctAnswer = question.options.find(option => option.correct);
+//                 if (correctAnswer) {
+//                     questionIdsAndCorrectIds.push({
+//                         questionId: question.id,
+//                         correctId: correctAnswer.id 
+//                     });
+//                 }
+//             });
+//         });
+
+//         // Format questions as required in the output
+//         const formattedQuestions = randomQuestions.map((question, index) => ({
+//             id: question.id,
+//             order: index + 1,
+//             questionText: question.questionText,
+//             options: question.options.map(option => ({
+//                 id: option.id,
+//                 optionText: option.optionText
+//             })),
+//             Level: question.Level
+//         }));
+
+//         // Store data in session
+//         req.session.quiz = formattedQuestions;
+//         req.session.answers = questionIdsAndCorrectIds;
+//         req.session.randomQuestions = randomQuestions;
+
+        
+//         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions});
+        
+//             // res.status(200).json({ Message: 'Quiz Results', Questions: formattedQuestions, Grade: Grade, TotalQuestions: totalQuestions, Pass: Pass });
+        
+        
+//}
+
+
+
+// export const SubmitQuiz = async (req, res, next) => {
+//    let session;
+//     let driver; 
+
+//         driver = await Neo4jConnection();
+//         session = driver.session();
+//     const {answer}=req.body
+//     const { jobId,SkillId } = req.query;
+
+//     let Grade = 0;
+
+//     // Retrieve quiz and correct answers from the session
+//     const quiz = req.session.quiz;
+//         const correctAnswers = req.session.answers;
+//         const randomQuestions = req.session.randomQuestions;
+//     console.log(quiz)
+//     if (!quiz || !correctAnswers) {
+//         return res.status(400).json({ error: 'Quiz session not found.' });
+//     }
+    
+//     answer.forEach(userAnswer => {
+//         const correctAnswer = correctAnswers.find(q => q.questionId === userAnswer.questionId);
+//         if (correctAnswer && userAnswer.answerId === correctAnswer.correctId) {
+//             Grade++;
+//         }
+//     });
+//     console.log("Grade",Grade)
+
+//     // Determine pass status based on grade
+//     const totalQuestions = randomQuestions.length;
+//     const Pass = Grade > totalQuestions / 2;
+
+//     if (!Pass) {
+//         const result = await session.run(
+//             `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(mandatorySkill:Skill)
+//              OPTIONAL MATCH (job)-[:REQUIRES {mandatory: false}]->(specificSkill:Skill {Nodeid: $SkillId})
+//              RETURN 
+//                 COLLECT(DISTINCT { 
+//                     skillId: ID(mandatorySkill), 
+//                     Nodeid: mandatorySkill.Nodeid,
+//                     skill: mandatorySkill 
+//                 }) AS mandatorySkills,
+//                 CASE WHEN specificSkill IS NOT NULL THEN { 
+//                     skillId: ID(specificSkill), 
+//                     Nodeid: specificSkill.Nodeid,
+//                     skill: specificSkill 
+//                 } ELSE null END AS specificSkill`,
+//             { jobId, SkillId }
+//         );
+    
+//         const record = result.records[0];
+    
+//         const mandatorySkills = record.get('mandatorySkills').map(skill => ({
+//             Nodeid: skill.Nodeid,
+//             ...skill.skill.properties
+//         }));
+    
+//         const specificSkillRecord = record.get('specificSkill');
+//         const specificSkill = specificSkillRecord ? {
+//             Nodeid: specificSkillRecord.Nodeid,
+//             ...specificSkillRecord.skill.properties
+//         } : null;
+    
+//         res.status(200).json({
+//             grade: Grade,
+//             pass: Pass,
+//             mandatorySkills: mandatorySkills,
+//             specificSkill: specificSkill
+//         });
+//     }
+// }

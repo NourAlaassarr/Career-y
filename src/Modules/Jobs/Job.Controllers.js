@@ -1,8 +1,3 @@
-
-
-
-
-
 //get all jobsOffer 
 
 //get all jobsOffers in track 

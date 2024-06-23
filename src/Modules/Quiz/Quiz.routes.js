@@ -19,5 +19,6 @@ router.get('/Quiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(Q
 router.get('/TrackQuiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
 router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 router.get('/SpecificFramework',ValidationCoreFunction(QuizValidation.getSpecificTrackSkill),asyncHandler(QuizControllers.getSpecificTrackSkill))
-router.get('/GetTrackQuiz',asyncHandler(QuizControllers.GetTrackQuiz))
+router.get('/GetTrackQuiz',ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
+router.post('/SubmitQuiz',ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
 export default router 
