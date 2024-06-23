@@ -70,7 +70,7 @@ export const GetTrackQuiz = {
   query: joi.object().keys({
 /// uuid
 jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
-SkillId:joi.string().guid({ version: ['uuidv4'] }).required(),
+SkillId:joi.string().guid({ version: ['uuidv4'] }).optional(),
   }).required(),
   params: joi.object().keys({
 
@@ -84,6 +84,26 @@ export const getSpecificTrackSkill = {
   query: joi.object().keys({
 /// uuid
 jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
+  }).required(),
+  params: joi.object().keys({
+
+  }).required()
+}
+
+export const SubmitQuiz={
+
+  body:  joi.object({
+    answer: joi.array().items(
+        joi.object({
+            questionId: joi.string().guid({ version: ['uuidv4'] }).required(),
+            answerId: joi.string().guid({ version: ['uuidv4'] }).required()
+        })
+    ).required()
+}),
+  query: joi.object().keys({
+/// uuid
+jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
+SkillId:joi.string().guid({ version: ['uuidv4'] }).optional(),
   }).required(),
   params: joi.object().keys({
 

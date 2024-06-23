@@ -3,6 +3,7 @@ import {GlobalResponse} from './ErrorHandling.js'
 import * as router from '../Modules/index.Routes.js'
 import { gracefulShutdown } from 'node-schedule'
 import{changeCouponStatus} from './Crons.js'
+
 import cors from 'cors'
 // import connectDB from '../../DB/Neo4j/Neo4j.js';
 // import { driver } from 'neo4j-driver'
@@ -13,6 +14,7 @@ export const initiateApp= async(App,express)=>{
     App.use(express.json())
     
     App.use(cors()) // allow anyone
+
     await Neo4jConnection()
     // DBconnection()
     
