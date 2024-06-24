@@ -4,6 +4,7 @@ import JobRoutes from'./Jobs/Job.Routes.js'
 import UserRoutes from './User/User.Routes.js'
 import TestRoutes from './Test/Test.routes.js'
 import RoadmapsRoutes from './Roadmaps/Roadmap.routes.js'
+import JobOfferRoutes from './Jobs/Job.Routes.js'
 export {
     AuthRoutes,
     QuizRoutes,
@@ -11,4 +12,5 @@ export {
     UserRoutes,
     TestRoutes,
     RoadmapsRoutes,
+    JobOfferRoutes,
 }
