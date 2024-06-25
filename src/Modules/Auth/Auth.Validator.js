@@ -108,5 +108,5 @@ export const reset={
     }).required(),
     params:joi.object().keys({
       
-    }).required()
+    }).optional()
 }

@@ -13,7 +13,7 @@ router.post('/LogOut',isAuth(),ValidationCoreFunction(Validator.LogOut),asyncHan
 router.patch('/ChangePassword',isAuth(),ValidationCoreFunction(Validator.ChangePassword),asyncHandler(AuthControllers.ChangePassword))
 router.get('/Confirm/:token',ValidationCoreFunction(Validator.ConfirmEmail),asyncHandler(AuthControllers.ConfirmEmail))
 router.patch('/ForgetPassword',ValidationCoreFunction(Validator.ForgetPassword),asyncHandler(AuthControllers.ForgetPassword))
-router.patch('/reset/:token',ValidationCoreFunction(Validator.reset),asyncHandler(AuthControllers.reset))
+router.patch('/reset/:token',asyncHandler(AuthControllers.reset))
 
 
 

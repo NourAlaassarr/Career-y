@@ -361,7 +361,7 @@ export const reset = async (req, res, next) => {
         // User not found
         return next(new Error('you already rest your password, try to login', { cause: 400 }))
     }
-    const isValidOTP = bcrypt.compareSync(code, sentCode);
+    const isValidOTP = pkg.compareSync(code, sentCode);
 
     if (!isValidOTP) {
         return next(new Error('Invalid or expired OTP', { cause: 400 }));
@@ -370,7 +370,7 @@ export const reset = async (req, res, next) => {
 
     const ResetPassword = await session.run(
         'MATCH (u:User {Email: $email, Code: $code}) ' +
-        'SET u.password = $newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
+        'SET u.password = $newPassword, u.ConfirmPassword=$newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
         'RETURN u',
         {
             email: decoded?.Email,

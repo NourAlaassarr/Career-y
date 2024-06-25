@@ -196,37 +196,6 @@ export const GetAllQuizzes = async (req, res, next) => {
         }
 };
 
-//DeleteNode
-export const DeleteNode = async (req, res, next) => {
-    const { QuizName } = req.body;
-    let session;
-
-    try {
-        const driver = await Neo4jConnection();
-        session = driver.session();
-
-        // Execute a READ query to check if the node with the specified QuizName exists
-        const readResult = await session.run("MATCH (n:Quiz {QuizName: $QuizName}) RETURN n", { QuizName });
-
-        if (readResult.records.length === 0) {
-            return res.status(404).json({ success: false, message: 'Node not found' });
-        }
-
-        // Execute the DELETE query
-        await session.run("MATCH (n:Quiz {QuizName: $QuizName}) DETACH DELETE n", { QuizName });
-
-        // Respond with success message or appropriate response
-        res.status(200).json({ success: true, message: 'Node deleted successfully' });
-    } catch (error) {
-        // Handle errors
-        next(error);
-    } finally {
-        // Close the session
-        if (session) {
-            await session.close();
-        }
-    }
-};
 
 //Add Quiz Neo4j
 // export const AddQuizNode = async (req, res, next) => {
@@ -534,6 +503,9 @@ export const SubmitQuiz = async (req, res, next) => {
         const totalQuestions = randomQuestions.length;
         const Pass = Grade > totalQuestions / 2;
 
+        if(!Pass)
+            {
+
         let query = `
             MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(mandatorySkill:Skill)
             OPTIONAL MATCH (job)-[:REQUIRES {mandatory: false}]->(specificSkill:Skill)
@@ -589,7 +561,7 @@ export const SubmitQuiz = async (req, res, next) => {
             mandatorySkills: mandatorySkills,
             specificSkill: specificSkill
         });
-
+    }
     } catch (error) {
         next(error);
     } 
