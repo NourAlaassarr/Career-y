@@ -8,6 +8,10 @@ export const Solve = async (req, res, next) => {
     const { SkillId } = req.query;
     const UserId = req.authUser._id;
 console.log(answer)
+
+// Get current timestamp
+const timestamp = new Date().toISOString();
+    console.log("Current Timestamp:", timestamp);
     let session;
 
     const driver = await Neo4jConnection();
@@ -22,19 +26,40 @@ console.log(answer)
         return next(new Error("Quiz does not exist", { cause: 400 }));
     }
 
-    // Check if the user has already taken the quiz
-    const quizAttemptsResult = await session.run(
-        "MATCH (u:User {_id: $UserId})-[:TOOK]->(qa:Skill {Nodeid: $SkillId}) RETURN COUNT(qa) AS count",
+     // Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+     const quizAttemptsResult = await session.run(
+        "MATCH (u:User {_id: $UserId})-[r:TOOK]->(qa:Skill {Nodeid: $SkillId}) RETURN r.timestamp AS lastAttempt",
         { UserId, SkillId }
     );
-    const quizAttemptsCount = quizAttemptsResult.records[0]
-        .get("count")
-        .toNumber();
-    // if (quizAttemptsCount > 0) {
-    //     return res
-    //         .status(400)
-    //         .json({ Message: "You have already taken this quiz" });
-    // }
+
+    if (quizAttemptsResult.records.length > 0) {
+        const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+        const lastAttemptDate = new Date(lastAttempt);
+        const currentDate = new Date();
+
+        console.log("Last Attempt Timestamp:", lastAttempt);
+        console.log("Last Attempt Date:", lastAttemptDate);
+        console.log("Current Date:", currentDate);
+
+        // Check if 24 hours have passed since the last attempt
+        const timeDifference = currentDate - lastAttemptDate;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+        console.log("Hours Difference:", hoursDifference);
+
+        if (hoursDifference < 24) {
+            return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+        } else {
+            // Remove existing relationships
+            await session.run(
+                `
+                MATCH (u:User {_id: $UserId})-[r:TOOK|PASSED|FAILED]->(q:Skill {Nodeid: $SkillId})
+                DELETE r
+                `,
+                { UserId, SkillId }
+            );
+        }
+    }
     const quizInfoResult = await session.run(
         "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q.name AS QuizName",
         { SkillId }
@@ -75,11 +100,15 @@ console.log(answer)
         // Update user node with quiz results and create relationship
         let query =
             "MATCH (u:User {_id: $UserId}), (q:Skill {Nodeid: $SkillId}) " +
-            "CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass }]->(q)";
+            "CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass,timestamp: $timestamp }]->(q)";
 
         if (Pass) {
             query +=
-                " MERGE (u)-[:PASSED]->(q)"; // Add PASSED relationship if Pass is true
+                " MERGE (u)-[:PASSED {timestamp: $timestamp}]->(q)";
+        }
+        else if (!Pass) {
+            query +=
+            " MERGE (u)-[:FAILED {timestamp: $timestamp}]->(q)";
         }
         
         await session.run(query, {
@@ -89,6 +118,7 @@ console.log(answer)
             Grade,
             totalQuestions,
             Pass,
+            timestamp,
         });
 
         res.status(200).json({
@@ -303,7 +333,7 @@ export const GetUserDetails = async (req, res, next) => {
     const driver = await Neo4jConnection();
     session = driver.session();
     const query = `
-    MATCH (u:User {id: $UserID})
+    MATCH (u:User {_id: $UserID})
     OPTIONAL MATCH (u)-[r:HAS_SKILL]->(s:Skill)
     RETURN u, collect(s) as skills;
 `;
@@ -362,10 +392,11 @@ export const CareerGoalUserProgress = async (req, res, next) => {
 
     // console.log(results);
     const userSkillCountNodes = await session.run(
-        `MATCH (u:User { _id: $userId })-[:PASSED]->(s:Skill)<-[:REQUIRES]-(j:Job { Nodeid: $careerGoalId })
+        `MATCH (u:User { _id: $userId })-[:TOOK { Pass: true }]->(s:Skill)<-[:REQUIRES]-(j:Job { Nodeid: $careerGoalId })
         RETURN count(s) AS userSkillCount`,
         { userId, careerGoalId }
     );
+    
     
     const userSkillCount = userSkillCountNodes.records[0].get("userSkillCount").toNumber();
 
@@ -374,6 +405,33 @@ export const CareerGoalUserProgress = async (req, res, next) => {
     res.status(200).json({ "Your Progress is" : userProgress +"%"});
 };
 
-//Recommend GapSkills in each track interestes user
+//Get All User Profile Skills
+export const GetALLUserSkills = async (req, res, next) => {
+    const UserID = req.authUser._id;
+    let session;
+    
 
-//Retake Quiz
+        const driver = await Neo4jConnection();
+        session = driver.session();
+
+        const query = `
+            MATCH (u:User {_id: $UserID})
+            OPTIONAL MATCH (u)-[r:HAS_SKILL]->(s:Skill)
+            RETURN collect(s) as skills
+        `;
+
+        const result = await session.run(query, { UserID });
+
+        if (result.records.length === 0) {
+            await session.close();
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        const skills = result.records[0].get('skills').map(skill => skill.properties);
+
+        await session.close();
+
+        res.status(200).json({ skills });
+};
+
+//Add review on Course

@@ -17,7 +17,7 @@ router.get('/RecommendTracks',isAuth(UserApiRoles.RecommendTracks),asyncHandler(
 router.get('/GetUserDetails',isAuth(UserApiRoles.GetUserDetails),asyncHandler(UserContollers.GetUserDetails))
 router.get('/CareerGuidanceMatching',isAuth(UserApiRoles.CareerGuidanceMatching),asyncHandler(UserContollers.CareerGuidanceMatching))
 router.get('/CareerGoalUserProgress',isAuth(UserApiRoles.CareerGoalUserProgress),asyncHandler(UserContollers.CareerGoalUserProgress))
-
+router.get('/GetAllSklls',isAuth(UserApiRoles.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
 
 
 export default router

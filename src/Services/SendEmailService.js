@@ -22,7 +22,7 @@ const Transporter = nodemailer.createTransport({
 })
 
 const emailInfo = await Transporter.sendMail({
-from:'"Nour Alaassar 👻"<nonaalaassar@gmail.com>',
+from:'"Career-y"<nonaalaassar@gmail.com>',
 to: to ? to : '',
 subject: subject ? subject :'hello',
 html:message?message :'',

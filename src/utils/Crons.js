@@ -1,5 +1,5 @@
 import {scheduleJob} from 'node-schedule'
-// import {CopounModel} from '../../DB/Models/Coupon.model.js'
+import { sendNotification}from '../Modules/Jobs/Job.Controllers.js'
 // import moment from 'moment'
 import moment  from 'moment-timezone'
 // export const job = () =>{
@@ -7,23 +7,23 @@ import moment  from 'moment-timezone'
 //     console.log('The answer to life, the universe, and everything!');}
 // )};
 
-export const changeCouponStatus =()=>{
-    scheduleJob('* */60 * * * *', async function(){
-        const IsValidCopoun = await CopounModel.find({CouponStatus:'Valid'})
-        console.log(IsValidCopoun)
-        for(const coupon of IsValidCopoun)
-        {
-            // console.log({
-            //     momentToDate:moment(coupon.toDate),
-            //     now:moment(),
-            //     cond:moment(coupon.toDate).isBefore(moment())
-            // })
 
-            if (moment(coupon.toDate).isBefore(moment().tz('Africa/Cairo'))){
-                coupon.CouponStatus='Expired'
-                await coupon.save(); 
-            }
+// Cron job for sending notifications
+export const notificationJob = () => {
+    scheduleJob('0 0 * * *', async function () { // This runs at midnight every day
+        console.log('Running the sendNotification cron job');
+        
+        // Mock request, response, and next objects
+        const req = {};
+        const res = {
+            json: (message) => console.log(message)
+        };
+        const next = (error) => console.error(error);
+
+        try {
+            await sendNotification(req, res, next);
+        } catch (error) {
+            console.error('Error running the cron job:', error);
         }
-        console.log('cron changecoupon is running..............')
-    })
-}
+    });
+};

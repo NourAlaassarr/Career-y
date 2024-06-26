@@ -264,3 +264,7 @@ export const UpdateCourse = async(req,res,next)=>{
     res.status(200).json({ message: "Course updated successfully" });
         
 }
+
+//Add Review
+export const AddReview = async(req,res,next)=>{
+}

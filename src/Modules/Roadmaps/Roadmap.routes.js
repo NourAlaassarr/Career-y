@@ -10,6 +10,7 @@ router.get('/GetRoadmap',ValidationCoreFunction(Validator.GetRoadmap),asyncHandl
 router.get('/GetAllTracks',ValidationCoreFunction(Validator.GetAllTracks),asyncHandler(RoadmapControllers.GetAllTracks))
 router.get('/SkillResources',ValidationCoreFunction(Validator.GetSkillResources),asyncHandler(RoadmapControllers.GetSkillResources))
 router.get('/AllSkills',ValidationCoreFunction(Validator.GetAllSkills),asyncHandler(RoadmapControllers.GetAllSkills))
-
+router.put('/Update',asyncHandler(RoadmapControllers.UpdateResource))
+router.get('/UpdatedSkill/:Skillid',asyncHandler(RoadmapControllers.GetUpdatedSkill))
 
 export default router;

@@ -1,4 +1,4 @@
-
+import send_Email from '../../utils/email.js';
 import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import { sendmailService } from '../../Services/SendEmailService.js'
@@ -261,3 +261,323 @@ export const UpdateJobOffer=async(req,res,next)=>{
 }
 
 //get all jobsOffers in track
+export const GetAllJobsIntrack=async(req,res,next)=>{
+    const{JobId}=req.query
+    let session;
+    const driver = await Neo4jConnection(); 
+    session = driver.session(); 
+    
+    const JobCheckResults = await session.run(
+        'MATCH (j:Job {Nodeid:$JobId}) RETURN j',
+        { JobId }
+    );
+    if (JobCheckResults.records.length === 0) {
+        return next(new Error("Skill Doesn't exist", { cause: 404 }));
+    }
+    const result = await session.run(
+        'MATCH (j:Job {Nodeid: $JobId})-[:REQUIRES]->(s:Skill)<-[:BELONGS_TO]-(jo:JobOffer) RETURN jo',
+        { JobId: JobId }
+    );
+
+    // Process the result
+    const jobOffers = result.records.map(record => record.get('jo').properties);
+
+    // Send the result as a response
+    res.status(200).json(jobOffers);
+}
+
+
+// export const sendNotification = async (req, res, next) => {
+//     const { email } = req.body;
+
+//     // Validate email input
+//     if (!email) {
+//         return res.status(StatusCodes.BAD_REQUEST).json({ message: 'Email is required' });
+//     }
+
+//     let session;
+//     try {
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
+
+//         // Fetch all job offers
+//         const jobOffersResult = await session.run(`
+//             MATCH (jo:JobOffer)
+//             RETURN jo
+//         `);
+
+//         // Process the result
+//         const jobOffers = jobOffersResult.records.map(record => record.get('jo').properties);
+
+//         // Check if there are any job offers
+//         if (jobOffers.length === 0) {
+//             return res.status(StatusCodes.NOT_FOUND).json({ message: 'No job offers found' });
+//         }
+
+//         // Close the session
+//         await session.close();
+
+//         // Create a formatted job offers message
+//         const jobOffersMessage = jobOffers.map(offer => `
+//             Title: ${offer.title}
+//             Company: ${offer.CompanyName}
+//             Description: ${offer.JobDescription}
+//             Requirements: ${offer.JobRequirements}
+//             Salary Range: ${offer.salary_range}
+//             Date Posted: ${offer.date_posted}
+//             Employment Type: ${offer.employment_type}
+//         `).join('\n\n');
+
+//         await send_Email({
+//             to: email,
+//             subject: 'All Job Offers',
+//             text: jobOffersMessage,
+//         });
+
+//         return res.status(StatusCodes.OK).json({ message: 'Job offers sent successfully' });
+
+//     } catch (error) {
+//         if (session) {
+//             await session.close();
+//         }
+//         return next(error);
+//     }
+
+// }
+
+
+
+//Crons
+export const sendNotification = async (req, res, next) => {
+    let session;
+
+    try {
+        const driver = await Neo4jConnection();
+        session = driver.session();
+
+        // Retrieve all distinct job names to populate frameworks array
+        const frameworksResult = await session.run(
+            `
+            MATCH (j:Job)
+            RETURN DISTINCT j.name AS framework
+            `
+        );
+
+        const frameworks = frameworksResult.records.map(record => record.get('framework'));
+        console.log("Frameworks:", frameworks);
+
+        if (frameworks.length === 0) {
+            await session.close();
+            return res.json({ message: 'No job frameworks found' });
+        }
+
+        const jobOffersResult = await session.run(
+            `
+            MATCH (j:Job)-[:REQUIRES]->(s:Skill)<-[:BELONGS_TO]-(jo:JobOffer)
+            WHERE j.name IN $frameworks
+            RETURN jo, j.name AS framework
+            `, { frameworks }
+        );
+
+        const jobOffers = jobOffersResult.records.map(record => {
+            const offer = record.get('jo').properties;
+            offer.framework = record.get('framework');
+
+            // Check for the timestamp field
+            if (offer.timestamp) {
+                offer.date_posted = new Date(offer.timestamp.low);
+            } else if (offer.date_posted && offer.date_posted.year && offer.date_posted.month && offer.date_posted.day) {
+                offer.date_posted = new Date(offer.date_posted.year.low, offer.date_posted.month.low - 1, offer.date_posted.day.low);
+            } else {
+                console.error(`Missing date information for job offer: ${offer}`);
+            }
+
+            return offer;
+        });
+
+        console.log(jobOffers);
+
+        if (jobOffers.length === 0) {
+            await session.close();
+            return res.json({ message: 'No job offers found' });
+        }
+
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+        for (const framework of frameworks) {
+            const usersResult = await session.run(`
+                MATCH (u:User)
+                WHERE ANY(goal IN u.CareerGoal WHERE goal = $framework)
+                RETURN u.Email AS email
+            `, { framework });
+
+            const users = usersResult.records.map(record => record.get('email'));
+            console.log(users);
+
+            const jobOffersMessage = jobOffers
+    .filter(offer => offer.framework.toLowerCase() === framework.toLowerCase() && offer.date_posted > oneWeekAgo)
+    .map(offer => jobOfferEmailTemplate({
+        jobTitle: offer.title,
+        companyName: offer.CompanyName,
+        jobDescription: offer.JobDescription,
+        salaryRange: offer.salary_range,
+        employmentType: offer.employment_type
+    }))
+    .join('\n\n');
+
+            if (!jobOffersMessage) continue;
+
+            for (const userEmail of users) {
+                try {
+                    const success = await sendmailService({
+                        to: userEmail,
+                        subject: `Job Offers for ${framework}`,
+                        message: jobOffersMessage,
+                    });
+                    if (success) {
+                        console.log(`Email sent to ${userEmail} for framework ${framework}`);
+                    } else {
+                        console.error(`Failed to send email to ${userEmail}`);
+                    }
+                } catch (emailError) {
+                    console.error(`Failed to send email to ${userEmail}: `, emailError);
+                }
+            }
+        }
+
+        await session.close();
+        return res.json({ message: 'Job offers sent successfully' });
+
+    } catch (error) {
+        console.error('Error in sendNotification:', error);
+        if (session) {
+            await session.close();
+        }
+        return next(error);
+    }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// export const sendNotification = async (req, res, next) => {
+//     const frameworks = ['Frontend', 'Backend'];
+//     let session;
+
+//     try {
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
+
+//         const jobOffersResult = await session.run(
+//             `
+//             MATCH (j:Job)-[:REQUIRES]->(s:Skill)<-[:BELONGS_TO]-(jo:JobOffer)
+//             WHERE j.name IN $frameworks
+//             RETURN jo, j.name AS framework
+//             `, { frameworks }
+//         );
+
+//         const jobOffers = jobOffersResult.records.map(record => {
+//             const offer = record.get('jo').properties;
+//             offer.framework = record.get('framework');
+//             offer.date_posted = {
+//                 year: offer.date_posted.year.low,
+//                 month: offer.date_posted.month.low,
+//                 day: offer.date_posted.day.low
+//             };
+//             return offer;
+//         });
+
+//         console.log(jobOffers);
+
+//         if (jobOffers.length === 0) {
+//             await session.close();
+//             return res.json({ message: 'No job offers found' });
+//         }
+
+//         for (const framework of frameworks) {
+//             const usersResult = await session.run(`
+//                 MATCH (u:User)
+//                 WHERE ANY(goal IN u.CareerGoal WHERE goal = $framework)
+//                 RETURN u.Email AS email
+//             `, { framework });
+
+//             const users = usersResult.records.map(record => record.get('email'));
+//             console.log(users);
+
+//             const jobOffersMessage = jobOffers
+//                 .filter(offer => offer.framework.toLowerCase() === framework.toLowerCase())
+//                 .map(offer => {
+//                     const datePosted = `${offer.date_posted.year}-${offer.date_posted.month}-${offer.date_posted.day}`;
+//                     return `
+//                     Title: ${offer.title}
+//                     Company: ${offer.CompanyName}
+//                     Description: ${offer.JobDescription}
+//                     Requirements: ${offer.JobRequirements}
+//                     Salary Range: ${offer.salary_range}
+//                     Date Posted: ${datePosted}
+//                     Employment Type: ${offer.employment_type}
+//                     `;
+//                 }).join('\n\n');
+
+//             if (!jobOffersMessage) continue;
+
+//             for (const userEmail of users) {
+//                 try {
+//                     await send_Email({
+//                         to: userEmail,
+//                         subject: `Job Offers for ${framework}`,
+//                         text: jobOffersMessage,
+//                     });
+//                     console.log(`Email sent to ${userEmail} for framework ${framework}`);
+//                 } catch (emailError) {
+//                     console.error(`Failed to send email to ${userEmail}: `, emailError);
+//                 }
+//             }
+//         }
+
+//         await session.close();
+//         return res.json({ message: 'Job offers sent successfully' });
+
+//     } catch (error) {
+//         console.error('Error in sendNotification: ', error);
+//         if (session) {
+//             await session.close();
+//         }
+//         return next(error);
+//     }
+// };

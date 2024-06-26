@@ -11,4 +11,5 @@ export const UserApiRoles={
     CareerGuidanceMatching:[SystemRoles.User],
     GetUserDetails:[SystemRoles.User],
     CareerGoalUserProgress:[SystemRoles.User],
+    GetALLUserSkills:[SystemRoles.User],
 }

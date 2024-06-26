@@ -2,7 +2,7 @@ import {GlobalResponse} from './ErrorHandling.js'
 // import {DBconnection}  from '../../DB/connections.js'
 import * as router from '../Modules/index.Routes.js'
 import { gracefulShutdown } from 'node-schedule'
-import{changeCouponStatus} from './Crons.js'
+import{notificationJob} from './Crons.js'
 
 import cors from 'cors'
 // import connectDB from '../../DB/Neo4j/Neo4j.js';
@@ -36,6 +36,8 @@ export const initiateApp= async(App,express)=>{
         }
     })
     App.get('/',(req,res)=>res.send("Home"))
+    //Crons
+    notificationJob();
     App.listen(Port,()=>{
         console.log(`---------------Server is Running on port number ${Port} !---------------`)
     })

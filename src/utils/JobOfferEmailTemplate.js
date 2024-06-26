@@ -1,23 +1,25 @@
-export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription }) => {
+export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription, salaryRange, employmentType }) => {
     return `<!DOCTYPE html>
       <html>
       <head>
           <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
           <style type="text/css">
               body {
-                  background-color: #88BDBF;
+                  background-color: #001f3f; /* Dark Blue */
                   margin: 0;
               }
               .container {
-                  width: 50%;
+                  width: 80%; /* Adjusted to make the container width smaller */
                   margin: auto;
-                  padding: 30px;
-                  background-color: #F3F3F3;
-                  border: 1px solid #630E2B;
+                  padding: 20px;
+                  background-color: #3e290c; /* Brown */
+                  border: 1px solid #3e290c; /* Brown */
+                  color: #fff; /* White */
               }
               .header {
                   display: flex;
                   justify-content: space-between;
+                  align-items: center;
               }
               .logo {
                   width: 100px;
@@ -25,39 +27,30 @@ export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription })
               .view-website {
                   text-align: right;
               }
+              .view-website a {
+                  text-decoration: none;
+                  color: #fff; /* White */
+              }
               .job-details {
                   text-align: center;
-                  padding: 25px 0;
+                  padding: 15px 0;
               }
               .job-title {
-                  color: #630E2B;
+                  color: #fff; /* White */
               }
-              .job-description {
-                  padding: 0 50px;
+              .job-description, .job-salary, .job-employment-type {
+                  padding: 0 30px;
+                  color: #fff; /* White */
               }
               .apply-button {
                   margin: 20px 0 30px;
                   border-radius: 4px;
                   padding: 10px 20px;
                   border: 0;
-                  color: #fff;
-                  background-color: #630E2B;
+                  color: #3e290c; /* Brown */
+                  background-color: #fff; /* White */
                   text-decoration: none;
                   display: inline-block;
-              }
-              .social-links {
-                  margin-top: 20px;
-                  text-align: center;
-              }
-              .social-link {
-                  text-decoration: none;
-                  padding: 10px 9px;
-                  color: #fff;
-                  border-radius: 50%;
-              }
-              .social-icon {
-                  width: 50px;
-                  height: 50px;
               }
           </style>
       </head>
@@ -68,7 +61,7 @@ export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription })
                   <img src="https://res.cloudinary.com/ddajommsw/image/upload/v1670703716/Screenshot_1100_yne3vo.png" alt="Company Logo">
               </div>
               <div class="view-website">
-                  <p><a href="http://localhost:4200/#/" target="_blank" style="text-decoration: none;">View In Website</a></p>
+                  <p><a href="http://localhost:4200/#/" target="_blank">View In Website</a></p>
               </div>
           </div>
           <div class="job-details">
@@ -76,20 +69,15 @@ export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription })
               <div class="job-description">
                   <p>${jobDescription}</p>
               </div>
-            //   <a href="" class="apply-button">${companyName} - Apply Now</a>
-          </div>
-          <div class="social-links">
-              <a href="${process.env.facebookLink}" class="social-link">
-                  <img src="https://res.cloudinary.com/ddajommsw/image/upload/v1670703402/Group35062_erj5dx.png" alt="Facebook" class="social-icon">
-              </a>
-              <a href="${process.env.instagram}" class="social-link">
-                  <img src="https://res.cloudinary.com/ddajommsw/image/upload/v1670703402/Group35063_zottpo.png" alt="Instagram" class="social-icon">
-              </a>
-              <a href="${process.env.twitterLink}" class="social-link">
-                  <img src="https://res.cloudinary.com/ddajommsw/image/upload/v1670703402/Group_35064_i8qtfd.png" alt="Twitter" class="social-icon">
-              </a>
+              <div class="job-salary">
+                  <p><strong>Salary Range:</strong> ${salaryRange}</p>
+              </div>
+              <div class="job-employment-type">
+                  <p><strong>Employment Type:</strong> ${employmentType}</p>
+              </div>
+              <!-- <a href="" class="apply-button">${companyName} - Apply Now</a> -->
           </div>
       </div>
       </body>
       </html>`;
-  };
+};
