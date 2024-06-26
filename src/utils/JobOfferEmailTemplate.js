@@ -13,7 +13,7 @@ export const jobOfferEmailTemplate = ({ jobTitle, companyName, jobDescription, s
                   margin: auto;
                   padding: 20px;
                   background-color: #3e290c; /* Brown */
-                  border: 1px solid #3e290c; /* Brown */
+                  border: 1px solid  #fff;
                   color: #fff; /* White */
               }
               .header {

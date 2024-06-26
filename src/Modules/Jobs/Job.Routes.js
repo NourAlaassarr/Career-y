@@ -12,4 +12,5 @@ router.get('/GetAllJobOffers',isAuth(JobApis.GetAllJobOffers),asyncHandler(JobCo
 router.delete('/DeleteJobOffer',isAuth(JobApis.DeleteJob),asyncHandler(JobControllers.DeleteJob))
 router.put('/UpdateJobOffer',isAuth(JobApis.UpdateJobOffer),asyncHandler(JobControllers.UpdateJobOffer))
 router.get('/GetTrackJobOffers',isAuth(JobApis.GetAllJobOffers),asyncHandler(JobControllers.GetAllJobOffers))
+router.post('/SendNoti',asyncHandler(JobControllers.sendNotification))
 export default router
