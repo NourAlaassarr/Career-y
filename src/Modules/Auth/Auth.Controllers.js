@@ -349,8 +349,9 @@ export const reset = async (req, res, next) => {
     let session;
     const driver = await Neo4jConnection();
     session = driver.session(); 
-
-
+    if(!code){
+        return next(new Error('OTP Required', { cause: 400 }))
+    }
     
     const user = await session.run(
         'MATCH (u:User {Email: $email, Code: $code}) RETURN u',

@@ -197,133 +197,23 @@ export const GetAllQuizzes = async (req, res, next) => {
 };
 
 
-//Add Quiz Neo4j
-// export const AddQuizNode = async (req, res, next) => {
-//     let session;
-//     try {
-//         const { QuizName } = req.body;
-//         const driver = await Neo4jConnection();
-//         session = driver.session();
-
-//         // Check if the quiz already exists
-//         const result = await session.run(
-//             "MATCH (q:Quiz {name: $quizname}) RETURN q",
-//             { quizname: QuizName }
-//         );
-
-//         if (result.records.length > 0) {
-//             return next(new Error("Quiz already exists", { cause: 400 }));
-//         }
-//         const QuizId = uuidv4();
-//         // Create a new quiz node in Neo4j
-//         const NewQuiz = await session.run(
-//             "CREATE (q:TrackQuiz {id: $QuizId, name: $QuizName}) RETURN q",
-//             { QuizId, QuizName }
-//         );
-//         const NewQuizNode = NewQuiz.records[0].get("q").properties;
-
-//         res.status(200).json({ success: true, message: 'Created Successfully', Quiz: NewQuizNode });
-//     } catch (error) {
-//         next(error);
-//     } finally {
-//         if (session) {
-//             await session.close();
-//         }
-//     }
-// };
-
-
-// //Get Random Quiz
-// export const GetTrackQuiz = async (req, res, next) => {
-//     const { jobId } = req.query; // Using query parameter for jobId
-//     let session;
-//     let driver; // Define driver variable in function scope
-
-//     try {
-//         const driver = await Neo4jConnection();
-//         session = driver.session();
-
-//         const result = await session.run(
-//             `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(skill:Skill)-[:HAS_QUESTION]->(question:Question)
-//              OPTIONAL MATCH (question)-[r:HAS_OPTION]->(option:Option)
-//              RETURN ID(question) AS questionId, skill.name AS skillName, question, COLLECT({ id: ID(option), optionText: option.optionText, correct: r.correct }) AS options`,
-//             { jobId }
-//         );
-        
-//         const skillsMap = new Map();
-        
-//         // Process the query results
-//         result.records.forEach(record => {
-//             const skillName = record.get('skillName');
-//             const questionId = record.get('questionId');
-//             const question = record.get('question').properties;
-//             const options = record.get('options').map(option => ({
-//                 id: option.id,
-//                 optionText: option.optionText,
-//                 correctId: option.correct ? option.id : null // Assign correctId based on option.correct
-//             }));
-        
-//             if (!skillsMap.has(skillName)) {
-//                 skillsMap.set(skillName, []);
-//             }
-//             skillsMap.get(skillName).push({ id: questionId, ...question, options });
-//         });
-        
-//         console.log(skillsMap);
-//         // Function to get random elements from an array
-//         const getRandomElements = (arr, count) => {
-//             const shuffled = arr.sort(() => 0.5 - Math.random());
-//             return shuffled.slice(0, count);
-//         };
-
-//         // Randomly select 3 questions from each skill
-//         const randomQuestions = [];
-//         skillsMap.forEach((questions) => {
-//             const selectedQuestions = getRandomElements(questions, 3); 
-//             randomQuestions.push(...selectedQuestions);
-//         });
-        
-
-//         // Format questions as required in the output
-//         const formattedQuestions = randomQuestions.map((question, index) => ({
-//             questionText: question.questionText,
-//             options: question.options.map(option => option.optionText),
-//             Level: question.Level,
-//             order: index + 1
-//         }));
-
-//         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
-//     } catch (error) {
-//         console.error('Error fetching random quiz:', error);
-//         res.status(500).json({ Message: 'Error fetching random quiz', Error: error.message });
-//     } finally {
-//         if (session) {
-//             session.close();
-//         }
-//         if (driver) {
-//             driver.close();
-//         }
-//     }
-// };
-
-
-
-//Career Guidance
-export const getSpecificTrackSkill= async (req, res, next) => {
-    const { jobId } = req.query;
+//->GetFrameWORKs
+export const getSpecificTrackSkill = async (req, res, next) => {
+    const { jobId } = req.query; 
+    const types = ['Framework', 'Development', 'Library']; // Types to filter for
     let session;
     const driver = await Neo4jConnection();
     session = driver.session();
 
     const result = await session.run(
         `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: false}]->(skill:Skill)
+        WHERE skill.type IN $types
         RETURN skill`,
-        { jobId }
+        { jobId, types }
     );
     const skills = result.records.map(record => record.get('skill').properties);
     res.status(200).json({ Message: 'Skills Retrieved Successfully', Skills: skills });
 }
-
 
 //Career guide
 export const GetTrackQuiz = async (req, res, next) => {
@@ -755,3 +645,112 @@ export const SubmitQuiz = async (req, res, next) => {
 //         });
 //     }
 // }
+
+//Add Quiz Neo4j
+// export const AddQuizNode = async (req, res, next) => {
+//     let session;
+//     try {
+//         const { QuizName } = req.body;
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
+
+//         // Check if the quiz already exists
+//         const result = await session.run(
+//             "MATCH (q:Quiz {name: $quizname}) RETURN q",
+//             { quizname: QuizName }
+//         );
+
+//         if (result.records.length > 0) {
+//             return next(new Error("Quiz already exists", { cause: 400 }));
+//         }
+//         const QuizId = uuidv4();
+//         // Create a new quiz node in Neo4j
+//         const NewQuiz = await session.run(
+//             "CREATE (q:TrackQuiz {id: $QuizId, name: $QuizName}) RETURN q",
+//             { QuizId, QuizName }
+//         );
+//         const NewQuizNode = NewQuiz.records[0].get("q").properties;
+
+//         res.status(200).json({ success: true, message: 'Created Successfully', Quiz: NewQuizNode });
+//     } catch (error) {
+//         next(error);
+//     } finally {
+//         if (session) {
+//             await session.close();
+//         }
+//     }
+// };
+
+
+// //Get Random Quiz
+// export const GetTrackQuiz = async (req, res, next) => {
+//     const { jobId } = req.query; // Using query parameter for jobId
+//     let session;
+//     let driver; // Define driver variable in function scope
+
+//     try {
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
+
+//         const result = await session.run(
+//             `MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(skill:Skill)-[:HAS_QUESTION]->(question:Question)
+//              OPTIONAL MATCH (question)-[r:HAS_OPTION]->(option:Option)
+//              RETURN ID(question) AS questionId, skill.name AS skillName, question, COLLECT({ id: ID(option), optionText: option.optionText, correct: r.correct }) AS options`,
+//             { jobId }
+//         );
+        
+//         const skillsMap = new Map();
+        
+//         // Process the query results
+//         result.records.forEach(record => {
+//             const skillName = record.get('skillName');
+//             const questionId = record.get('questionId');
+//             const question = record.get('question').properties;
+//             const options = record.get('options').map(option => ({
+//                 id: option.id,
+//                 optionText: option.optionText,
+//                 correctId: option.correct ? option.id : null // Assign correctId based on option.correct
+//             }));
+        
+//             if (!skillsMap.has(skillName)) {
+//                 skillsMap.set(skillName, []);
+//             }
+//             skillsMap.get(skillName).push({ id: questionId, ...question, options });
+//         });
+        
+//         console.log(skillsMap);
+//         // Function to get random elements from an array
+//         const getRandomElements = (arr, count) => {
+//             const shuffled = arr.sort(() => 0.5 - Math.random());
+//             return shuffled.slice(0, count);
+//         };
+
+//         // Randomly select 3 questions from each skill
+//         const randomQuestions = [];
+//         skillsMap.forEach((questions) => {
+//             const selectedQuestions = getRandomElements(questions, 3); 
+//             randomQuestions.push(...selectedQuestions);
+//         });
+        
+
+//         // Format questions as required in the output
+//         const formattedQuestions = randomQuestions.map((question, index) => ({
+//             questionText: question.questionText,
+//             options: question.options.map(option => option.optionText),
+//             Level: question.Level,
+//             order: index + 1
+//         }));
+
+//         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
+//     } catch (error) {
+//         console.error('Error fetching random quiz:', error);
+//         res.status(500).json({ Message: 'Error fetching random quiz', Error: error.message });
+//     } finally {
+//         if (session) {
+//             session.close();
+//         }
+//         if (driver) {
+//             driver.close();
+//         }
+//     }
+// };
