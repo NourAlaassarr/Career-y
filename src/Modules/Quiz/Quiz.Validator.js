@@ -102,7 +102,7 @@ export const SubmitQuiz={
 }),
   query: joi.object().keys({
 /// uuid
-jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
+jobId:joi.string().guid({ version: ['uuidv4'] }).optional(),
 SkillId:joi.string().guid({ version: ['uuidv4'] }).optional(),
   }).required(),
   params: joi.object().keys({

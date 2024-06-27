@@ -265,6 +265,33 @@ export const UpdateCourse = async(req,res,next)=>{
         
 }
 
-//Add Review
+//get course Data
+export const GetCourseDetails = async(req,res,next)=>{
+    const { CourseId } = req.query;
+
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    const CourseCheckResults = await session.run(
+        'MATCH (c:Course {CourseId: $CourseId}) RETURN c',
+        { CourseId }
+    );
+
+    if (CourseCheckResults.records.length === 0) {
+        return next(new Error("Course Doesn't exist", { cause: 404 }));
+    }
+
+    const getCourseDetailsQuery = `MATCH (c:Course {CourseId: $CourseId}) RETURN c`;
+        const result = await session.run(getCourseDetailsQuery, { CourseId });
+        const CourseNode=result.records[0].get('c') 
+        const courseData = CourseNode.properties;
+        res.status(200).json({ Message: 'Success',courseData });
+        session.close();
+    
+}
+
+
+
+//Add Review TOBE
 export const AddReview = async(req,res,next)=>{
 }

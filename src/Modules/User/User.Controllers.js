@@ -104,11 +104,7 @@ const timestamp = new Date().toISOString();
 
         if (Pass) {
             query +=
-                " MERGE (u)-[:PASSED {timestamp: $timestamp}]->(q)";
-        }
-        else if (!Pass) {
-            query +=
-            " MERGE (u)-[:FAILED {timestamp: $timestamp}]->(q)";
+                " MERGE (u)-[:HAS_SKILL]->(q)";
         }
         
         await session.run(query, {

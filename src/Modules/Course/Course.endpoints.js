@@ -7,4 +7,5 @@ export const CourseApiRoles={
     DeleteCourse:[SystemRoles.Admin],
     GetAllCourses:[SystemRoles.Admin,SystemRoles.User],
     UpdateCourse:[SystemRoles.Admin,SystemRoles.User],
+    GetCourseDetails:[SystemRoles.Admin,SystemRoles.User],
 }

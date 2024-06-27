@@ -104,8 +104,9 @@ export const GetSkillResources = async (req, res, next) => {
         );
         // console.log(result.records.map(record => record.get('skill').properties))
         const skills = result.records.map(record => record.get('skill').properties);
+        await session.close();
         res.status(200).json({ Message: 'Success', Skills: skills });
-        session.close();
+        
     
 };
 

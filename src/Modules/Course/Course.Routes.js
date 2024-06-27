@@ -13,6 +13,9 @@ router.patch('/ApproveCourse',isAuth(CourseApiRoles.ApproveCourse),asyncHandler(
 
 router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
 
+router.get('/CourseDetails',isAuth(CourseApiRoles.GetCourseDetails),asyncHandler(CourseControllers.GetCourseDetails))
+
+
 //Owner/Admin
 router.put('/UpdateCourse',isAuth(CourseApiRoles.UpdateCourse),asyncHandler(CourseControllers.UpdateCourse))
 export default router
