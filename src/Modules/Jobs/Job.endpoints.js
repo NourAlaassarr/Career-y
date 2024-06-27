@@ -5,4 +5,5 @@ export const JobApis={
     DeleteJob:[SystemRoles.Admin],
     GetAllJobOffers:[SystemRoles.Admin,SystemRoles.User],
     UpdateJobOffer:[SystemRoles.Admin],
+    GetJobDetails:[SystemRoles.Admin,SystemRoles.User],
 }

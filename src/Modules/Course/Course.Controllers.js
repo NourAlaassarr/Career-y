@@ -285,8 +285,9 @@ export const GetCourseDetails = async(req,res,next)=>{
         const result = await session.run(getCourseDetailsQuery, { CourseId });
         const CourseNode=result.records[0].get('c') 
         const courseData = CourseNode.properties;
-        res.status(200).json({ Message: 'Success',courseData });
         session.close();
+        res.status(200).json({ Message: 'Success',courseData });
+        
     
 }
 

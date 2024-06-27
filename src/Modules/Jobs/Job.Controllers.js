@@ -286,6 +286,38 @@ export const GetAllJobsIntrack=async(req,res,next)=>{
     res.status(200).json(jobOffers);
 }
 
+//get jobOffer Detail
+export const GetJobDetails = async(req,res,next)=>{
+    const { jobOfferId } = req.query;
+
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    const JobOfferCheckResults = await session.run(
+        'MATCH (c:JobOffer {jobOfferId: $jobOfferId}) RETURN c',
+        { jobOfferId }
+    );
+
+    if (JobOfferCheckResults.records.length === 0) {
+        return next(new Error("JobOffer Doesn't exist", { cause: 404 }));
+    }
+
+    const getJobDetailsQuery = `MATCH (c:JobOffer {jobOfferId: $jobOfferId}) RETURN c`;
+        const result = await session.run(getJobDetailsQuery, { jobOfferId });
+        const JobOfferNode=result.records[0].get('c') 
+        const JobData = JobOfferNode.properties;
+        // Transform the date fields
+        if (JobData.date_posted) {
+            const year = JobData.date_posted.year.low;
+            const month = JobData.date_posted.month.low;
+            const day = JobData.date_posted.day.low;
+            JobData.date_posted = `${year}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        }
+        res.status(200).json({ Message: 'Success',JobData });
+        session.close();
+    
+}
+
 
 // export const sendNotification = async (req, res, next) => {
 //     const { email } = req.body;
