@@ -121,11 +121,6 @@ export const DeleteNode = async (req, res, next) => {
     }
 };
 
-
-
-
-
-
 export const AddId = async (req, res, next) => {
     const { name } = req.body;
     const driver = await Neo4jConnection();
