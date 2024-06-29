@@ -182,7 +182,7 @@ export const GetAllQuizzes = async (req, res, next) => {
     // Match all skills that have a "CONTAINS" relationship and return their names
 
         const AllQuizzes = await session.run(
-            "MATCH (s:Skill)-[:HAS_QUESTION]->(:Question) RETURN DISTINCT s.name AS name, s.Node.id AS id" 
+            "MATCH (s:Skill)-[:HAS_QUESTION]->(:Question) RETURN DISTINCT s.name AS name, s.Nodeid AS id" 
         );
     
 
@@ -191,7 +191,7 @@ export const GetAllQuizzes = async (req, res, next) => {
     }
 
     // Extract the name property of all skills
-    const quizzes = result.records.map(record => ({
+    const quizzes = AllQuizzes.records.map(record => ({
         id: record.get('id'),
         name: record.get('name'),
     }));

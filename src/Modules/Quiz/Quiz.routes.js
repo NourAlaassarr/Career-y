@@ -17,7 +17,7 @@ router.post('/AddQuestionsToQuiz',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFu
 
 
 router.get('/Quiz',isAuth(QuizApiRoles.GetQuiz),ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
-router.get('/AllQuizzes',isAuth(QuizApiRoles.GetAllQuizzes),ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
+router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 
 
 //Careeer Guidance
