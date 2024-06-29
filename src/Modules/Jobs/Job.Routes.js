@@ -8,7 +8,9 @@ import {JobApis}from'./Job.endpoints.js'
 
 //Admin Only 
 router.post('/AddJob',isAuth(JobApis.Add_JobOffer),asyncHandler(JobControllers.AddJobOffer))
+//Admin Only 
 router.delete('/DeleteJobOffer',isAuth(JobApis.DeleteJob),asyncHandler(JobControllers.DeleteJob))
+//Admin Only 
 router.put('/UpdateJobOffer',isAuth(JobApis.UpdateJobOffer),asyncHandler(JobControllers.UpdateJobOffer))
 
 

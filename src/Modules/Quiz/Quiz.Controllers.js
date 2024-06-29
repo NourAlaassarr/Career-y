@@ -2,6 +2,8 @@
 import {generateToken,VerifyToken}from'../../utils/TokenFunction.js'
 import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
+import axios from 'axios';
+import { tr } from 'date-fns/locale';
 
 //Add Quiz Neo4j
 export const AddQuizNode = async (req, res, next) => {
@@ -180,7 +182,7 @@ export const GetAllQuizzes = async (req, res, next) => {
     // Match all skills that have a "CONTAINS" relationship and return their names
 
         const AllQuizzes = await session.run(
-            "MATCH (s:Skill)-[:HAS_QUESTION]->(:Question) RETURN DISTINCT s.name AS name"
+            "MATCH (s:Skill)-[:HAS_QUESTION]->(:Question) RETURN DISTINCT s.name AS name, s.Node.id AS id" 
         );
     
 
@@ -189,7 +191,10 @@ export const GetAllQuizzes = async (req, res, next) => {
     }
 
     // Extract the name property of all skills
-    const quizzes = AllQuizzes.records.map(record => record.get("name"));
+    const quizzes = result.records.map(record => ({
+        id: record.get('id'),
+        name: record.get('name'),
+    }));
 
     res.status(200).json({ Message: 'Done', Quizzes: quizzes });
         if (session) {
@@ -221,8 +226,12 @@ const getRandomElements = (arr, count) => {
     return shuffled.slice(0, count);
 };
 
+
+
+
+//--------------------------------Career Guidance-------------------------------------------------------------------
 // Get BackendQuiz neo4j
-export const GetBackendQuiz = async (req, res, next) => {
+export const GetBackendTrackQuiz = async (req, res, next) => {
     const { jobId, SkillId } = req.query;
     let session;
     let driver;
@@ -445,11 +454,13 @@ export const GetTrackQuiz = async (req, res, next) => {
         req.session.quiz = formattedQuestions;
         req.session.answers = questionIdsAndCorrectIds;
         req.session.randomQuestions = randomQuestions;
+        req.session.jobId=jobId
 
         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
 
 };
 
+//SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
     const { answer } = req.body;
 
@@ -467,7 +478,7 @@ export const SubmitQuiz = async (req, res, next) => {
         const correctAnswers = req.session.answers;
         const randomQuestions = req.session.randomQuestions;
         const SkillId =req.session.SkillId
-         const jobId=req.session.jobId
+        const jobId=req.session.jobId
 
         console.log(SkillId)
         // console.log("Quiz from session:", quiz);
@@ -549,13 +560,392 @@ export const SubmitQuiz = async (req, res, next) => {
             specificSkill: specificSkill
         });
     }
+    else
+    {
+    let query;
+    let params = { jobId };
+
+    if (SkillId) {
+        query = `
+            MATCH (skill:Skill {Nodeid: $SkillId})<-[:BELONGS_TO]-(JobOffer:JobOffer)
+            RETURN JobOffer
+        `;
+        params.SkillId = SkillId;
+    } else {
+        query = `
+            MATCH (job:Job {Nodeid: $jobId})<-[:BELONGS_TO]-(JobOffer:JobOffer)
+            RETURN JobOffer
+        `;
+    }
+
+    const result = await session.run(query, params);
+
+    const jobs = result.records.map(record => {
+        const jobNode = record.get('JobOffer') || record.get('JobOffer');
+        return {
+            Nodeid: jobNode.properties.Nodeid,
+            ...jobNode.properties
+        };
+    });
+
+    console.log("Job Offers:", jobs);
+
+    res.status(200).json({
+        grade: Grade,
+        pass: Pass,
+        jobs: jobs
+    });
+}
     } catch (error) {
         next(error);
     } 
 };
 
 
+//-------------------------------------------FullStackQuiz---------------------------------------------------------------//
+
+const fetchBackendQuiz = async (jobId, SkillId, token) => {
+    try {
+        console.log('Fetching backend quiz...');
+        const response = await axios.get(`http://localhost:3000/Quiz/GetBackendTrackQuiz`, {
+            params: { jobId, SkillId },
+            headers: {
+                token: token, 
+            },
+        });
+        console.log(response.data);
+        return response.data;
+       
+    } catch (error) {
+        throw new Error('Failed to fetch backend quiz');
+    }
+};
+
+// const fetchFrameworks = async (jobId, token) => {
+//     console.log('Fetching frameworks...');
+//     try {
+//         const response = await axios.get(`http://localhost:3000/Quiz/SpecificFramework`, {
+//             params: { jobId },
+//             headers: {
+//                 token: token,
+//             },
+//         });
+//         return response.data;
+//     } catch (error) {
+//         throw new Error('Failed to fetch frameworks');
+//     }
+// };
+
+const fetchFrontendTrackQuiz = async (jobId, SkillId, token) => {
+    try {
+        console.log('Fetching track quiz...');
+        const response = await axios.get('http://localhost:3000/Quiz/GetTrackQuiz', {
+            params: { jobId, SkillId },
+            headers: {
+                token: token,
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching track quiz:', error.response ? error.response.data : error.message);
+        throw new Error('Failed to fetch track quiz');
+    }
+};
+
+export const GetFullStackTrackQuiz = async (req, res, next) => {
+    try {
+        const { BackendId,FrontendId,BackendFrameWorkId ,FrontendFrameWorkId} = req.query;
+        const token= req.headers.token
+        if (!BackendId || !FrontendId || !BackendFrameWorkId || !FrontendFrameWorkId) {
+            return res.status(400).json({ message: 'Missing required parameters' });
+        }
+
+        // Fetch backend Track quiz data
+        const backendQuizResponse = await fetchBackendQuiz(BackendId, BackendFrameWorkId, token);
+
+        // Fetch Frontend TrackQuiz data
+        const frontendQuizResponse = await fetchFrontendTrackQuiz(FrontendId,FrontendFrameWorkId,token);
+        const combinedQuestions = [...backendQuizResponse.Questions, ...frontendQuizResponse.Questions];
+        const questionIds = combinedQuestions.map(q => q.id);
+        console.log(questionIds);
+        // Neo4j query to get correct answers
+        const driver = await Neo4jConnection();
+        const session = driver.session();
+        
+        const result = await session.run(`
+            MATCH (q:Question)-[r:HAS_OPTION {correct: true}]->(o:Option)
+            WHERE q.id IN $questionIds
+            RETURN q.id AS questionId, o.id AS correctAnswerId
+          `, { questionIds });
+
+          // Extract and return the correct answers
+          const correctAnswers = result.records.map(record => ({
+            questionId: record.get('questionId'),
+            correctAnswerId: record.get('correctAnswerId')
+          }));
+
+          console.log("correctAnswer",correctAnswers);
+          console.log("combinedQuestions",combinedQuestions);
+        req.session.combinedQuestions = combinedQuestions;
+        req.session.correctAnswers = correctAnswers;
+        req.session.BackendId = BackendId;
+        req.session.BackendFrameWorkId = BackendFrameWorkId;
+        req.session.FrontendId = FrontendId;
+        req.session.FrontendFrameWorkId = FrontendFrameWorkId;
+
+        return res.status(200).json({
+            message: 'Data fetched successfully',
+            Questions: combinedQuestions,
+        });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        return next(new Error('Failed to fetch data', { cause: 500 }));
+    }
+};
+
+
+export const submitFullstackTrackQuiz = async (req, res, next) => {
+    const { answer } = req.body;
+    try {
+        console.log("helo")
+        console.log('Session Data:', req.session);
+
+        const quiz = req.session.combinedQuestions;
+        const correctAnswers = req.session.correctAnswers;
+        const BackendId = req.session.BackendId;
+        const BackendFrameWorkId = req.session.BackendFrameWorkId;
+        const FrontendId = req.session.FrontendId;
+        const FrontendFrameWorkId = req.session.FrontendFrameWorkId;
+
+        console.log('Quiz:', quiz);
+        console.log('Correct Answers:', correctAnswers);
+        console.log('BackendId:', BackendId);
+        console.log('BackendFrameWorkId:', BackendFrameWorkId);
+        console.log('FrontendId:', FrontendId);
+        console.log('FrontendFrameWorkId:', FrontendFrameWorkId);
+
+        if (!quiz || !correctAnswers) {
+            return res.status(400).json({ error: 'Quiz session not found.' });
+        }
+        let Grade = 0;
+        answer.forEach(userAnswer => {
+            const correctAnswer = correctAnswers.find(q => q.questionId === userAnswer.questionId);
+            if (correctAnswer && userAnswer.answerId === correctAnswer.correctId) {
+                Grade++;
+            }
+        });
+
+        const totalQuestions = quiz.length;
+        const Pass = Grade > totalQuestions / 2;
+        console.log('Grade:', Grade);
+        console.log('totalQuestions:', totalQuestions);
+
+    
+
+        if (!Pass) {
+            try {
+                const BackendJobOffers = await FetchJobIfPass(BackendId, BackendFrameWorkId, req.headers.token);
+                console.log("BackendJobOffers", BackendJobOffers);
+                const FrontEndJobOffers = await FetchJobIfPass(FrontendId,FrontendFrameWorkId, req.headers.token);
+                console.log("FrontEndJobOffers", FrontEndJobOffers);
+                res.status(200).json({
+                    message: 'Congratulations! You passed the quiz.',
+                    grade: Grade,
+                    pass: Pass,
+                    backendJobOffers: BackendJobOffers,
+                    frontendJobOffers: FrontEndJobOffers
+                });
+            } catch (fetchError) {
+                console.error('Error fetching job offers:', fetchError);
+                return next(fetchError);
+            }
+        }  else {
+            try {
+                // Fetch backend skills
+                const FetchBackendResponse = await fetchSkills(BackendId, BackendFrameWorkId, req.headers.token);
+                console.log("FetchBackendResponse", FetchBackendResponse);
+
+                // Fetch frontend skills
+                const FetchFrontendResponse = await fetchSkills(FrontendId, FrontendFrameWorkId, req.headers.token);
+                console.log("FetchFrontendResponse", FetchFrontendResponse);
+
+                // Use the response directly
+                return res.status(200).json({
+                    message: 'You failed the quiz. Here are the required skills.',
+                    grade: Grade,
+                    pass: Pass,
+                    backendSkills: FetchBackendResponse.mandatorySkills,
+                    backendSpecificSkill: FetchBackendResponse.specificSkill,
+                    frontendSkills: FetchFrontendResponse.mandatorySkills,
+                    frontendSpecificSkill: FetchFrontendResponse.specificSkill,
+                });
+            } catch (fetchError) {
+                console.error('Error fetching skills:', fetchError); // Added logging for errors
+                return next(fetchError);
+            }
+        }
+    } catch (error) {
+        console.error('Error submitting quiz:', error); // Added logging for errors
+        next(error);
+    }
+};
+
+const fetchSkills = async (jobId, SkillId, token) => {
+    console.log('Fetching skills...');
+    console.log(token)
+    try {
+        const response = await axios.get(`http://localhost:3000/Quiz/fetchSkillsIfFailed`, {
+            params: { jobId, SkillId },
+            headers: { 'token': token }
+        });
+
+        console.log('Skills fetched:', response.data);
+        return response.data;
+
+    } catch (error) {
+        // console.error('Error fetching skills:', error);
+        throw new Error('Failed to fetch skills');
+    }
+};
+
+export const fetchSkillsIfFailed = async (req, res, next) => {
+    const { jobId, SkillId } = req.query;
+    const Pass = req.session.Pass;
+
+    try {
+        const driver = await Neo4jConnection();
+        const session = driver.session();
+
+        let query = `
+            MATCH (job:Job {Nodeid: $jobId})-[:REQUIRES {mandatory: true}]->(mandatorySkill:Skill)
+            OPTIONAL MATCH (job)-[:REQUIRES]->(specificSkill:Skill)
+        `;
+        let params = { jobId };
+
+        if (SkillId) {
+            query += `
+                WHERE specificSkill.Nodeid = $SkillId
+            `;
+            params.SkillId = SkillId;
+        }
+
+        query += `
+            RETURN 
+                COLLECT(DISTINCT { 
+                    skillId: ID(mandatorySkill), 
+                    Nodeid: mandatorySkill.Nodeid,
+                    skill: mandatorySkill 
+                }) AS mandatorySkills,
+                CASE WHEN specificSkill IS NOT NULL THEN { 
+                    skillId: ID(specificSkill), 
+                    Nodeid: specificSkill.Nodeid,
+                    skill: specificSkill 
+                } ELSE null END AS specificSkill
+        `;
+
+        const result = await session.run(query, params);
+        const record = result.records[0];
+
+        if (!record) {
+            return res.status(404).json({ message: 'No skills found.' });
+        }
+
+        const mandatorySkills = record.get('mandatorySkills').map(skill => ({
+            Nodeid: skill.Nodeid,
+            ...skill.skill.properties
+        }));
+
+        let specificSkill = null;
+        if (SkillId) {
+            const specificSkillRecord = record.get('specificSkill');
+            specificSkill = specificSkillRecord ? {
+                Nodeid: specificSkillRecord.Nodeid,
+                ...specificSkillRecord.skill.properties
+            } : null;
+        }
+
+        console.log({
+            mandatorySkills: mandatorySkills,
+            specificSkill: specificSkill,
+        });
+
+        res.status(200).json({
+            mandatorySkills: mandatorySkills,
+            specificSkill: specificSkill,
+        });
+    } catch (error) {
+        console.error('Error in fetchSkillsIfFailed:', error);
+        next(error);
+    }
+};
+
+// Fetch job offers from an external API
+export const FetchJobIfPass = async (jobId, SkillId, token) => {
+    console.log('Fetching JOBOFFERS...');
+
+    try {
+        const response = await axios.get(`http://localhost:3000/Quiz/fetchJobsOffers`, {
+            params: { jobId, SkillId },
+            headers: { 'token': token }
+        });
+
+        console.log('Job offers fetched:', response.data);
+        return response.data;
+
+    } catch (error) {
+        console.error('Error fetching job offers:', error);
+        throw new Error('Failed to fetch job offers');
+    }
+};
+export const fetchJobsOffers = async (req, res, next) => {
+    const { jobId, SkillId } = req.query;
+    try {
+        const driver = await Neo4jConnection();
+        const session = driver.session();
+
+        let query;
+        let params = { jobId };
+
+        if (SkillId) {
+            query = `
+                MATCH (skill:Skill {Nodeid: $SkillId})<-[:BELONGS_TO]-(JobOffer:JobOffer)
+                RETURN JobOffer
+            `;
+            params.SkillId = SkillId;
+        } else {
+            query = `
+                MATCH (job:Job {Nodeid: $jobId})<-[:BELONGS_TO]-(JobOffer:JobOffer)
+                RETURN JobOffer
+            `;
+        }
+
+        const result = await session.run(query, params);
+
+        const jobs = result.records.map(record => {
+            const jobNode = record.get('JobOffer');
+            return {
+                Nodeid: jobNode.properties.Nodeid,
+                ...jobNode.properties
+            };
+        });
+
+        console.log("Job Offers:", jobs);
+
+        res.status(200).json({
+            jobs: jobs
+        });
+
+        await session.close();
+    } catch (error) {
+        console.error('Error fetching job offers:', error);
+        next(error);
+    }
+};
+
+
 // export const AddQuestionsToNode = async (req, res, next) => {
+
+
 //     let session;
 //     let tx;
 //     const { SkillId } = req.query;

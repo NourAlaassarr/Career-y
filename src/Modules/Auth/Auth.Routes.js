@@ -6,6 +6,7 @@ import * as Validator from './Auth.Validator.js'
 import { ValidationCoreFunction } from "../../middleware/validation.js";
 const router = Router()
 
+//Admin
 router.post('/AdminSignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.AdminSignUp))
 router.post('/SignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.SignUp))
 router.post('/SignIn',ValidationCoreFunction(Validator.SignIn),asyncHandler(AuthControllers.signIn))

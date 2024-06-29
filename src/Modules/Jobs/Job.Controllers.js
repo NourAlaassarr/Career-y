@@ -5,7 +5,7 @@ import { sendmailService } from '../../Services/SendEmailService.js'
 import { emailTemplate } from '../../utils/EmailTemplate.js'
 import{jobOfferEmailTemplate}from'../../utils/JobOfferEmailTemplate.js'
 
-//Add Job offer -> JobID/SkillId  (Admin ) + Notify Users
+//Add Job offer -> JobID/SkillId  (Admin only ) + Notify Users
 export const AddJobOffer = async (req, res, next) => {
     let session;
     
@@ -179,7 +179,7 @@ export const GetAllJobOffers = async (req, res, next) => {
         res.status(200).json(jobOffers);
 } 
 
-//delete JobOffer (Admin )
+//delete JobOffer (Admin only)
 export const DeleteJob=async(req,res,next)=>{
     const{JobOfferId}=req.query
     let session;
@@ -199,7 +199,7 @@ export const DeleteJob=async(req,res,next)=>{
         res.status(200).json({message: 'JobOffer deleted successfully' });
 }
 
-//update JobOffer (Admin)
+//update JobOffer (Admin only)
 export const UpdateJobOffer=async(req,res,next)=>{
     const { JobOfferId } = req.query;
     const {CompanyName, JobDescription, JobRequirements, salary_range, date_posted, employment_type, title } = req.body;

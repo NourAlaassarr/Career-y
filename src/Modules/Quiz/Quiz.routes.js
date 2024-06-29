@@ -15,10 +15,21 @@ router.post('/AddQuiz',asyncHandler(QuizControllers.AddQuizNode))
 //Admin Only
 router.post('/AddQuestionsToQuiz',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(QuizValidation.AddQuestionsToNode),asyncHandler(QuizControllers.AddQuestionsToQuiz))
 
-router.get('/GetBackTrackQuiz',ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetBackendQuiz))
+
 router.get('/Quiz',isAuth(QuizApiRoles.GetQuiz),ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
 router.get('/AllQuizzes',isAuth(QuizApiRoles.GetAllQuizzes),ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
+
+
+//Careeer Guidance
 router.get('/SpecificFramework',isAuth(QuizApiRoles.GetFrameWORKs),ValidationCoreFunction(QuizValidation.getSpecificTrackSkill),asyncHandler(QuizControllers.GetFrameWORKs))
-router.get('/GetTrackQuiz',isAuth(),ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
-router.post('/SubmitQuiz',isAuth(QuizApiRoles.SubmitQuiz),ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
+router.get('/GetTrackQuiz',isAuth(QuizApiRoles.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
+router.post('/SubmitQuiz',ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
+router.get('/GetBackendTrackQuiz',ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetBackendTrackQuiz))
+
+/// FullStack ///
+router.get('/GetFullStackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),asyncHandler(QuizControllers.GetFullStackTrackQuiz))
+router.post('/submitFullstackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),asyncHandler(QuizControllers.submitFullstackTrackQuiz))
+router.get('/fetchSkillsIfFailed',isAuth(QuizApiRoles.fetchSkillsIfFailed),asyncHandler(QuizControllers.fetchSkillsIfFailed))
+
+router.get('/fetchJobsOffers',isAuth(QuizApiRoles.fetchJobsOffers),asyncHandler(QuizControllers.fetchJobsOffers))
 export default router 

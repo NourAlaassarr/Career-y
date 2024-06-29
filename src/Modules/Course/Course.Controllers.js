@@ -292,6 +292,13 @@ export const GetCourseDetails = async(req,res,next)=>{
 }
 
 
+//recommend Course f tarck mo3yan
+export const RecommendCourse = async(req,res,next)=>{
+    const{TrackId}=req.query
+    
+}
+
+
 
 //Add Review TOBE
 export const AddReview = async(req,res,next)=>{
