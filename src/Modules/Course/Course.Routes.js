@@ -5,10 +5,11 @@ import { asyncHandler } from '../../utils/ErrorHandling.js';
 import  {isAuth} from'../../Middleware/auth.js'
 import{CourseApiRoles}from'./Course.endpoints.js'
 
+//Admins Only
 router.post('/AddCourse',isAuth(CourseApiRoles.Add_Course),asyncHandler(CourseControllers.AddCourse));
-//Admins
+//Admins Only
 router.delete('/DeleteCourse',isAuth(CourseApiRoles.DeleteCourse),asyncHandler(CourseControllers.DeleteCourse))
-//Admins
+//Admins Only
 router.patch('/ApproveCourse',isAuth(CourseApiRoles.ApproveCourse),asyncHandler(CourseControllers.ApproveCourse))
 
 router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))

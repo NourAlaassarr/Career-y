@@ -11,7 +11,9 @@ App.use(session({
     secret: '1234gsshjjdnnsdekekhwekhdl', // Replace with a random string (used to sign the session ID cookie)
     resave: false,
     saveUninitialized: true,
-    cookie: { secure: false } // Set secure to true in production (HTTPS)
+    cookie: { cookie: {
+        maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
+    } }
 }));
 
 initiateApp(App,express)
