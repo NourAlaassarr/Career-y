@@ -2,11 +2,10 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
 
 
-
-
-////Get Roadmap of Specific Track ID
+//Get Roadmap of Specific Track ID
 export const GetRoadmap = async (req, res, next) => {
     const { TrackId } = req.query;
+    
     let session;
     const driver = await Neo4jConnection();
     session = driver.session(); 
@@ -25,37 +24,38 @@ export const GetRoadmap = async (req, res, next) => {
             'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.Nodeid = $TrackId RETURN otherJob',
             { TrackId }
         );
-        console.log(TrackId)
+        console.log(JobContainsOtherJobsResult.records)
         let skills = [];
 
         if (JobContainsOtherJobsResult.records.length > 0) {
-            // If there are other jobs connected to the track, get their names
-            const otherJobNames = JobContainsOtherJobsResult.records.map(record => record.get('otherJob').properties.name);
-            
-            // Query to get skills associated with the other jobs
-            for (const otherJobName of otherJobNames) {
-                const skillsResult = await session.run(
-                    'MATCH (job:Job {Nodeid: $TrackId})-[:REQUIRES]->(skill:Skill) ' +
-                    'OPTIONAL MATCH (job)-[r:REQUIRES]->(skill) ' +
-                    'RETURN skill, COALESCE(r.mandatory, false) AS mandatory',
-                    { TrackId }
-                );
-            
-                const jobSkills = skillsResult.records.map(record => {
-                    const skillNode = record.get('skill');
-                    return {
-                        name: skillNode.properties.name,
-                        properties: skillNode.properties,
-                        mandatory: record.get('mandatory')
-                    };
-                });
-            
-                skills.push({
-                    job: otherJobName,
-                    skills: jobSkills
-                });
-            }
-        } else {
+           // Process each connected otherJob node
+        for (const record of JobContainsOtherJobsResult.records) {
+            const otherJobNode = record.get('otherJob');
+
+            // Query to get skills associated with the current otherJob and their mandatory status
+            const skillsResult = await session.run(
+                'MATCH (otherJob:Job {Nodeid: $otherJobId})-[:REQUIRES]->(skill:Skill) ' +
+                'MATCH (otherJob)-[r:REQUIRES]->(skill) ' +
+                'RETURN skill, r.mandatory AS mandatory',
+                { otherJobId: otherJobNode.properties.Nodeid }
+            );
+
+            const jobSkills = skillsResult.records.map(record => {
+                const skillNode = record.get('skill');
+                return {
+                    name: skillNode.properties.name,
+                    properties: skillNode.properties,
+                    mandatory: record.get('mandatory')
+                };
+            });
+
+            skills.push({
+                job: otherJobNode.properties.name,
+                skills: jobSkills
+            });
+        }
+    }
+        else {
             // If there are no other jobs connected to the track, get the skills of the track itself
             const RoadMap = await session.run(
                 'MATCH (job:Job {Nodeid: $TrackId})-[:REQUIRES]->(skill:Skill) ' +
@@ -125,6 +125,7 @@ export const GetAllSkills= async(req,res,next)=>{
     
     res.status(200).json({ Message: 'Skills', Skills: skills });
 }
+
 //Update ResourcesAdmin + Send Notification for the Updation
 export const UpdateResource = async (req, res, next) => {
     const { Skillid } = req.query;
@@ -232,8 +233,6 @@ export const GetUpdatedSkill= async (req, res, next) => {
 
 }
 
-
-
 //GetUpdatedRoadMap
 export const GetUpdatedRoadMap= async (req, res, next) => {
     const {JobId} = req.params;
@@ -305,6 +304,102 @@ export const GetUpdatedRoadMap= async (req, res, next) => {
     res.json({ Message: 'Success', RoadMap: skills });
     session.close();
 }
+
+
+
+
+// export const GetRoadmap = async (req, res, next) => {
+//     const { TrackId } = req.query;
+//     let session;
+
+//     try {
+//         const driver = await Neo4jConnection();
+//         session = driver.session();
+
+//         // Check if track exists
+//         const TrackCheckResult = await session.run(
+//             'MATCH (job:Job {Nodeid: $TrackId}) RETURN job',
+//             { TrackId }
+//         );
+
+//         if (TrackCheckResult.records.length === 0) {
+//             return next(new Error("Track Doesn't exist", { cause: 404 }));
+//         }
+
+//         let skills = [];
+
+//         // Query to get other jobs connected to the track
+//         const JobContainsOtherJobsResult = await session.run(
+//             'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.Nodeid = $TrackId RETURN otherJob',
+//             { TrackId }
+//         );
+
+//         if (JobContainsOtherJobsResult.records.length > 0) {
+//             // If there are other jobs connected to the track, iterate through each job
+//             for (const record of JobContainsOtherJobsResult.records) {
+//                 const otherJobNode = record.get('otherJob');
+
+//                 // Query to get skills associated with the current otherJob
+//                 const skillsResult = await session.run(
+//                     'MATCH (otherJob:Job {Nodeid: $otherJobId})-[:REQUIRES]->(skill:Skill) ' +
+//                     'RETURN skill, false AS mandatory', // Assuming skills are not mandatory in this query
+//                     { otherJobId: otherJobNode.properties.Nodeid }
+//                 );
+
+//                 const jobSkills = skillsResult.records.map(record => {
+//                     const skillNode = record.get('skill');
+//                     return {
+//                         name: skillNode.properties.name,
+//                         properties: skillNode.properties,
+//                         mandatory: record.get('mandatory')
+//                     };
+//                 });
+
+//                 skills.push({
+//                     job: otherJobNode.properties.name,
+//                     skills: jobSkills
+//                 });
+//             }
+//         }
+
+//         // Query to get skills of the main job (track) itself
+//         const mainJobSkillsResult = await session.run(
+//             'MATCH (job:Job {Nodeid: $TrackId})-[:REQUIRES]->(skill:Skill) ' +
+//             'RETURN skill, false AS mandatory', // Assuming skills are not mandatory in this query
+//             { TrackId }
+//         );
+
+//         const mainJobSkills = mainJobSkillsResult.records.map(record => {
+//             const skillNode = record.get('skill');
+//             return {
+//                 name: skillNode.properties.name,
+//                 properties: skillNode.properties,
+//                 mandatory: record.get('mandatory')
+//             };
+//         });
+
+//         // Combine main job skills with other jobs' skills
+//         skills.unshift({  // Adding main job skills at the beginning of the skills array
+//             job: 'Main Job', // Adjust as needed
+//             skills: mainJobSkills
+//         });
+
+//         res.json({ Message: 'Success', RoadMap: skills });
+//     } catch (error) {
+//         next(error); // Pass any errors to the error handler middleware
+//     } finally {
+//         if (session) {
+//             session.close();
+//         }
+//     }
+// };
+
+
+
+
+
+
+
 //UpdateRoadmap TOBE IMPLEMENTED
 ////Get Roadmap of Specific Track by name
 // export const GetRoadmap = async (req, res, next) => {
