@@ -4,7 +4,7 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 
 
 
-////Get Roadmap of Specific Track by name
+////Get Roadmap of Specific Track ID
 export const GetRoadmap = async (req, res, next) => {
     const { TrackId } = req.query;
     let session;
@@ -25,7 +25,7 @@ export const GetRoadmap = async (req, res, next) => {
             'MATCH (job:Job)-[:REQUIRES]->(otherJob:Job) WHERE job.Nodeid = $TrackId RETURN otherJob',
             { TrackId }
         );
-
+        console.log(TrackId)
         let skills = [];
 
         if (JobContainsOtherJobsResult.records.length > 0) {
