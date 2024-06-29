@@ -5,7 +5,7 @@ import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from 'axios';
 import { tr } from 'date-fns/locale';
 
-//Add Quiz Neo4j
+//Add Quiz Neo4j(Admins)
 export const AddQuizNode = async (req, res, next) => {
     let session;
         const { JobId } = req.query;
@@ -607,7 +607,7 @@ export const SubmitQuiz = async (req, res, next) => {
 const fetchBackendQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching backend quiz...');
-        const response = await axios.get(`http://localhost:3000/Quiz/GetBackendTrackQuiz`, {
+        const response = await axios.get(`http://localhost:8000/Quiz/GetBackendTrackQuiz`, {
             params: { jobId, SkillId },
             headers: {
                 token: token, 
@@ -624,7 +624,7 @@ const fetchBackendQuiz = async (jobId, SkillId, token) => {
 // const fetchFrameworks = async (jobId, token) => {
 //     console.log('Fetching frameworks...');
 //     try {
-//         const response = await axios.get(`http://localhost:3000/Quiz/SpecificFramework`, {
+//         const response = await axios.get(`http://localhost:8000/Quiz/SpecificFramework`, {
 //             params: { jobId },
 //             headers: {
 //                 token: token,
@@ -639,7 +639,7 @@ const fetchBackendQuiz = async (jobId, SkillId, token) => {
 const fetchFrontendTrackQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching track quiz...');
-        const response = await axios.get('http://localhost:3000/Quiz/GetTrackQuiz', {
+        const response = await axios.get('http://localhost:8000/Quiz/GetTrackQuiz', {
             params: { jobId, SkillId },
             headers: {
                 token: token,
@@ -794,7 +794,7 @@ const fetchSkills = async (jobId, SkillId, token) => {
     console.log('Fetching skills...');
     console.log(token)
     try {
-        const response = await axios.get(`http://localhost:3000/Quiz/fetchSkillsIfFailed`, {
+        const response = await axios.get(`http://localhost:8000/Quiz/fetchSkillsIfFailed`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });
@@ -884,7 +884,7 @@ export const FetchJobIfPass = async (jobId, SkillId, token) => {
     console.log('Fetching JOBOFFERS...');
 
     try {
-        const response = await axios.get(`http://localhost:3000/Quiz/fetchJobsOffers`, {
+        const response = await axios.get(`http://localhost:8000/Quiz/fetchJobsOffers`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });
