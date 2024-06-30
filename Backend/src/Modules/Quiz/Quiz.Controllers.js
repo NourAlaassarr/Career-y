@@ -703,9 +703,13 @@ export const GetFullStackTrackQuiz = async (req, res, next) => {
     }
 };
 
-
+//i am using token in header
 export const submitFullstackTrackQuiz = async (req, res, next) => {
     const { answer } = req.body;
+    const userId = req.authUser._id
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
     try {
         console.log("helo")
         console.log('Session Data:', req.session);
@@ -740,9 +744,23 @@ export const submitFullstackTrackQuiz = async (req, res, next) => {
         console.log('Grade:', Grade);
         console.log('totalQuestions:', totalQuestions);
 
-    
+const fixedTrackId = '697f3adc-4fc4-4ef8-bffd-bd3cf243375f';
 
-        if (!Pass) {
+// Record the quiz result in the database for the fixed track
+await session.run(
+    `MATCH (u:User {_id: $userId})
+     MATCH (t:Job {Nodeid: $fixedTrackId})
+     CREATE (u)-[:TOOK_TrackQuiz {pass: $Pass, grade: $Grade,TotalQuestions: $totalQuestions}]->(t)`,
+    {
+        userId,
+        Pass,
+        Grade,
+        fixedTrackId,
+        totalQuestions
+    }
+);
+
+        if (Pass) {
             try {
                 const BackendJobOffers = await FetchJobIfPass(BackendId, BackendFrameWorkId, req.headers.token);
                 console.log("BackendJobOffers", BackendJobOffers);

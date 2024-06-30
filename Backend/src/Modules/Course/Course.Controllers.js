@@ -293,12 +293,26 @@ export const GetCourseDetails = async(req,res,next)=>{
 
 
 //recommend Course f tarck mo3yan
-export const RecommendCourse = async(req,res,next)=>{
-    const{TrackId}=req.query
-    
-}
+export const GetTrackCourses = async (req, res, next) => {
+    const { TrackId } = req.query;
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
 
+  
+        const CourseCheckResults = await session.run(
+            `MATCH (t:Job {Nodeid: $TrackId})-[:RELATED_COURSE]->(c:Course) RETURN c`,
+            { TrackId }
+        );
 
+        if (CourseCheckResults.records.length === 0) {
+            return next(new Error("Track has no related courses", { cause: 404 }));
+        }
+
+        const courses = CourseCheckResults.records.map(record => record.get('c').properties);
+        res.status(200).json({ courses });
+   
+};
 
 //Add Review TOBE
 export const AddReview = async(req,res,next)=>{

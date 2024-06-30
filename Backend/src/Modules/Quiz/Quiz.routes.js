@@ -23,8 +23,8 @@ router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),as
 //Careeer Guidance
 router.get('/SpecificFramework',isAuth(QuizApiRoles.GetFrameWORKs),ValidationCoreFunction(QuizValidation.getSpecificTrackSkill),asyncHandler(QuizControllers.GetFrameWORKs))
 router.get('/GetTrackQuiz',isAuth(QuizApiRoles.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
-router.post('/SubmitQuiz',ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
-router.get('/GetBackendTrackQuiz',ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetBackendTrackQuiz))
+router.post('/SubmitQuiz',isAuth(QuizApiRoles.SubmitQuiz),ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
+router.get('/GetBackendTrackQuiz',isAuth(QuizApiRoles.GetBackendTrackQuiz),ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetBackendTrackQuiz))
 
 /// FullStack ///
 router.get('/GetFullStackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),asyncHandler(QuizControllers.GetFullStackTrackQuiz))

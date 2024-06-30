@@ -16,6 +16,7 @@ router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),asyncHandler(Co
 
 router.get('/CourseDetails',isAuth(CourseApiRoles.GetCourseDetails),asyncHandler(CourseControllers.GetCourseDetails))
 
+router.get("/GetTrackCourses",isAuth(CourseApiRoles.GetTrackCourses),asyncHandler(CourseControllers.GetTrackCourses))
 
 //Owner/Admin
 router.put('/UpdateCourse',isAuth(CourseApiRoles.UpdateCourse),asyncHandler(CourseControllers.UpdateCourse))

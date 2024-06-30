@@ -8,4 +8,5 @@ export const CourseApiRoles={
     GetAllCourses:[SystemRoles.Admin,SystemRoles.User],
     UpdateCourse:[SystemRoles.Admin,SystemRoles.User],
     GetCourseDetails:[SystemRoles.Admin,SystemRoles.User],
+    GetTrackCourses:[SystemRoles.Admin,SystemRoles.User],
 }
