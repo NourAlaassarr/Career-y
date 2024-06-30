@@ -750,7 +750,7 @@ const fixedTrackId = '697f3adc-4fc4-4ef8-bffd-bd3cf243375f';
 await session.run(
     `MATCH (u:User {_id: $userId})
      MATCH (t:Job {Nodeid: $fixedTrackId})
-     CREATE (u)-[:TOOK_TrackQuiz {pass: $Pass, grade: $Grade,TotalQuestions: $totalQuestions}]->(t)`,
+     CREATE (u)-[:TOOK_TRACK_QUIZ {pass: $Pass, grade: $Grade,TotalQuestions: $totalQuestions}]->(t)`,
     {
         userId,
         Pass,
