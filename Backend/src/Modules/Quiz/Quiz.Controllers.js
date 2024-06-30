@@ -225,8 +225,128 @@ const getRandomElements = (arr, count) => {
     const shuffled = arr.sort(() => 0.5 - Math.random());
     return shuffled.slice(0, count);
 };
+//------------------------------------Topic Quiz---------------------------------------------
+//Solve TopicQuiz
+export const SubmitTopicQuiz = async (req, res, next) => {
+    const { answer } = req.body;
+    const { SkillId } = req.query;
+    const UserId = req.authUser._id;
+console.log(answer)
 
+// Get current timestamp
+const timestamp = new Date().toISOString();
+    console.log("Current Timestamp:", timestamp);
+    let session;
 
+    const driver = await Neo4jConnection();
+    session = driver.session();
+
+    // Check if the quiz exists
+    const ifQuizExists = await session.run(
+        "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q",
+        { SkillId }
+    );
+    if (ifQuizExists.records.length === 0) {
+        return next(new Error("Quiz does not exist", { cause: 400 }));
+    }
+
+     // Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+     const quizAttemptsResult = await session.run(
+        "MATCH (u:User {_id: $UserId})-[r:TOOK]->(qa:Skill {Nodeid: $SkillId}) RETURN r.timestamp AS lastAttempt",
+        { UserId, SkillId }
+    );
+
+    if (quizAttemptsResult.records.length > 0) {
+        const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+        const lastAttemptDate = new Date(lastAttempt);
+        const currentDate = new Date();
+
+        console.log("Last Attempt Timestamp:", lastAttempt);
+        console.log("Last Attempt Date:", lastAttemptDate);
+        console.log("Current Date:", currentDate);
+
+        // Check if 24 hours have passed since the last attempt
+        const timeDifference = currentDate - lastAttemptDate;
+        const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+        console.log("Hours Difference:", hoursDifference);
+
+        if (hoursDifference < 24) {
+            return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+        } else {
+            // Remove existing relationships
+            await session.run(
+                `
+                MATCH (u:User {_id: $UserId})-[r:TOOK|PASSED|FAILED]->(q:Skill {Nodeid: $SkillId})
+                DELETE r
+                `,
+                { UserId, SkillId }
+            );
+        }
+    }
+    const quizInfoResult = await session.run(
+        "MATCH (q:Skill {Nodeid: $SkillId}) RETURN q.name AS QuizName",
+        { SkillId }
+    );
+    const quizInfoRecord = quizInfoResult.records[0];
+    const QuizName = quizInfoRecord ? quizInfoRecord.get("QuizName") : "";
+
+    // Get Quiz information
+    const quizQuestionsResult = await session.run(
+        `
+        MATCH (q:Skill {Nodeid: $SkillId})-[:HAS_QUESTION]->(question:Question)
+        OPTIONAL MATCH (question)-[rel:HAS_OPTION]->(option:Option)
+        WHERE rel.correct = true
+        RETURN question.id AS questionId, option.id AS answerId
+        ORDER BY question.order
+        `,
+        { SkillId }
+    );
+    
+    const quizQuestions = quizQuestionsResult.records.map(record => ({
+        questionId: record.get("questionId"),
+        answerId: record.get("answerId")
+    }));
+    console.log("Quiz Name:", QuizName);
+    console.log("Quiz Questions with Correct Answers:", quizQuestions);
+
+    let Grade = 0;
+    for (let i = 0; i < answer.length; i++) {
+        const userAnswer = answer[i];
+        const correctAnswer = quizQuestions.find(q => q.questionId === userAnswer.questionId);
+        if (correctAnswer && userAnswer.answerId === correctAnswer.answerId) {
+            Grade++;
+        }
+    }
+    const totalQuestions = quizQuestions.length;
+    const Pass = Grade > totalQuestions / 2;
+
+        // Update user node with quiz results and create relationship
+        let query =
+            "MATCH (u:User {_id: $UserId}), (q:Skill {Nodeid: $SkillId}) " +
+            "CREATE (u)-[:TOOK { QuizName: $QuizName, Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass,timestamp: $timestamp }]->(q)";
+
+        if (Pass) {
+            query +=
+                " MERGE (u)-[:HAS_SKILL]->(q)";
+        }
+        
+        await session.run(query, {
+            UserId,
+            SkillId,
+            QuizName,
+            Grade,
+            totalQuestions,
+            Pass,
+            timestamp,
+        });
+
+        res.status(200).json({
+            Message: "Your grade is",
+            Grade,
+            TotalQuestions: totalQuestions,
+        });
+    }
 
 
 //--------------------------------Career Guidance-------------------------------------------------------------------

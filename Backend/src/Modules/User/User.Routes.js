@@ -8,7 +8,7 @@ import {UserApiRoles}from './User.endpoints.js'
 const router = Router()
 
 
-router.post('/Solve',isAuth(UserApiRoles.Solve),asyncHandler(UserContollers.SolveQuiz))
+
 router.get('/AllSolved',isAuth(UserApiRoles.GetALLMarksAndGrades),asyncHandler(UserContollers.GetALLMarksAndGrades))
 router.post('/AddCareerGoal',isAuth(UserApiRoles.AddCareerGoal),asyncHandler(UserContollers.AddCareerGoal))
 router.post('/AddSkills',isAuth(UserApiRoles.AddSkills),asyncHandler(UserContollers.AddSkills))

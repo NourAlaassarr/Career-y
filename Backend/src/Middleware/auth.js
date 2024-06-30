@@ -7,8 +7,9 @@ export const isAuth = (roles)=>{
     
     return async(req,res,next)=>{
         let session;
-    try{
         const tokens = req.headers.token
+    try{
+        
         // console.log(tokens)
         if(!tokens)
         {
@@ -72,10 +73,10 @@ export const isAuth = (roles)=>{
                 'MATCH (user:User {token: $token}) RETURN user',
                 { token: tokens }
             );
-        
+            console.log(result)
             // Check if the user exists
             const user = result.records[0].get('user');
-            if (!user) {
+            if (!result.records[0]) {
                 return next(new Error('Error token', { cause: 500 }));
             }
             console.log(user)

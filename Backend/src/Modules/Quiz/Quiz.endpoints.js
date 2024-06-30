@@ -13,4 +13,5 @@ export const QuizApiRoles={
     GetFullStackTrackQuiz:[SystemRoles.User,SystemRoles.Admin],
     fetchSkillsIfFailed:[SystemRoles.User,SystemRoles.Admin],
     fetchJobsOffers:[SystemRoles.User,SystemRoles.Admin],
+    SubmitTopicQuiz:[SystemRoles.User,SystemRoles.Admin],
 }
