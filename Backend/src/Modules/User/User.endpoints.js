@@ -13,4 +13,5 @@ export const UserApiRoles={
     CareerGoalUserProgress:[SystemRoles.User,SystemRoles.Admin],
     GetALLUserSkills:[SystemRoles.User,SystemRoles.Admin],
     AddFeedBack:[SystemRoles.User],
+    UpdateFeedBack:[SystemRoles.User],
 }

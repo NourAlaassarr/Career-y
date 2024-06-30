@@ -2,9 +2,9 @@ import { session } from "neo4j-driver";
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
+import {convertNeo4jDatetimeToISO} from "../../utils/ConverNeo4jDateTimes.js";
 
 //UserGet All Grades+QuizName Neo4j
-
 export const GetALLMarksAndGrades = async (req, res, next) => {
     const UserId = req.authUser._id;
 
@@ -229,32 +229,58 @@ export const RecommendTracks = async (req, res, next) => {
     res.status(200).json({ Message: "done", jobs });
     session.close(); // Close the session in the finally block
 };
-//Get All User Profile Skills
+
+
+// Get All User Profile Skills and Feedbacks
 export const GetUserDetails = async (req, res, next) => {
     const UserID = req.authUser._id;
     let session;
     const driver = await Neo4jConnection();
     session = driver.session();
+
     const query = `
     MATCH (u:User {_id: $UserID})
-    OPTIONAL MATCH (u)-[r:HAS_SKILL]->(s:Skill)
-    RETURN u, collect(s) as skills;
-`;
+    OPTIONAL MATCH (u)-[:HAS_SKILL]->(s:Skill)
+    OPTIONAL MATCH (u)-[:GAVE_FEEDBACK]->(f:Feedback)
+    WITH u, collect(DISTINCT s) as skills, collect(DISTINCT f) as feedbacks
+    RETURN u, skills, feedbacks;
+    `;
+    try {
+        const result = await session.run(query, { UserID });
 
-    const result = await session.run(query, { UserID });
+        if (result.records.length === 0) {
+            return next(new Error("User not found", { cause: 404 }));
+        }
 
-    const userRecord = result.records[0];
-    const user = userRecord.get("u").properties;
-    const skills = userRecord.get("skills").map((skill) => skill.properties);
+        const userRecord = result.records[0];
+        const user = userRecord.get("u").properties;
+        const skills = userRecord.get("skills").map((skill) => skill.properties);
+        const feedbacks = userRecord.get("feedbacks").map((feedback) => {
+            let feedbackProps = feedback.properties;
 
-    const userDetails = {
-        ...user,
-        skills: skills,
-    };
+            // Convert Neo4j datetime object to JavaScript Date object for createdAt and updatedAt
+            feedbackProps.createdAt = convertNeo4jDatetimeToISO(feedbackProps.createdAt);
+            feedbackProps.updatedAt = convertNeo4jDatetimeToISO(feedbackProps.updatedAt);
 
-    res.status(200).json(userDetails);
+            return feedbackProps;
+        });
+
+        const userDetails = {
+            ...user,
+            skills: skills,
+            feedbacks: feedbacks,
+        };
+
+        res.status(200).json(userDetails);
+    } catch (error) {
+        console.error(error);
+        return next(new Error("Internal Server Error"), { cause: 500 });
+    } finally {
+        if (session) {
+            await session.close();
+        }
+    }
 };
-
 //Track User's Progress Only Mandatoury Skills
 export const CareerGoalUserProgress = async (req, res, next) => {
     const userId = req.authUser._id;
@@ -373,4 +399,45 @@ export const AddFeedBack = async (req, res, next) => {
       res.status(201).json({ Message: "Feedback Added Successfully"});
     }
 
+//Update FeedBack on Career-y
+export const UpdateFeedBack = async (req, res, next) => {
+    const { feedback } = req.body;
+
+    const UserId = req.authUser._id;
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    if(!feedback){
+        return next(new Error("Feedback is required"), { cause: 400 });
+    }
+    // Update the existing feedback
+    const result = await session.run(
+        `MATCH (u:User { _id: $UserId })-[:GAVE_FEEDBACK]->(f:Feedback)
+         SET f.feedback = $feedback, f.updatedAt = datetime()
+         RETURN f`,
+        { UserId, feedback }
+    );
+
+    if (result.records.length === 0) {
+        return next(new Error("Feedback not found or you're not authorized to update this feedback", { cause: 404 }));
+    }
+
+    const updatedFeedback = result.records[0].get('f').properties;
+    res.status(200).json({Message:"Feedback Updated Successfully"});
+
+}
+
+
 //Add Rate on Course 
+// export const AddRate = async (req, res, next) => {
+//     const { rate } = req.body;
+//     // Validate rate
+//     if (rate < 1 || rate > 5) {
+//         return next(new Error("Rate must be between 1 and 5"), { cause: 400 });
+//     }
+
+//     const UserId = req.authUser._id;
+//     let session;
+//     const driver = await Neo4jConnection();
+//     session = driver.session();
+// }
