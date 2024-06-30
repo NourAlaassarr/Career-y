@@ -53,7 +53,7 @@ To run the project locally, follow these steps:
 4. Start the backend server: `npm run server`
 5. Start the frontend development server: `npm run client`
 
-Visit [http://localhost:3000](http://localhost:3000) to access the website.
+Visit [http://localhost:8000](http://localhost:8000) to access the website.
 
 ## Technologies Used
 
