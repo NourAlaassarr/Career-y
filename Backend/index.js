@@ -17,3 +17,4 @@ App.use(session({
 }));
 
 initiateApp(App,express)
+export default App;
