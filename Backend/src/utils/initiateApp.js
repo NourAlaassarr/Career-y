@@ -27,7 +27,7 @@ export const initiateApp= async(App,express)=>{
     App.use('/JobOffer',router.JobOfferRoutes)
     App.use('/Course',router.CourseRoutes)
     App.use('/Admin',router.AdminRoutes)
-    App.all('*',(req,res,next)=> res.status(404).json({Message:'404  URL Not Found'}))
+    App.all('*',(req,res,next)=> res.status(404).json({Message:'hhhhhhh  URL Not Found'}))
 
     App.use(GlobalResponse)
     App.use((err ,req,res,next)=>{
