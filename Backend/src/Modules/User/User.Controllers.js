@@ -124,50 +124,7 @@ const timestamp = new Date().toISOString();
         });
     }
 //UserGet All Grades+QuizName Neo4j
-// export const GetALLMarksAndGrades = async (req, res, next) => {
-//     const UserId = req.authUser._id;
 
-//     let session;
-//     const driver = await Neo4jConnection();
-//     session = driver.session();
-
-//     try {
-//         const AllInfo = await session.run(
-//             `MATCH (u:User {_id: $UserId})
-//              OPTIONAL MATCH (u)-[took:TOOK]->(quiz:Skill)
-//              OPTIONAL MATCH (u)-[tookTrack:TOOK_TRACK_QUIZ ]->(trackQuiz:Job)
-//              RETURN u, 
-//              COLLECT({
-//                 QuizName: quiz.name, 
-//                 TotalQuestions: took.TotalQuestions,
-//                 Grade: took.Grade, 
-//                 Pass: took.Pass 
-//              }) AS takenQuizzes,
-//              COLLECT({
-//                 TrackId: trackQuiz.Nodeid, 
-//                 TrackName: trackQuiz.name,
-//                 Grade: tookTrack.grade, 
-//                 TotalQuestions: tookTrack.TotalQuestions, 
-//                 Pass: tookTrack.pass 
-//              }) AS trackQuizzes`,
-//             { UserId }
-//         );
-
-//         const user = AllInfo.records[0].get("u").properties;
-//         const takenQuizzes = AllInfo.records[0].get("takenQuizzes");
-//         const trackQuizzes = AllInfo.records[0].get("trackQuizzes");
-
-
-//         res.status(200).json({ Message: "DONE", takenQuizzes, trackQuizzes });
-//     } catch (error) {
-//         console.error('Error fetching marks and grades:', error);
-//         next(error);
-//     } finally {
-//         if (session) {
-//             await session.close();
-//         }
-//     }
-// };
 export const GetALLMarksAndGrades = async (req, res, next) => {
     const UserId = req.authUser._id;
 
