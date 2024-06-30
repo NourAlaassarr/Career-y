@@ -1,7 +1,7 @@
 import { session } from "neo4j-driver";
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from "axios";
-
+import { v4 as uuidv4 } from 'uuid';
 
 //UserGet All Grades+QuizName Neo4j
 
@@ -337,4 +337,40 @@ export const GetALLUserSkills = async (req, res, next) => {
         res.status(200).json({ skills });
 };
 
-//Add review on CourseorCareer-y
+//Add FeedBack on Career-y
+export const AddFeedBack = async (req, res, next) => {
+    const { feedback } = req.body;
+    const UserId = req.authUser._id;
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    if(!feedback){
+        return next(new Error("Feedback is required"), { cause: 400 });
+    }
+    const checkResult = await session.run(
+        `MATCH (u:User { _id: $UserId })-[:GAVE_FEEDBACK]->(f:Feedback)
+         RETURN f`,
+        { UserId }
+      );
+  
+      if (checkResult.records.length > 0) {
+        return next(new Error("You have already provided a feedback", { cause: 400 }));
+      }
+    const FeedbackId = uuidv4();
+    const result = await session.run(
+        `MATCH (u:User { _id: $UserId })
+         CREATE (f:Feedback { feedback: $feedback, createdAt: datetime(),FeedbackId: $FeedbackId  })
+         CREATE (u)-[:GAVE_FEEDBACK]->(f)
+         RETURN f`,
+        { UserId, feedback,FeedbackId}
+      );
+  
+      if (result.records.length === 0) {
+        return next(new Error("User not found", { cause: 404 }));
+      }
+  
+      const createdFeedback = result.records[0].get('f');
+      res.status(201).json({ Message: "Feedback Added Successfully"});
+    }
+
+//Add Rate on Course 

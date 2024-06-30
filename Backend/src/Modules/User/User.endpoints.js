@@ -1,5 +1,5 @@
 import { SystemRoles } from "../../utils/SystemRoles.js"
-import { RecommendTracks } from "./User.Controllers.js"
+
 
 export const UserApiRoles={
     Solve:[SystemRoles.User,SystemRoles.Admin],
@@ -12,4 +12,5 @@ export const UserApiRoles={
     GetUserDetails:[SystemRoles.User,SystemRoles.Admin],
     CareerGoalUserProgress:[SystemRoles.User,SystemRoles.Admin],
     GetALLUserSkills:[SystemRoles.User,SystemRoles.Admin],
+    AddFeedBack:[SystemRoles.User],
 }

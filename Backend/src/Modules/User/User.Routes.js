@@ -19,5 +19,6 @@ router.get('/GetUserDetails',isAuth(UserApiRoles.GetUserDetails),asyncHandler(Us
 router.get('/CareerGoalUserProgress',isAuth(UserApiRoles.CareerGoalUserProgress),asyncHandler(UserContollers.CareerGoalUserProgress))
 router.get('/GetAllSklls',isAuth(UserApiRoles.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
 
+router.post('/AddFeedBack',isAuth(UserApiRoles.AddFeedBack),asyncHandler(UserContollers.AddFeedBack))
 
 export default router
