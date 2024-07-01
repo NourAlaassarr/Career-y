@@ -186,6 +186,25 @@ export const GetALLCourses = async(req,res,next)=>{
         res.status(200).json({ courses });
 }
 
+export const GetALLUnapprovedCourses = async(req,res,next)=>{
+    let session;
+    const driver = await Neo4jConnection();
+    session = driver.session();
+    
+    const getAllCoursesQuery = `
+            MATCH (c:Course {Approved: false})
+            RETURN c
+        `;
+
+        const result = await session.run(getAllCoursesQuery);
+
+        // Extract the courses from the result
+        const courses = result.records.map(record => record.get('c').properties);
+
+        // Return the courses as JSON response
+        res.status(200).json({ courses });
+}
+
 //Owner/Admin can uupdate Course
 export const UpdateCourse = async(req,res,next)=>{
     const { CourseId } = req.query;
