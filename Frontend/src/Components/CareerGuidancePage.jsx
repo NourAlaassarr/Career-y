@@ -5,21 +5,21 @@ import "../Styles/CareerGuidancePage.css";
 
 // Import track images
 import Android from "../../images/logo/Android.png";
-import Backend from "../../images/logo/backend.jpg";
-import DataAnalyst from "../../images/logo/Data Analyst.jpeg";
-import DataEngineering from "../../images/logo/Data Engineering.png";
-import FullStack from "../../images/logo/FullStack.jpeg";
+import Backend from "../../images/logo/backend.png";
+import DataAnalyst from "../../images/logo/Data Analyst.png";
+import DataEngineering from "../../images/logo/Data Engineering .png";
+import FullStack from "../../images/logo/FullStack.png";
 import Frontend from "../../images/logo/frontend.png";
-import Security from "../../images/logo/security.jpg";
+import Security from "../../images/logo/security.png";
 import DataArchitect from "../../images/logo/Android.png"; // Example, replace with correct image
-import DataEngineer from "../../images/logo/Data Engineering.png"; // Example, replace with correct image
-import DataScientist from "../../images/logo/Data Science.jpeg";
-import DatabaseAdministrator from "../../images/logo/Database Administration.jpeg";
+import DataEngineer from "../../images/logo/Data Engineering .png"; // Example, replace with correct image
+import DataScientist from "../../images/logo/Data Science.png";
+import DatabaseAdministrator from "../../images/logo/Database Administration.png";
 import EmbeddedSystems from "../../images/logo/Embedded Systems.png";
 import Flutter from "../../images/logo/Flutter.png";
 import SoftwareTesting from "../../images/logo/Software Testing.png";
 import GameDevelopment from "../../images/logo/Game Development.png";
-import ReactNative from "../../images/logo/React Native.jpeg";
+import ReactNative from "../../images/logo/React Native.png";
 
 const CareerGuidancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -103,7 +103,7 @@ const CareerGuidancePage = () => {
       <div className="tracks-container">
         {filteredTracks.map((track) => (
           <Link
-            to={`/track/${track.Nodeid}`}
+            to={`/track/${track.Nodeid}/assessment`}
             key={track.Nodeid}
             className="track-link"
           >
@@ -124,3 +124,4 @@ const CareerGuidancePage = () => {
 };
 
 export default CareerGuidancePage;
+

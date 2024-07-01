@@ -13,7 +13,6 @@ import JobList from "./JobList";
 import Home from "./Home";
 import AddSkillsPage from "./AddSkillsPage";
 import CareerGuidancePage from "./CareerGuidancePage";
-import TrackDetailPage from "./TrackDetailPage";
 import AddSkills2Page from "./AddSkills2Page";
 import QuizPage from "./QuizPage";
 import SkillQuizPage from "./SkillQuizPage";
@@ -108,28 +107,16 @@ function Navbar() {
           <Route path="/jobs" element={<JobList />} />
           <Route path="/add-skills" element={<AddSkillsPage />} />
           <Route path="/career-guidance" element={<CareerGuidancePage />} />
-          <Route path="/track/:id" element={<TrackDetailPage />} />
+
+        <Route path="/track/:trackId/assessment" element={<TrackAssessmentPage />} />
+
           <Route path="/add-skills-2" element={<AddSkills2Page />} />
           <Route path="/quiz" element={<QuizPage />} />
-          <Route path="/quiz/:skill" element={<SkillQuizPage />} />
-          <Route
-            path="/track/:id/assessment"
-            element={<TrackAssessmentPage />}
-          />
+          <Route path="/quiz/:skillId" element={<SkillQuizPage/>} />
+          
           <Route path="/job" element={<JobPage />} />
           <Route path="/track/:id/course" element={<TrackCoursePage />} />
-          <Route
-            path="/track/:id/assessment/option1"
-            element={<TrackAssessmentPage option="1" />}
-          />
-          <Route
-            path="/track/:id/assessment/option2"
-            element={<TrackAssessmentPage option="2" />}
-          />
-          <Route
-            path="/track/:id/assessment/option3"
-            element={<TrackAssessmentPage option="3" />}
-          />
+          
           <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
         </Routes>
       </div>
