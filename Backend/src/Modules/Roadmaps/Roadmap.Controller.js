@@ -1,7 +1,7 @@
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
-//lol
+
 //Get Roadmap of Specific Track ID
 export const GetRoadmap = async (req, res, next) => {
     const { TrackId } = req.query;
@@ -350,7 +350,7 @@ export const DeleteSkillFromRoadmap = async (req, res, next) => {
 }
 
 
-//Create Roadmap TOBE Implemented (Admins Only)
+//Create new Roadmap TOBE Implemented (Admins Only)
 
 
 
