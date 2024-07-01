@@ -16,7 +16,7 @@ const LoginForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     // Perform login logic here
-    const response = await httpPost("http://localhost:3000/Auth/SignIn", {
+    const response = await httpPost("Auth/SignIn", {
       Email: email,
       Password: password,
     });

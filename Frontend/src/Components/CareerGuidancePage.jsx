@@ -28,7 +28,7 @@ const CareerGuidancePage = () => {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await httpGet("/Roadmap/GetAllTracks");
+        const response = await httpGet("Roadmap/GetAllTracks");
         console.log("Tracks fetched:", response); // Debug log
         if (response && response.Jobs) {
           setTracks(response.Jobs);

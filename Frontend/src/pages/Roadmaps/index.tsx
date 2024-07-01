@@ -12,7 +12,7 @@ export const Roadmaps = () => {
 
   const getRoadmaps = useCallback(async () => {
     const { Jobs } = await httpGet(
-      "http://localhost:3000/Roadmap/GetAllTracks"
+      "Roadmap/GetAllTracks"
     );
     setRoadmaps(Jobs);
   }, []);

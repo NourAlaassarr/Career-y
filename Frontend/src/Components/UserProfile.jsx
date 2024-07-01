@@ -144,7 +144,7 @@ export default function ProfilePage() {
           throw new Error("No token found");
         }
 
-        const data = await httpGet("http://localhost:3000/User/GetUserDetails", token); 
+        const data = await httpGet("User/GetUserDetails", token); 
         setUser(data);
       } catch (error) {
         console.error("Error fetching user data:", error);

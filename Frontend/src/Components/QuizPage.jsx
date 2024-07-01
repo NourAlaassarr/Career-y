@@ -245,7 +245,7 @@ const QuizPage = () => {
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await httpGet("/Quiz/AllQuizzes");
+        const response = await httpGet("Quiz/AllQuizzes");
         console.log("Quizzes fetched:", response); // Debug log
         if (response && response.Quizzes) {
           setQuizzes(response.Quizzes);

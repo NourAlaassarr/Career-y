@@ -102,7 +102,7 @@ const AddSkills2Page = () => {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const response = await httpGet("/Roadmap/AllSkills");
+        const response = await httpGet("Roadmap/AllSkills");
         console.log("Skills fetched:", response); // Debug log
         if (response && response.Skills) {
           setSkills(response.Skills.map((skill) => skill.name)); // Assuming 'name' is the skill property to display
@@ -136,7 +136,7 @@ const AddSkills2Page = () => {
 
   const handleSubmit = async () => {
     try {
-      const response = await httpPost("/User/AddSkills", {
+      const response = await httpPost("User/AddSkills", {
         skills: selectedSkills,
       });
       console.log("Submit response:", response); // Debug log

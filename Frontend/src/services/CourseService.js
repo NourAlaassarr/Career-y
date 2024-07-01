@@ -1,21 +1,22 @@
 // CourseService.js
 
-const BASE_URL = "http://localhost:3000"; // Replace with your backend URL
+import { httpGet } from "../axios/axiosUtils";
 
 export const getAllCourses = async () => {
+  const session = JSON.parse(localStorage.getItem("session"));
+  console.log(session.token);
   try {
-    const response = await fetch(`${BASE_URL}/api/course/GetAllCourses`, {
-      method: "GET",
+    const response = await httpGet("Course/GetAllCourses", {
       headers: {
-        "Content-Type": "application/json",
-        // Add any necessary headers such as authorization token if required
+        token: session.token,
       },
     });
-    if (!response.ok) {
+    console.log(response.courses);
+    if (!response) {
       throw new Error("Failed to fetch courses");
     }
-    const data = await response.json();
-    return data.courses; // Assuming backend returns courses as an array in { courses: [...] } format
+    const data = await response.courses;
+    return data; // Assuming backend returns courses as an array in { courses: [...] } format
   } catch (error) {
     console.error("Error fetching courses:", error);
     throw error;
