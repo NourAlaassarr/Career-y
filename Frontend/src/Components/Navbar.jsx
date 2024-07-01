@@ -64,7 +64,7 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/add-skills" className="nav-link">
+                <Link to="/add-skills-2" className="nav-link">
                   Add Skills
                 </Link>
               </li>
