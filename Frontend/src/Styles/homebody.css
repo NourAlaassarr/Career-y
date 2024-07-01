@@ -1,0 +1,18 @@
+.hero {
+  position: relative;
+  padding: 5em 0;
+  overflow: hidden;
+}
+
+.hero-bg {
+  background: linear-gradient(
+    170deg,
+    var(--primary-color) 64%,
+    var(--white-color) 30%
+  );
+}
+
+.hero-image {
+  position: relative;
+  top: 2em;
+}

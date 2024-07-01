@@ -1,0 +1,100 @@
+/* Overall container for the Add Skills Page */
+.add-skills-page {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    max-width: 600px;
+    margin: 0 auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  /* Page header styling */
+  .add-skills-page h2 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 1.8rem;
+    text-align: center;
+  }
+  
+  /* Styling for paragraphs */
+  .add-skills-page p {
+    color: #555;
+    margin-bottom: 10px;
+    font-size: 1rem;
+    text-align: center;
+  }
+  
+  /* Styling for the input fields */
+  .add-skills-page input[type="number"],
+  .add-skills-page input[type="text"] {
+    padding: 10px;
+    margin-bottom: 15px;
+    width: 100%;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  
+  /* Specific styling for the number input */
+  .add-skills-page input[type="number"] {
+    margin-bottom: 20px;
+  }
+  
+  /* Add some spacing between each skill input */
+  .skill-input {
+    margin-bottom: 10px;
+  }
+  
+  /* Style for the container holding the skill inputs */
+  .skills-container {
+    margin-top: 10px;
+  }
+  
+  /* Placeholder text styling */
+  .add-skills-page input::placeholder {
+    color: #aaa;
+  }
+  
+  /* Add some interactive styles */
+  .add-skills-page input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  /* Example button styling */
+  button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    background-color: #1d2329;
+    color: white;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+    display: block;
+    width: 100%;
+  }
+  
+  button:hover {
+    background-color: #0056b3;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .add-skills-page {
+      padding: 15px;
+      border-radius: 0;
+    }
+  
+    .add-skills-page h2 {
+      font-size: 1.5rem;
+    }
+  
+    .add-skills-page p {
+      font-size: 0.9rem;
+    }
+  }
+  

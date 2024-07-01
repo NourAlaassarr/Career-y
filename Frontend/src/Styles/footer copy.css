@@ -1,0 +1,33 @@
+.site-footer {
+  background: var(--dark-color);
+  padding: 3em 0; /* Reduce padding to make the footer smaller */
+}
+
+.site-footer a {
+  color: var(--p-color);
+}
+
+.site-footer a:hover,
+.footer-icon {
+  color: var(--secondary-color);
+}
+
+.footer-link li {
+  display: inline-block;
+  list-style: none;
+  margin: 0 10px;
+}
+
+.copyright-text,
+.footer-link,
+.site-footer .social-icon {
+  margin-top: 2em; /* Reduce top margin to make elements more compact */
+}
+
+.copyright-text {
+  margin-top: 1.5em; /* Reduce top margin to make elements more compact */
+}
+
+.container {
+  padding: 3em 0;
+}

@@ -1,0 +1,101 @@
+.project {
+  background: var(--project-bg);
+}
+
+.project-wrapper {
+  position: relative;
+}
+
+.project-wrapper img {
+  border-radius: var(--border-radius-small);
+}
+
+.project-info {
+  background: var(--white-color);
+  border-radius: var(--border-radius-small);
+  position: absolute;
+  bottom: 32px;
+  right: 32px;
+  left: 32px;
+  width: 90%;
+  padding: 32px;
+}
+
+.project-info small {
+  font-family: Plain-Bold;
+  color: var(--gray-color);
+  position: relative;
+  top: 2px;
+}
+
+.project-info a {
+  color: var(--primary-color);
+}
+
+.project-info .project-icon {
+  background: var(--primary-color);
+}
+
+.project-icon {
+  position: absolute;
+  right: 30px;
+  top: 40px;
+  background: var(--dark-color);
+  border-radius: var(--border-radius-large);
+  color: var(--white-color);
+  font-size: var(--h2-font-size);
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  padding-left: 5px;
+}
+
+.owl-theme .owl-dots .owl-dot {
+  outline: none;
+}
+
+.owl-theme .owl-dots .owl-dot span {
+  background: var(--gray-color);
+  width: 50px;
+  height: 3px;
+  margin: 35px 5px;
+}
+
+.owl-theme .owl-dots .owl-dot.active span,
+.owl-theme .owl-dots .owl-dot:hover span {
+  background: var(--secondary-color);
+}
+
+.list-detail {
+  margin-left: 1em;
+  padding-left: 1em;
+  position: relative;
+}
+
+.list-detail li {
+  display: block;
+  list-style: none;
+  margin: 0.6em 0 0 0.8em;
+}
+
+.list-detail li::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-width: 0 16px 16px 0;
+  border-color: transparent var(--secondary-color) transparent transparent;
+  border-style: solid;
+  position: absolute;
+  left: 0;
+}
+
+.list-detail span {
+  position: relative;
+  bottom: 5px;
+}
+
+.client-info img {
+  width: 100px;
+  margin-right: 1em;
+}
