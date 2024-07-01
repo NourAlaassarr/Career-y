@@ -7,7 +7,7 @@ import "../Styles/CareerGuidancePage.css";
 import Android from "../../images/logo/Android.png";
 import Backend from "../../images/logo/backend.png";
 import DataAnalyst from "../../images/logo/Data Analyst.png";
-import DataEngineering from "../../images/logo/Data Engineering .png";
+//import DataEngineering from "../../images/logo/Data Engineering .png";
 import FullStack from "../../images/logo/FullStack.png";
 import Frontend from "../../images/logo/frontend.png";
 import Security from "../../images/logo/security.png";
@@ -57,8 +57,6 @@ const CareerGuidancePage = () => {
         return Backend;
       case "data analyst":
         return DataAnalyst;
-      case "data engineering":
-        return DataEngineering;
       case "full_stack":
         return FullStack;
       case "frontend":

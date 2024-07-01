@@ -1,35 +1,70 @@
 .track-assessment-page {
-  padding: 20px;
   max-width: 800px;
   margin: 0 auto;
-  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
 }
 
-.track-assessment-page h1 {
+.timer-container {
+  font-size: 1.5rem;
   margin-bottom: 20px;
 }
 
-.question-container {
-  margin-top: 20px;
+.quiz-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 20px;
+  background-color: #f9f9f9;
 }
 
-.question-container h2 {
+.question-block {
   margin-bottom: 20px;
 }
 
-.question-container button {
-  display: block;
-  margin: 10px auto;
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  border: none;
+.question-block h2 {
+  margin-bottom: 10px;
+  font-size: 1.2rem;
+}
+
+.question-block p {
+  margin-bottom: 10px;
+}
+
+.question-block ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.question-block li {
+  margin-bottom: 5px;
+}
+
+.submit-btn {
   background-color: #007bff;
   color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 1rem;
+  cursor: pointer;
   border-radius: 5px;
-  transition: background-color 0.3s ease;
 }
 
-.question-container button:hover {
+.submit-btn:hover {
   background-color: #0056b3;
+}
+
+.submitting-message {
+  font-size: 1.2rem;
+  margin-top: 10px;
+}
+
+@media (max-width: 600px) {
+  .quiz-container {
+    padding: 10px;
+  }
+
+  .submit-btn {
+    font-size: 0.9rem;
+    padding: 8px 16px;
+  }
 }
