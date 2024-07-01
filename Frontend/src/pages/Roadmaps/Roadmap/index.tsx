@@ -16,7 +16,7 @@ export const Roadmap = () => {
 
   const getRoadmap = useCallback(async () => {
     const { RoadMap, Name, Description } = await httpGet(
-      `http://localhost:3000/Roadmap/GetRoadmap?TrackId=${id}`
+      `Roadmap/GetRoadmap?TrackId=${id}`
     );
     console.log(RoadMap);
     setSkills(RoadMap);
