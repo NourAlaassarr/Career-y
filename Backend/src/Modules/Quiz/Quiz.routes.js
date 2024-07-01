@@ -8,7 +8,7 @@ import * as QuizValidation from './Quiz.Validator.js'
 
 const router = Router()
 //Admin Only
-router.post('/AddQuiz',asyncHandler(QuizControllers.AddQuizNode))
+router.post('/AddQuiz',isAuth(QuizApiRoles.Add_Quiz),asyncHandler(QuizControllers.AddQuizNode))
 //Admin Only
 // router.post('/AddQuestions',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(QuizValidation.AddQuestionsToNode),asyncHandler(QuizControllers.AddQuestionsToNode))
 
@@ -17,7 +17,7 @@ router.post('/AddQuestionsToQuiz',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFu
 
 
 router.get('/Quiz',isAuth(QuizApiRoles.GetQuiz),ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
-router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
+router.get('/AllQuizzes',isAuth(QuizApiRoles.GetAllQuizzes),ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 
 //Topic Quiz 
 router.post('/SubmitTopicQuiz',isAuth(QuizApiRoles.SubmitTopicQuiz),asyncHandler(QuizControllers.SubmitTopicQuiz))

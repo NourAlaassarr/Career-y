@@ -8,7 +8,7 @@ export const QuizApiRoles={
     GetTrackQuiz:[SystemRoles.Admin,SystemRoles.User],
     GetAllQuizzes:[SystemRoles.Admin,SystemRoles.User],
     GetFrameWORKs:[SystemRoles.Admin,SystemRoles.User],
-    SubmitQuiz:[SystemRoles.User,SystemRoles],
+    SubmitQuiz:[SystemRoles.User,SystemRoles.Admin],
     
     GetBackendTrackQuiz:[SystemRoles.User,SystemRoles.Admin],
     GetFullStackTrackQuiz:[SystemRoles.User,SystemRoles.Admin],
