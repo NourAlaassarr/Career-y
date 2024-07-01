@@ -15,6 +15,7 @@ router.patch('/ApproveCourse',isAuth(CourseApiRoles.ApproveCourse),asyncHandler(
 router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
 
 router.get('/GetALLUnapprovedCourses',isAuth(CourseApiRoles.GetCourseDetails),asyncHandler(CourseControllers.GetALLUnapprovedCourses))
+
 router.get('/CourseDetails',isAuth(CourseApiRoles.GetCourseDetails),asyncHandler(CourseControllers.GetCourseDetails))
 
 router.get("/GetTrackCourses",isAuth(CourseApiRoles.GetTrackCourses),asyncHandler(CourseControllers.GetTrackCourses))
