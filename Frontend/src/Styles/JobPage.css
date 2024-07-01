@@ -1,0 +1,30 @@
+.job-page {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .job-page h1 {
+    margin-bottom: 20px;
+  }
+  
+  .job-page ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .job-page li {
+    margin: 10px 0;
+  }
+  
+  .job-page a {
+    text-decoration: none;
+    color: #007bff;
+    transition: color 0.3s ease;
+  }
+  
+  .job-page a:hover {
+    color: #0056b3;
+  }
+  

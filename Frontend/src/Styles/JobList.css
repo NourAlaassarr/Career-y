@@ -1,0 +1,28 @@
+.job-listing {
+  border: 2px solid #0c8195; /* Border color */
+  padding: 16px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+}
+
+.job-title a {
+  color: #0c8195; /* Link color */
+  text-decoration: none;
+}
+
+.job-title a:hover {
+  text-decoration: underline;
+}
+
+.apply-button {
+  background-color: #0c8195; /* Button color */
+  color: #fff;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.apply-button:hover {
+  background-color: #086173; /* Darker shade on hover */
+}

@@ -1,0 +1,9 @@
+.about {
+  position: relative;
+  overflow: hidden;
+}
+
+.about-image img {
+  display: block;
+  margin: 0 auto;
+}

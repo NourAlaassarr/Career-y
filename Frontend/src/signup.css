@@ -1,0 +1,189 @@
+body {
+  padding: 0;
+  margin: 0;
+  font-family: "Inter", sans-serif;
+  margin-top: 60px;
+}
+
+.container {
+  display: flex;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 30%;
+  min-width: 150px;
+  background-color: rgba(5, 122, 141, 1);
+  overflow: hidden;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signup-form {
+  width: 300px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 16px;
+}
+
+.signup-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.signup-form input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 16px;
+  border: none;
+  border-bottom: 1px solid #ccc;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.signup-form button {
+  width: 100%;
+  padding: 8px;
+  background-color: rgba(5, 122, 141, 1);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+}
+
+.logo-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 24px;
+}
+
+.logo {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background-color: #f2f2f2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.logo-image {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.company-name {
+  font-size: 24px;
+  color: #fff;
+}
+
+.separator {
+  width: 90%;
+  height: 1px;
+  background-color: rgba(184, 230, 236, 0.8);
+  margin: 16px auto;
+  border-radius: 50px;
+  /* Additional separator styles */
+}
+
+.slogan {
+  color: #fff;
+  font-size: 24px;
+  line-height: 1.5;
+  display: block;
+  margin-left: 16px;
+  margin-right: 16px;
+  text-align: center;
+}
+
+.span-with-icon {
+  display: flex;
+  align-items: center;
+  justify-self: left;
+  margin: 8px 8px 8px 8px;
+  font-size: 20px;
+}
+
+.signup-header {
+  text-align: center;
+}
+
+.signup-header h2 {
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.signup-header p {
+  font-size: 14px;
+  color: #555;
+}
+
+.signin-container {
+  display: flex;
+  text-align: center;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.signin-form {
+  width: 100%;
+  max-width: 400px; /* Adjust the maximum width as needed */
+  border: 1px solid #ccc;
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.signin-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: none;
+  border-bottom: 1px solid #ccc; /* Bottom border for input fields */
+  box-sizing: border-box;
+}
+
+.signin-form button {
+  width: 100%;
+  padding: 16px;
+  background-color: rgba(5, 122, 141, 1);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.navbar {
+  background-color: #f2f2f2;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+}
+
+.nav-list {
+  list-style-type: none;
+  display: flex;
+  justify-content: space-evenly;
+  padding: 0;
+}
+
+.nav-item {
+  margin-right: 10px;
+}
