@@ -56,7 +56,7 @@ export const ConfirmEmail={
       
       }).required(),
       params:joi.object().keys({
-        
+        token: joi.string().required() 
       }).required()
 }
 
@@ -92,7 +92,7 @@ export const ForgetPassword={
     }).required(),
     params:joi.object().keys({
       
-    }).required()
+    }).optional()
 }
 
 export const reset={

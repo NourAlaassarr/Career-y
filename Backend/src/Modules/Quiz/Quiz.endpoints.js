@@ -9,8 +9,10 @@ export const QuizApiRoles={
     GetAllQuizzes:[SystemRoles.Admin,SystemRoles.User],
     GetFrameWORKs:[SystemRoles.Admin,SystemRoles.User],
     SubmitQuiz:[SystemRoles.User,SystemRoles],
+    
     GetBackendTrackQuiz:[SystemRoles.User,SystemRoles.Admin],
     GetFullStackTrackQuiz:[SystemRoles.User,SystemRoles.Admin],
+
     fetchSkillsIfFailed:[SystemRoles.User,SystemRoles.Admin],
     fetchJobsOffers:[SystemRoles.User,SystemRoles.Admin],
     SubmitTopicQuiz:[SystemRoles.User,SystemRoles.Admin],
