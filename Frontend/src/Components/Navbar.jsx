@@ -21,6 +21,7 @@ import JobPage from "./JobPage";
 import TrackCoursePage from "./TrackCoursePage";
 import QuizGradePage from "./QuizGradePage";
 import { Roadmap } from "../pages/Roadmaps/Roadmap";
+import TrackQuizGradePage from "./TrackQuizGradePage";
 
 function Signup() {
   return (
@@ -108,7 +109,10 @@ function Navbar() {
           <Route path="/add-skills" element={<AddSkillsPage />} />
           <Route path="/career-guidance" element={<CareerGuidancePage />} />
 
+        
+        
         <Route path="/track/:trackId/assessment" element={<TrackAssessmentPage />} />
+        <Route path="/track/:job/grade" element={<TrackQuizGradePage />} />
 
           <Route path="/add-skills-2" element={<AddSkills2Page />} />
           <Route path="/quiz" element={<QuizPage />} />
