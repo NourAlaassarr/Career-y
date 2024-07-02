@@ -19,6 +19,9 @@ import Flutter from "../../images/logo/Flutter.png";
 import SoftwareTesting from "../../images/logo/Software Testing.png";
 import GameDevelopment from "../../images/logo/Game Development.png";
 import ReactNative from "../../images/logo/React Native.png";
+import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
+import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
+
 
 const CareerGoalPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -87,12 +90,16 @@ const CareerGoalPage = () => {
         return EmbeddedSystems;
       case "flutter development":
         return Flutter;
-      case "software testing":
+      case "software testing ":
         return SoftwareTesting;
       case "game development":
         return GameDevelopment;
       case "react native":
         return ReactNative;
+      case "robotics automation technician":
+        return RoboticsAutomationTechnician;
+      case "business intelligence developer":
+        return BusinessIntelligenceDeveloper;  
       default:
         return null; // Default image or no image
     }

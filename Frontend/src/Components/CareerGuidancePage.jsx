@@ -10,7 +10,7 @@ import DataAnalyst from "../../images/logo/Data Analyst.png";
 import FullStack from "../../images/logo/FullStack.png";
 import Frontend from "../../images/logo/frontend.png";
 import Security from "../../images/logo/security.png";
-import DataArchitect from "../../images/logo/Android.png"; // Example, replace with correct image
+import DataArchitect from "../../images/logo/database-management.png"; // Example, replace with correct image
 import DataEngineer from "../../images/logo/Data Engineering .png"; // Example, replace with correct image
 import DataScientist from "../../images/logo/Data Science.png";
 import DatabaseAdministrator from "../../images/logo/Database Administration.png";
@@ -19,6 +19,10 @@ import Flutter from "../../images/logo/Flutter.png";
 import SoftwareTesting from "../../images/logo/Software Testing.png";
 import GameDevelopment from "../../images/logo/Game Development.png";
 import ReactNative from "../../images/logo/React Native.png";
+import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
+import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
+
+
 
 const CareerGuidancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -74,12 +78,16 @@ const CareerGuidancePage = () => {
         return EmbeddedSystems;
       case "flutter development":
         return Flutter;
-      case "software testing":
+      case "software testing ":
         return SoftwareTesting;
       case "game development":
         return GameDevelopment;
       case "react native":
         return ReactNative;
+      case "robotics automation technician":
+        return RoboticsAutomationTechnician;
+      case "business intelligence developer":
+        return BusinessIntelligenceDeveloper;
       default:
         return null; // Default image or no image
     }

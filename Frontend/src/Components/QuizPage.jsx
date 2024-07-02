@@ -78,6 +78,40 @@ import HTMLLogo from '../../images/SkillsLogo/HTML.png';
 import VueLogo from '../../images/SkillsLogo/vue.png';
 import AngularLogo from '../../images/SkillsLogo/Angular.png';
 import CLogo from '../../images/SkillsLogo/C.png';
+//
+import Cplusplus from '../../images/SkillsLogo/C++.png';
+import Assembly from '../../images/SkillsLogo/Assembly.png';
+import Rust from '../../images/SkillsLogo/Rust.png';
+import EmbeddedC from '../../images/SkillsLogo/Embedded C.png';
+import ARM_Assembly from '../../images/SkillsLogo/ARM Assembly.png';
+import AVR_Assembly from '../../images/SkillsLogo/AVR Assembly.png';
+import SPI_Protocol from '../../images/SkillsLogo/SPI Protocol.png';
+import I2C_Protocol from '../../images/SkillsLogo/I2C Protocol.png';
+import UART_Protocol from '../../images/SkillsLogo/UART Protocol.png';
+import CAN_protocol  from '../../images/SkillsLogo/CAN protocol .png';
+import Embedded_Linux from '../../images/SkillsLogo/Embedded Linux.png';
+import FreeRTOSpng from '../../images/SkillsLogo/FreeRTOSpng.png';
+import MicroPython from '../../images/SkillsLogo/MicroPython.png';
+import BareMetalProgramming from '../../images/SkillsLogo/Bare Metal Programming.png';
+import RealTimeOperatingSystems from '../../images/SkillsLogo/Real-Time Operating Systems.png';
+import DebuggingTechniques from '../../images/SkillsLogo/Debugging Techniques.png';
+import FirmwareDesign from '../../images/SkillsLogo/Firmware Design.png';
+import Dart from '../../images/SkillsLogo/Dart.png';
+import DesignPatterns_dart from '../../images/SkillsLogo/Design Patterns_dart.png';
+import SolidPrinciples_dart from '../../images/SkillsLogo/Solid Principles_dart.png';
+import OOP from '../../images/SkillsLogo/OOP.png';
+import SQLite from '../../images/SkillsLogo/SQLite.png';
+import Firebase from '../../images/SkillsLogo/Firebase.png';
+import AdvancedDart from '../../images/SkillsLogo/Advanced Dart.png';
+import WidgetTesting from '../../images/SkillsLogo/Widget Testing.png';
+import IntegrationTesting from '../../images/SkillsLogo/Integration Testing.png';
+import MongoDB from '../../images/SkillsLogo/MongoDB.png';
+import NoSQLDatabases from '../../images/SkillsLogo/NoSQL Databases.png';
+import DataWarehouse from '../../images/SkillsLogo/Data Warehouse.png';
+import ApacheSpark from '../../images/SkillsLogo/Apache Spark.png';
+import KafkApache from '../../images/SkillsLogo/Kafk Apache.png';
+import DatabaseSecurity from '../../images/SkillsLogo/Database Security.png';
+import RX from '../../images/SkillsLogo/Dart.png';
 
 // Mapping quiz names to their respective images
 const quizImageMap = {
@@ -154,6 +188,39 @@ const quizImageMap = {
   'vue': VueLogo,
   'angular': AngularLogo,
   'c': CLogo,
+  'c++': Cplusplus,
+  'assembly': Assembly,
+  'rust': Rust,
+  'embedded c': EmbeddedC,
+  'arm assembly': ARM_Assembly,
+  'avr assembly': AVR_Assembly,
+  'spi protocol': SPI_Protocol,
+  'i2c protocol': I2C_Protocol,
+  'uart protocol': UART_Protocol,
+  'can protocol': CAN_protocol,
+  'embedded linux': Embedded_Linux,
+  'freertos': FreeRTOSpng,
+  'micropython': MicroPython,
+  'bare metal programming': BareMetalProgramming,
+  'real-time operating systems': RealTimeOperatingSystems,
+  'debugging techniques': DebuggingTechniques,
+  'firmware design': FirmwareDesign,
+  'dart': Dart,
+  'design patterns': DesignPatterns_dart,
+  'solid principles': SolidPrinciples_dart,
+  'oop': OOP,
+  'sqlite': SQLite,
+  'firebase': Firebase,
+  'advanced dart': AdvancedDart,
+  'widget testing': WidgetTesting,
+  'integration testing': IntegrationTesting,
+  'mongodb': MongoDB,
+  'nosql databases': NoSQLDatabases,
+  'data warehouse': DataWarehouse,
+  'apache spark': ApacheSpark,
+  'apache kafka': KafkApache,
+  'database security':DatabaseSecurity,
+  'rxdart':RX,
 };
 
 
