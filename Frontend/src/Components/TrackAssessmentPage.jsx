@@ -146,11 +146,12 @@ const TrackAssessmentPage = () => {
     setIsSubmitting(true);
 
     const answerArray = Object.keys(answers).map((questionId) => ({
-      questionId: parseInt(questionId),
+      questionId: questionId,
       answerId: answers[questionId],
     }));
 
     try {
+      console.log(answerArray);
       const response = await httpPost(
         `http://localhost:8000/Quiz/SubmitQuiz?jobId=${trackId}`,
         { answer: answerArray },

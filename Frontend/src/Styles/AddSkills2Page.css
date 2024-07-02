@@ -1,10 +1,10 @@
-.add-skills2-page {
+/*.add-skills2-page {
   padding: 20px;
   max-width: 1000px;
   margin: 0 auto;
   position: relative;
   min-height: 100vh;
-  padding-bottom: 60px; /* Extra padding to avoid overlap with the fixed button */
+  padding-bottom: 60px; 
 }
 
 .search-bar {
@@ -45,6 +45,104 @@
 
 .skill-item:hover {
   background-color: #f1f1f1;
+}
+
+.submit-button {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 40px);
+  max-width: 400px;
+  padding: 15px;
+  font-size: 18px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+*/
+
+.add-skills2-page {
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 60px; /* Extra padding to avoid overlap with the fixed button */
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.header-sentence {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.skills-container {
+  display: flex;
+  gap: 20px;
+}
+
+.skills-list {
+  flex: 1;
+}
+
+.skill-item {
+  display: block;
+  padding: 10px 15px;
+  background: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.skill-item input {
+  margin-right: 10px;
+}
+
+.skill-item:hover {
+  background-color: #f1f1f1;
+}
+
+.selected-skills-list {
+  flex: 1;
+}
+
+.selected-skills-list h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.selected-skills-list ul {
+  padding: 0;
+  margin: 0;
+}
+
+.selected-skills-list li {
+  list-style-type: none;
+  margin-bottom: 5px;
 }
 
 .submit-button {
