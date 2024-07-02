@@ -40,9 +40,10 @@ export const initiateApp= async(App,express)=>{
     
     //Crons
     notificationJob();
-    App.listen(Port,()=>{
+   const server= App.listen(Port,()=>{
         console.log(`---------------Server is Running on port number ${Port} !---------------`)
     })
+    return server;
    
 }
 

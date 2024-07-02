@@ -15,6 +15,5 @@ App.use(session({
         maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
     } }
 }));
-
 initiateApp(App,express)
-export default App;
+export default App; 

@@ -4,6 +4,7 @@ import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
 import { ValidationCoreFunction } from "../../middleware/validation.js";
 import * as Validator from './Roadmap.Validator.js'
+import  {RoadmapsApiRoles} from './Roadmaps.endpoints.js'
 const router =Router()
 
 router.get('/GetRoadmap',ValidationCoreFunction(Validator.GetRoadmap),asyncHandler(RoadmapControllers.GetRoadmap))
@@ -14,7 +15,7 @@ router.get('/AllSkills',ValidationCoreFunction(Validator.GetAllSkills),asyncHand
 router.get('/UpdatedSkill/:Skillid',asyncHandler(RoadmapControllers.GetUpdatedSkill))
 
 //ADmin Only
-router.post('/AddSkillToRoadmap',asyncHandler(RoadmapControllers.AddSkillToRoadmap))
-router.delete('/deleteNode',asyncHandler(RoadmapControllers.DeleteSkillFromRoadmap))
-router.put('/Update',asyncHandler(RoadmapControllers.UpdateResource))
+router.post('/AddSkillToRoadmap', isAuth(RoadmapsApiRoles.AddSkillToRoadmap),ValidationCoreFunction(Validator.AddSkillToRoadmap),asyncHandler(RoadmapControllers.AddSkillToRoadmap))
+router.delete('/deleteNode',isAuth(RoadmapsApiRoles.DeleteSkillFromRoadmap),ValidationCoreFunction(Validator.DeleteSkillFromRoadmap),asyncHandler(RoadmapControllers.DeleteSkillFromRoadmap))
+router.put('/Update',isAuth(RoadmapsApiRoles.UpdateResource),ValidationCoreFunction(Validator.UpdateResource),asyncHandler(RoadmapControllers.UpdateResource))
 export default router;
