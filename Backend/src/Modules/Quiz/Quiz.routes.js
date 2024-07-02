@@ -20,18 +20,19 @@ router.get('/Quiz',isAuth(QuizApiRoles.GetQuiz),ValidationCoreFunction(QuizValid
 router.get('/AllQuizzes',isAuth(QuizApiRoles.GetAllQuizzes),ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 
 //Topic Quiz 
-router.post('/SubmitTopicQuiz',isAuth(QuizApiRoles.SubmitTopicQuiz),asyncHandler(QuizControllers.SubmitTopicQuiz))
+router.post('/SubmitTopicQuiz',isAuth(QuizApiRoles.SubmitTopicQuiz),ValidationCoreFunction(QuizValidation.SubmitTopicQuiz),asyncHandler(QuizControllers.SubmitTopicQuiz))
 
 //Careeer Guidance
 router.get('/SpecificFramework',isAuth(QuizApiRoles.GetFrameWORKs),ValidationCoreFunction(QuizValidation.getSpecificTrackSkill),asyncHandler(QuizControllers.GetFrameWORKs))
-router.get('/GetTrackQuiz',isAuth(QuizApiRoles.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
+router.get('/GetTrackQuiz',isAuth(QuizApiRoles.GetTrackQuiz),ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetTrackQuiz))
 router.post('/SubmitQuiz',isAuth(QuizApiRoles.SubmitQuiz),ValidationCoreFunction(QuizValidation.SubmitQuiz),asyncHandler(QuizControllers.SubmitQuiz))
 router.get('/GetBackendTrackQuiz',isAuth(QuizApiRoles.GetBackendTrackQuiz),ValidationCoreFunction(QuizValidation.GetTrackQuiz),asyncHandler(QuizControllers.GetBackendTrackQuiz))
 
 /// FullStack ///
-router.get('/GetFullStackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),asyncHandler(QuizControllers.GetFullStackTrackQuiz))
-router.post('/submitFullstackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),asyncHandler(QuizControllers.submitFullstackTrackQuiz))
-router.get('/fetchSkillsIfFailed',isAuth(QuizApiRoles.fetchSkillsIfFailed),asyncHandler(QuizControllers.fetchSkillsIfFailed))
+router.get('/GetFullStackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),ValidationCoreFunction(QuizValidation.GetFullStackTrackQuiz),asyncHandler(QuizControllers.GetFullStackTrackQuiz))
+router.post('/submitFullstackTrackQuiz',isAuth(QuizApiRoles.GetFullStackTrackQuiz),ValidationCoreFunction(QuizValidation.submitFullstackTrackQuiz),asyncHandler(QuizControllers.submitFullstackTrackQuiz))
 
+
+router.get('/fetchSkillsIfFailed',isAuth(QuizApiRoles.fetchSkillsIfFailed),asyncHandler(QuizControllers.fetchSkillsIfFailed))
 router.get('/fetchJobsOffers',isAuth(QuizApiRoles.fetchJobsOffers),asyncHandler(QuizControllers.fetchJobsOffers))
 export default router 
