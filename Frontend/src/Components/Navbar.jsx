@@ -24,6 +24,8 @@ import { Roadmap } from "../pages/Roadmaps/Roadmap";
 import TrackQuizGradePage from "./TrackQuizGradePage";
 import CareerGoalPage from './CareerGoalPage';
 import MissingSkillsPage from './MissingSkillsPage';
+import ShowingMissingSkills from './ShowingMissingSkills';
+
 
 function Signup() {
   return (
@@ -119,6 +121,7 @@ function Navbar() {
           <Route path="/add-skills-2" element={<AddSkills2Page />} />
           <Route path="/career-goal" element={<CareerGoalPage />} />
           <Route path="/track/:careerGoalId/missingSkills" element={<MissingSkillsPage />} />
+          <Route path="/track/:careerGoalId/showMissingSkills" element={<ShowingMissingSkills />} />
           
           <Route path="/quiz" element={<QuizPage />} />
           <Route path="/quiz/:skillId" element={<SkillQuizPage/>} />

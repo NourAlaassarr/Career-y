@@ -10,7 +10,7 @@ import DataAnalyst from "../../images/logo/Data Analyst.png";
 import FullStack from "../../images/logo/FullStack.png";
 import Frontend from "../../images/logo/frontend.png";
 import Security from "../../images/logo/security.png";
-import DataArchitect from "../../images/logo/Android.png"; // Example, replace with correct image
+import DataArchitect from "../../images/logo/database-management.png"; // Example, replace with correct image
 import DataEngineer from "../../images/logo/Data Engineering .png"; // Example, replace with correct image
 import DataScientist from "../../images/logo/Data Science.png";
 import DatabaseAdministrator from "../../images/logo/Database Administration.png";
@@ -54,7 +54,8 @@ const CareerGoalPage = () => {
         { CareerGoalId: careerGoalId },
         { headers: { 'token': session.token } }
       );
-      navigate(`/track/${careerGoalId}/missingSkills`);
+      navigate(`/track/${careerGoalId}/showMissingSkills`);
+      
     } catch (error) {
       console.error("Error posting career goal:", error);
     }
