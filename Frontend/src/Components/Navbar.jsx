@@ -11,9 +11,8 @@ import SignupForm from "./../pages/SignUp";
 import ProfilePage from "./UserProfile";
 import JobList from "./JobList";
 import Home from "./Home";
-import AddSkillsPage from "./AddSkillsPage";
 import CareerGuidancePage from "./CareerGuidancePage";
-import AddSkills2Page from "./AddSkills2Page";
+import AddSkillsPage from "./AddSkillsPage";
 import QuizPage from "./QuizPage";
 import SkillQuizPage from "./SkillQuizPage";
 import TrackAssessmentPage from "./TrackAssessmentPage";
@@ -69,7 +68,7 @@ function Navbar() {
                 </Link>
               </li>
               <li className="nav-item">
-                <Link to="/add-skills-2" className="nav-link">
+                <Link to="/add-skills" className="nav-link">
                   Add Skills
                 </Link>
               </li>
@@ -110,7 +109,7 @@ function Navbar() {
           <Route path="/roadmaps/:id" element={<Roadmap />} />
           <Route path="/UserProfile" element={<ProfilePage />} />
           <Route path="/jobs" element={<JobList />} />
-          <Route path="/add-skills" element={<AddSkillsPage />} />
+          
           <Route path="/career-guidance" element={<CareerGuidancePage />} />
 
         
@@ -118,7 +117,7 @@ function Navbar() {
         <Route path="/track/:trackId/assessment" element={<TrackAssessmentPage />} />
         <Route path="/track/:job/grade" element={<TrackQuizGradePage />} />
 
-          <Route path="/add-skills-2" element={<AddSkills2Page />} />
+          <Route path="/add-skills" element={<AddSkillsPage />} />
           <Route path="/career-goal" element={<CareerGoalPage />} />
           <Route path="/track/:careerGoalId/missingSkills" element={<MissingSkillsPage />} />
           <Route path="/track/:careerGoalId/showMissingSkills" element={<ShowingMissingSkills />} />

@@ -1,67 +1,169 @@
-import React, { useState } from "react";
-import "../Styles/AddSkillsPage.css"; // Import CSS for AddSkillsPage
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { httpGet, httpPost } from "../axios/axiosUtils";
+import "../Styles/AddSkillsPage.css";
 
 const AddSkillsPage = () => {
-  const [numSkills, setNumSkills] = useState(0);
-  const [userSkills, setUserSkills] = useState([]);
+  const session = JSON.parse(localStorage.getItem("session"));
+  const [searchTerm, setSearchTerm] = useState("");
+  const [skills, setSkills] = useState([]);
+  const [existingSkills, setExistingSkills] = useState([]);
+  const [selectedSkills, setSelectedSkills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [newSkills, setNewSkills] = useState(false);
   const [error, setError] = useState("");
+  const [successMessage, setSuccessMessage] = useState(""); // State for success message
+  const navigate = useNavigate(); // Initialize the useNavigate hook
 
-  const handleInputChange = (event) => {
-    const num = parseInt(event.target.value);
+  useEffect(() => {
+    const fetchSkills = async () => {
+      try {
+        // Fetch all skills available
+        const allSkillsResponse = await httpGet("/Roadmap/AllSkills", {
+          headers: { token: session.token },
+        });
+        if (allSkillsResponse && allSkillsResponse.Skills) {
+          setSkills(allSkillsResponse.Skills);
+        } else {
+          console.error("Unexpected response structure:", allSkillsResponse);
+          setError("Failed to fetch skills. Please try again later.");
+        }
 
-    if (isNaN(num) || num < 0) {
-      setError(
-        "Please enter a valid number of skills greater than or equal to 0."
-      );
-      setNumSkills(0);
-      setUserSkills([]);
-    } else if (num > 5) {
-      setError("You can add a maximum of 5 skills.");
-      setNumSkills(9);
-      setUserSkills(Array(5).fill(""));
+        // Fetch user's already added skills
+        const userSkillsResponse = await httpGet("/User/GetAllSklls", {
+          headers: { token: session.token },
+        });
+        if (userSkillsResponse && userSkillsResponse.skills) {
+          const userSkillIds = userSkillsResponse.skills.map((skill) => skill.Nodeid);
+          setExistingSkills(userSkillIds);
+        } else {
+          console.error("Unexpected response structure:", userSkillsResponse);
+          setError("Failed to fetch user skills. Please try again later.");
+        }
+      } catch (error) {
+        console.error("Error fetching skills:", error);
+        setError("Failed to fetch skills. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    setLoading(true);
+    fetchSkills();
+  }, []);
+
+  const filteredSkills = skills.filter(
+    (skill) =>
+      skill.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      !existingSkills.includes(skill.Nodeid)
+  );
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  const handleSkillChange = (e) => {
+    const skillNodeid = e.target.value;
+    if (selectedSkills.includes(skillNodeid)) {
+      setSelectedSkills(selectedSkills.filter((skill) => skill !== skillNodeid));
     } else {
-      setError("");
-      setNumSkills(num);
-      setUserSkills(Array(num).fill("")); // Initialize an array of empty strings based on num
+      setSelectedSkills([...selectedSkills, skillNodeid]);
+    }
+    setNewSkills(true);
+  };
+
+  const handleSubmit = async () => {
+    setLoading(true);
+    setSuccessMessage(""); // Clear success message before new submission
+    try {
+      const response = await httpPost(
+        "/User/AddSkills",
+        {
+          Skills: selectedSkills,
+        },
+        { headers: { token: session.token } }
+      );
+
+      console.log("Submit response:", response);
+
+      setSuccessMessage("Skills submitted successfully!");
+
+      // Clear selected skills
+      setSelectedSkills([]);
+      setNewSkills(false);
+      // Navigate to CareerGoalPage after a short delay
+      setTimeout(() => {
+        navigate("/career-goal"); // Adjust the path as per your route setup
+      }, 3000); // 3 seconds delay
+    } catch (error) {
+      console.error("Error submitting skills:", error.message);
+      setError(`Failed to submit skills: ${error.message}`);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSkillInputChange = (index, event) => {
-    const updatedSkills = [...userSkills];
-    updatedSkills[index] = event.target.value;
-    setUserSkills(updatedSkills);
-  };
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
 
   return (
-    <div className="add-skills-page">
-      <h2>Add Skillsssss</h2>
-      <p>How many skills do you have?</p>
+    <div className="add-skills2-page">
       <input
-        type="number"
-        value={numSkills}
-        onChange={handleInputChange}
-        placeholder="Enter number of skills"
-        min="0"
-        max="9"
+        type="text"
+        placeholder="Search for skills..."
+        value={searchTerm}
+        onChange={handleSearchChange}
+        className="search-bar"
       />
-      {error && <p className="error-message">{error}</p>}
+      <div className="header-sentence">Choose the skills you want to add</div>
+      {successMessage && <div className="success-message">{successMessage}
+      </div>}
       <div className="skills-container">
-        {numSkills > 0 && (
-          <div>
-            {[...Array(numSkills)].map((_, index) => (
+        <div className="skills-list">
+          {filteredSkills.map((skill, index) => (
+            <label key={index} className="skill-item">
               <input
-                key={index}
-                type="text"
-                className="skill-input"
-                value={userSkills[index]}
-                onChange={(e) => handleSkillInputChange(index, e)}
-                placeholder={`Enter skill ${index + 1}`}
+                type="checkbox"
+                value={skill.Nodeid}
+                checked={selectedSkills.includes(skill.Nodeid)}
+                onChange={handleSkillChange}
               />
+              {skill.name}
+            </label>
+          ))}
+        </div>
+        <div className="existing-skills-list">
+          <h3>Existing Skills:</h3>
+          <ul>
+            {existingSkills.map((skillId, index) => (
+              <li key={index}>{skills.find((skill) => skill.Nodeid === skillId)?.name}</li>
             ))}
-          </div>
-        )}
+          </ul>
+        </div>
+        <div className="selected-skills-list">
+          {selectedSkills.length > 0 && (
+            <div>
+              <h3>Selected Skills:</h3>
+              <ul>
+                {selectedSkills.map((skillId, index) => (
+                  <li key={index}>{skills.find((skill) => skill.Nodeid === skillId)?.name}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
       </div>
-      <button>Submit Skills</button>
+      {newSkills && (
+        <button className="submit-button" disabled={selectedSkills.length === 0} onClick={handleSubmit}>
+          Submit
+        </button>
+      )}
+      
     </div>
   );
 };
