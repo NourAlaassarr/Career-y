@@ -1,96 +1,138 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { BrowserRouter as Router, Link, Route, Routes } from "react-router-dom";
+import { FaUser } from "react-icons/fa"; // Import the user icon
+import "./../styles/Navbar.css";
+import "./../styles/general.css";
 
-export const Navbar = () => {
+import Sidebar from "./Sidebar";
+import LoginForm from "./LoginForm";
+import ResetPasswordForm from "./ResetPassword";
+import { Roadmaps } from "./../pages/Roadmaps";
+import SignupForm from "./../pages/SignUp";
+import ProfilePage from "./UserProfile";
+import JobList from "./JobList";
+import Home from "./Home";
+import CareerGuidancePage from "./CareerGuidancePage";
+import AddSkillsPage from "./AddSkillsPage";
+import QuizPage from "./QuizPage";
+import SkillQuizPage from "./SkillQuizPage";
+import TrackAssessmentPage from "./TrackAssessmentPage";
+import JobPage from "./JobPage";
+import TrackCoursePage from "./TrackCoursePage";
+import QuizGradePage from "./QuizGradePage";
+import { Roadmap } from "../pages/Roadmaps/Roadmap";
+import TrackQuizGradePage from "./TrackQuizGradePage";
+import CareerGoalPage from './CareerGoalPage';
+import MissingSkillsPage from './MissingSkillsPage';
+import ShowingMissingSkills from './ShowingMissingSkills';
+
+
+function Signup() {
   return (
-    <AppBar
-      sx={{ backgroundColor: "white", color: "#057a8d" }}
-      position="sticky"
-    >
-      <Toolbar>
-        <Button color="inherit" component={Link} to="/">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Home
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/about">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            About
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/quiz">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Quiz
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/add-skills">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Add SKills
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/roadmaps">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Roadmaps
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/career-guidance">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Career Guidance
-          </Typography>
-        </Button>
-        <Typography
-          variant="h6"
-          component="div"
-          sx={{ flexGrow: 1, ml: "15%" }}
-        >
-          Career-Y
-        </Typography>
-        <Button color="inherit" component={Link} to="/login">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Sign In
-          </Typography>
-        </Button>
-        <Button color="inherit" component={Link} to="/sign-up">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            Sign Up
-          </Typography>
-        </Button>
-      </Toolbar>
-    </AppBar>
+    <div className="container">
+      <Sidebar />
+      <div className="content">
+        <SignupForm />
+      </div>
+    </div>
   );
-};
+}
+
+function Login() {
+  return <LoginForm />;
+}
+
+function ResetPassword() {
+  return <ResetPasswordForm />;
+}
+
+function Navbar() {
+  return (
+    <Router>
+      <div>
+        <nav className="navbar navbar-expand-lg">
+          <div className="Navbar">
+            <ul className="navbar-nav">
+              <li className="nav-item">
+                <Link className="brand" to="/">
+                  CAREER-Y
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/about" className="nav-link smoothScroll">
+                  About
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/quiz" className="nav-link smoothScroll">
+                  Quiz
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/add-skills" className="nav-link">
+                  Add Skills
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/roadmaps" className="nav-link">
+                  Roadmaps
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/career-guidance" className="nav-link">
+                  Career Guidance
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/login" className="nav-link contact">
+                  Login
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/sign-up" className="nav-link contact">
+                  Sign Up
+                </Link>
+              </li>
+              <li className="nav-item">
+                <Link to="/UserProfile" className="nav-link">
+                  <FaUser />
+                </Link>
+              </li>
+            </ul>
+          </div>
+        </nav>
+        <Routes>
+          <Route path="/" />
+          <Route path="/login" element={<Login />} />
+          <Route path="/sign-up" element={<Signup />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/roadmaps" element={<Roadmaps />} />
+          <Route path="/roadmaps/:id" element={<Roadmap />} />
+          <Route path="/UserProfile" element={<ProfilePage />} />
+          <Route path="/jobs" element={<JobList />} />
+          
+          <Route path="/career-guidance" element={<CareerGuidancePage />} />
+
+        
+        
+        <Route path="/track/:trackId/assessment" element={<TrackAssessmentPage />} />
+        <Route path="/track/:job/grade" element={<TrackQuizGradePage />} />
+
+          <Route path="/add-skills" element={<AddSkillsPage />} />
+          <Route path="/career-goal" element={<CareerGoalPage />} />
+          <Route path="/track/:careerGoalId/missingSkills" element={<MissingSkillsPage />} />
+          <Route path="/track/:careerGoalId/showMissingSkills" element={<ShowingMissingSkills />} />
+          
+          <Route path="/quiz" element={<QuizPage />} />
+          <Route path="/quiz/:skillId" element={<SkillQuizPage/>} />
+          
+          <Route path="/job" element={<JobPage />} />
+          <Route path="/track/:id/course" element={<TrackCoursePage />} />
+          
+          <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 
 export default Navbar;
