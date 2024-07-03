@@ -166,31 +166,31 @@ export const AddSkills = async (req, res, next) => {
     // Handle the result as needed
     res.status(200).json({ message: "Skills added successfully" });
 };
-
-//Recommend GapSkills in CareerGoal
+// //Recommend GapSkills in CareerGoal
 export const GapSkills = async (req, res, next) => {
     const UserId = req.authUser._id;
     let session;
     const driver = await Neo4jConnection();
     session = driver.session();
 
-    const GapSkillsQuery = await session.run(
-        `
-    MATCH (u:User {_id: $userId})-[:HAS_SKILL]->(userSkill)
-MATCH (job:Job {Nodeid: u.CareerGoal[1]})-[:REQUIRES]->(Skill)
-WHERE NOT (u)-[:HAS_SKILL]->(Skill)
-RETURN DISTINCT Skill.name AS gapSkill, 
-                CASE WHEN EXISTS((job)-[:REQUIRES {mandatory: true}]->(Skill))
-                     THEN true
-                     ELSE false
-                END AS mandatory
-
-`,
+    const GapSkillsQuery = await session.run(`
+        MATCH (u:User {_id: $userId})-[:HAS_SKILL]->(userSkill)
+        MATCH (job:Job {Nodeid: u.CareerGoal[1]})
+        OPTIONAL MATCH (job)-[:REQUIRES]->(relatedJob:Job)
+        WITH u, job, COLLECT(DISTINCT relatedJob) AS relatedJobs
+        UNWIND relatedJobs + job AS j
+        MATCH (j)-[:REQUIRES]->(s:Skill)
+        WHERE NOT (u)-[:HAS_SKILL]->(s)
+        RETURN DISTINCT s.name AS gapSkill, 
+                        CASE WHEN EXISTS((j)-[:REQUIRES {mandatory: true}]->(s))
+                             THEN true
+                             ELSE false
+                        END AS mandatory
+        `,
         { userId: UserId }
     );
 
     // Extract gap skills from the query result
-    // const gapSkills = GapSkillsQuery.records.map(record => record.get('gapSkill'));
     const gapSkills = GapSkillsQuery.records.map((record) => {
         return {
             Skill: record.get("gapSkill"),
@@ -203,6 +203,8 @@ RETURN DISTINCT Skill.name AS gapSkill,
     // Return the gap skills as JSON
     res.status(200).json({ gapSkills });
 };
+
+
 //recommend tracks According to the user skills
 export const RecommendTracks = async (req, res, next) => {
     const userId = req.authUser._id; // Ensure consistent naming convention
@@ -428,7 +430,7 @@ export const UpdateFeedBack = async (req, res, next) => {
 }
 
 
-//Add Rate on Course 
+//Add Rate on Course TOBE
 // export const AddRate = async (req, res, next) => {
 //     const { rate } = req.body;
 //     // Validate rate
@@ -441,3 +443,44 @@ export const UpdateFeedBack = async (req, res, next) => {
 //     const driver = await Neo4jConnection();
 //     session = driver.session();
 // }
+
+
+
+
+
+
+// export const GapSkills = async (req, res, next) => {
+//     const UserId = req.authUser._id;
+//     let session;
+//     const driver = await Neo4jConnection();
+//     session = driver.session();
+
+//     const GapSkillsQuery = await session.run(
+//         `
+//     MATCH (u:User {_id: $userId})-[:HAS_SKILL]->(userSkill)
+// MATCH (job:Job {Nodeid: u.CareerGoal[1]})-[:REQUIRES]->(Skill)
+// WHERE NOT (u)-[:HAS_SKILL]->(Skill)
+// RETURN DISTINCT Skill.name AS gapSkill, 
+//                 CASE WHEN EXISTS((job)-[:REQUIRES {mandatory: true}]->(Skill))
+//                      THEN true
+//                      ELSE false
+//                 END AS mandatory
+
+// `,
+//         { userId: UserId }
+//     );
+
+//     // Extract gap skills from the query result
+//     // const gapSkills = GapSkillsQuery.records.map(record => record.get('gapSkill'));
+//     const gapSkills = GapSkillsQuery.records.map((record) => {
+//         return {
+//             Skill: record.get("gapSkill"),
+//             mandatory: record.get("mandatory") === true, // Convert to boolean
+//         };
+//     });
+
+//     await session.close();
+
+//     // Return the gap skills as JSON
+//     res.status(200).json({ gapSkills });
+// };
