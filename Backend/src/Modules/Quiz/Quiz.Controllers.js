@@ -601,8 +601,8 @@ export const SubmitQuiz = async (req, res, next) => {
         const jobId=req.session.jobId
 
         console.log(SkillId)
-        // console.log("Quiz from session:", quiz);
-        // console.log("Correct answers from session:", correctAnswers);
+        console.log("Quiz from session:", quiz);
+        console.log("randomQuestions session:", randomQuestions);
 
         if (!quiz || !correctAnswers) {
             return res.status(400).json({ error: 'Quiz session not found.' });
