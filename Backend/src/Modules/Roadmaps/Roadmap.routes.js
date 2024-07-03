@@ -4,7 +4,9 @@ import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
 import { ValidationCoreFunction } from "../../middleware/validation.js";
 import * as Validator from './Roadmap.Validator.js'
+import {CloudFunction}from '../../Services/MulterCloud.js'
 import  {RoadmapsApiRoles} from './Roadmaps.endpoints.js'
+import { allowedExtensions } from "../../utils/allowedExtensions.js";
 const router =Router()
 
 router.get('/GetRoadmap',ValidationCoreFunction(Validator.GetRoadmap),asyncHandler(RoadmapControllers.GetRoadmap))
@@ -18,4 +20,8 @@ router.get('/UpdatedSkill/:Skillid',asyncHandler(RoadmapControllers.GetUpdatedSk
 router.post('/AddSkillToRoadmap', isAuth(RoadmapsApiRoles.AddSkillToRoadmap),ValidationCoreFunction(Validator.AddSkillToRoadmap),asyncHandler(RoadmapControllers.AddSkillToRoadmap))
 router.delete('/deleteNode',isAuth(RoadmapsApiRoles.DeleteSkillFromRoadmap),ValidationCoreFunction(Validator.DeleteSkillFromRoadmap),asyncHandler(RoadmapControllers.DeleteSkillFromRoadmap))
 router.put('/Update',isAuth(RoadmapsApiRoles.UpdateResource),ValidationCoreFunction(Validator.UpdateResource),asyncHandler(RoadmapControllers.UpdateResource))
+
+
+//Add Img
+// router.post('/AddImg',CloudFunction(allowedExtensions.Image).single('Image'),ValidationCoreFunction(Validator.AddImg),asyncHandler(RoadmapControllers.AddImg))
 export default router;
