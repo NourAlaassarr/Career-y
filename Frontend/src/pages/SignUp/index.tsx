@@ -27,7 +27,7 @@ const SignupForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     // Perform signup logic here
-    httpPost("http://localhost:3000/Auth/SignUp", {
+    httpPost("http://localhost:8000/Auth/SignUp", {
       UserName: username,
       Email: email,
       password,
