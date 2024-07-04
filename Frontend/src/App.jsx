@@ -6,8 +6,6 @@ import ProfilePage from "./Components/UserProfile";
 import JobList from "./Components/JobList";
 import AddSkillsPage from "./Components/AddSkillsPage";
 import CareerGuidancePage from "./Components/CareerGuidancePage";
-import TrackDetailPage from "./Components/TrackDetailPage";
-import AddSkills2Page from "./Components/AddSkills2Page";
 import QuizPage from "./Components/QuizPage";
 import SkillQuizPage from "./Components/SkillQuizPage";
 import TrackAssessmentPage from "./Components/TrackAssessmentPage";
@@ -15,7 +13,7 @@ import JobPage from "./Components/JobPage";
 import TrackCoursePage from "./Components/TrackCoursePage";
 import QuizGradePage from "./Components/QuizGradePage";
 import {Roadmap} from "./pages/Roadmaps/Roadmap";
-import { Navbar } from "./Components/Navbar";
+import Navbar from "./Components/Navbar";
 import LoginForm from "./Components/LoginForm";
 import SignupForm from "./pages/SignUp";
 
@@ -31,8 +29,6 @@ function App() {
         <Route path="/jobs" element={<JobList />} />
         <Route path="/add-skills" element={<AddSkillsPage />} />
         <Route path="/career-guidance" element={<CareerGuidancePage />} />
-        <Route path="/track/:id" element={<TrackDetailPage />} />
-        <Route path="/add-skills-2" element={<AddSkills2Page />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/quiz/:skill" element={<SkillQuizPage />} />
         <Route
