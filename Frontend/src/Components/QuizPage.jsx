@@ -225,13 +225,16 @@ const quizImageMap = {
 
 
 const QuizPage = () => {
+  const session = JSON.parse(localStorage.getItem("session"));
   const [searchTerm, setSearchTerm] = useState('');
   const [quizzes, setQuizzes] = useState([]);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await httpGet('/Quiz/AllQuizzes');
+        const response = await httpGet('Quiz/AllQuizzes', {
+          headers: { token: session.token },
+        });
         console.log('Quizzes fetched:', response); // Debug log
         if (response && response.Quizzes) {
           setQuizzes(response.Quizzes);

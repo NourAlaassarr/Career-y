@@ -19,7 +19,7 @@ const AddSkillsPage = () => {
     const fetchSkills = async () => {
       try {
         // Fetch all skills available
-        const allSkillsResponse = await httpGet("/Roadmap/AllSkills", {
+        const allSkillsResponse = await httpGet("Roadmap/AllSkills", {
           headers: { token: session.token },
         });
         if (allSkillsResponse && allSkillsResponse.Skills) {
@@ -30,7 +30,7 @@ const AddSkillsPage = () => {
         }
 
         // Fetch user's already added skills
-        const userSkillsResponse = await httpGet("/User/GetAllSklls", {
+        const userSkillsResponse = await httpGet("User/GetAllSklls", {
           headers: { token: session.token },
         });
         if (userSkillsResponse && userSkillsResponse.skills) {
@@ -77,7 +77,7 @@ const AddSkillsPage = () => {
     setSuccessMessage(""); // Clear success message before new submission
     try {
       const response = await httpPost(
-        "/User/AddSkills",
+        "User/AddSkills",
         {
           Skills: selectedSkills,
         },

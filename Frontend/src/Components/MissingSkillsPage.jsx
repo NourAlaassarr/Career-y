@@ -10,7 +10,7 @@ const MissingSkillsPage = () => {
   useEffect(() => {
     const fetchGapSkills = async () => {
       try {
-        const response = await httpGet('/User/GapSkills', {
+        const response = await httpGet('User/GapSkills', {
           headers: { 'token': session.token }
         });
         console.log("Gap skills fetched:", response); // Debug log
@@ -26,7 +26,7 @@ const MissingSkillsPage = () => {
 
     const fetchRecommendedTracks = async () => {
       try {
-        const response = await httpGet('/User/RecommendTracks', {
+        const response = await httpGet('User/RecommendTracks', {
           headers: { 'token': session.token }
         });
         console.log("Recommended tracks fetched:", response); // Debug log

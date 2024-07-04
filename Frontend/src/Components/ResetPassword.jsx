@@ -26,7 +26,7 @@ const ResetPasswordForm = () => {
 
   const sendOtp = () => {
     // Simulate sending OTP
-    httpPatch("http://localhost:3000/Auth/ForgetPassword", { Email: email });
+    httpPatch("Auth/ForgetPassword", { Email: email });
     setOtpSent(true);
   };
 

@@ -32,7 +32,7 @@ const CareerGoalPage = () => {
   useEffect(() => {
     const fetchTracks = async () => {
       try {
-        const response = await httpGet("/Roadmap/GetAllTracks");
+        const response = await httpGet("Roadmap/GetAllTracks");
         console.log("Tracks fetched:", response); // Debug log
         if (response && response.Jobs) {
           setTracks(response.Jobs);
@@ -50,7 +50,7 @@ const CareerGoalPage = () => {
   const handleTrackClick = async (careerGoalId) => {
     try {
       await httpPost(
-        `/User/AddCareerGoal?CareerGoalId=${careerGoalId}`,
+        `User/AddCareerGoal?CareerGoalId=${careerGoalId}`,
         { CareerGoalId: careerGoalId },
         { headers: { 'token': session.token } }
       );
