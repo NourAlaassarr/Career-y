@@ -538,22 +538,13 @@ export const GetTrackQuiz = async (req, res, next) => {
         };
 
         const randomQuestions = [];
-        const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
+        // const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
 
         skillsMap.forEach((questions) => {
             const selectedQuestions = getRandomElements(questions, 3);
             randomQuestions.push(...selectedQuestions);
 
-            selectedQuestions.forEach(question => {
-                // Find correct option id
-                const correctAnswer = question.options.find(option => option.correct);
-                if (correctAnswer) {
-                    questionIdsAndCorrectIds.push({
-                        questionId: question.id,
-                        correctId: correctAnswer.id
-                    });
-                }
-            });
+           
         });
 
         
@@ -571,10 +562,11 @@ export const GetTrackQuiz = async (req, res, next) => {
         }));
 
         // Store data in session
-        req.session.quiz = formattedQuestions;
-        req.session.answers = questionIdsAndCorrectIds;
+        // req.session.quiz = formattedQuestions;
+        // req.session.answers = questionIdsAndCorrectIds;
         req.session.randomQuestions = randomQuestions;
         req.session.jobId=jobId
+        console.log(randomQuestions)
 
         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
 
@@ -582,11 +574,11 @@ export const GetTrackQuiz = async (req, res, next) => {
 
 //SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
-    const { answer,sessionData } = req.body;
-
+    const {answer, sessionData } = req.body;
+    const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
     let session;
     let driver;
-
+console.log(sessionData)
     try {
         driver = await Neo4jConnection();
         session = driver.session();
@@ -594,17 +586,33 @@ export const SubmitQuiz = async (req, res, next) => {
         let Grade = 0;
 
         // Retrieve quiz and correct answers from the session
-        const quiz = sessionData.quiz;
-        const correctAnswers = sessionData.answers;
+        // const quiz = sessionData.quiz;
+        // const correctAnswers = sessionData.answers;
+
         const randomQuestions = sessionData.randomQuestions;
+        console.log(randomQuestions)
+
         const SkillId =sessionData.SkillId
         const jobId=sessionData.jobId
 
-        console.log(SkillId)
-        console.log("Quiz from session:", quiz);
-        console.log("randomQuestions session:", randomQuestions);
+        randomQuestions.forEach(question => {
+            // Find correct option id
+            const correctAnswer = question.options.find(option => option.correct);
+            if (correctAnswer) {
+                questionIdsAndCorrectIds.push({
+                    questionId: question.id,
+                    correctId: correctAnswer.id
+                });
+            }
+        });
 
-        if (!quiz || !correctAnswers) {
+        const correctAnswers =[]
+        correctAnswers.push(...questionIdsAndCorrectIds)
+        console.log(SkillId)
+        console.log("randomQuestions session:", randomQuestions);
+        console.log("correctanswers",correctAnswers)
+        
+        if (!correctAnswers) {
             return res.status(400).json({ error: 'Quiz session not found.' });
         }
 
