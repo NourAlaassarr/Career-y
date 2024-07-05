@@ -12,7 +12,7 @@ import {Neo4jConnection}from'../../DB/Neo4j/Neo4j.js'
 export const initiateApp= async(App,express)=>{
     const Port =process.env.PORT || 5000
     App.use(express.json())
-    
+    App.use(express.urlencoded({ extended: true }));
     App.use(cors()) // allow anyone
 
     await Neo4jConnection()
