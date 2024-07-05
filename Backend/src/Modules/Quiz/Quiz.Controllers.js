@@ -873,7 +873,7 @@ export const submitFullstackTrackQuiz = async (req, res, next) => {
         const Pass = Grade > totalQuestions / 2;
         console.log('Grade:', Grade);
         console.log('totalQuestions:', totalQuestions);
-
+        quizzes.delete(quizId);
 const fixedTrackId = '697f3adc-4fc4-4ef8-bffd-bd3cf243375f';
 
 // Record the quiz result in the database for the fixed track
