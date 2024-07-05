@@ -569,8 +569,8 @@ export const GetTrackQuiz = async (req, res, next) => {
         // Store data in session
         // req.session.quiz = formattedQuestions;
         // req.session.answers = questionIdsAndCorrectIds;
-        req.session.randomQuestions = randomQuestions;
-        req.session.jobId=jobId
+        // req.session.randomQuestions = randomQuestions;
+        // req.session.jobId=jobId
         console.log(randomQuestions)
 
         res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions,QuizId: quizId });
