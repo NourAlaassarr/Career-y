@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from 'axios';
 import { tr } from 'date-fns/locale';
-
+const quizzes = new Map();
 //Add Quiz Neo4j(Admins)
 export const AddQuizNode = async (req, res, next) => {
     let session;
@@ -447,6 +447,8 @@ export const GetTrackQuiz = async (req, res, next) => {
     const { jobId, SkillId } = req.query;
     let session;
     let driver;
+    
+
         driver = await Neo4jConnection();
         session = driver.session();
         const skillsMap = new Map();
@@ -547,7 +549,10 @@ export const GetTrackQuiz = async (req, res, next) => {
            
         });
 
-        
+        const quizId = uuidv4();
+
+    // Store the random questions in the in-memory store with the quizId
+    quizzes.set(quizId, randomQuestions);
 
         // Format questions as required in the output
         const formattedQuestions = randomQuestions.map((question, index) => ({
@@ -568,60 +573,50 @@ export const GetTrackQuiz = async (req, res, next) => {
         req.session.jobId=jobId
         console.log(randomQuestions)
 
-        res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
+        res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions,QuizId: quizId });
 
 };
 
 //SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
-    const {answer, sessionData } = req.body;
-    const questionIdsAndCorrectIds = []; // Array to store questionId and correct answerId
+    const { answer, quizId, SkillId, jobId } = req.body;
+    if (!answer || !quizId) {
+        return res.status(400).json({ error: 'Invalid request. Missing required data.' });
+    }
+    console.log("data",quizId,jobId,SkillId)
+    // Retrieve the randomQuestions using the quizId
+    const randomQuestions = quizzes.get(quizId);
+    if (!randomQuestions) {
+        return res.status(400).json({ error: 'Invalid quiz ID or quiz has expired.' });
+    }
+
+    const questionIdsAndCorrectIds = [];
     let session;
     let driver;
-console.log(sessionData)
-    try {
-        driver = await Neo4jConnection();
-        session = driver.session();
+    driver = await Neo4jConnection();
+    session = driver.session();
 
-        let Grade = 0;
-
-        // Retrieve quiz and correct answers from the session
-        // const quiz = sessionData.quiz;
-        // const correctAnswers = sessionData.answers;
-
-        const randomQuestions = sessionData.randomQuestions;
-        console.log(randomQuestions)
-
-        const SkillId =sessionData.SkillId
-        const jobId=sessionData.jobId
-
-        randomQuestions.forEach(question => {
-            // Find correct option id
-            const correctAnswer = question.options.find(option => option.correct);
-            if (correctAnswer) {
-                questionIdsAndCorrectIds.push({
-                    questionId: question.id,
-                    correctId: correctAnswer.id
-                });
-            }
-        });
-
-        const correctAnswers =[]
-        correctAnswers.push(...questionIdsAndCorrectIds)
-        console.log(SkillId)
-        console.log("randomQuestions session:", randomQuestions);
-        console.log("correctanswers",correctAnswers)
-        
-        if (!correctAnswers) {
-            return res.status(400).json({ error: 'Quiz session not found.' });
+    randomQuestions.forEach(question => {
+        // Find correct option id
+        const correctAnswer = question.options.find(option => option.correct);
+        if (correctAnswer) {
+            questionIdsAndCorrectIds.push({
+                questionId: question.id,
+                correctId: correctAnswer.id
+            });
         }
+    });
 
-        answer.forEach(userAnswer => {
-            const correctAnswer = correctAnswers.find(q => q.questionId === userAnswer.questionId);
-            if (correctAnswer && userAnswer.answerId === correctAnswer.correctId) {
-                Grade++;
-            }
-        });
+    const correctAnswers = [];
+    correctAnswers.push(...questionIdsAndCorrectIds);
+    console.log(correctAnswers)
+    let Grade=0;
+    answer.forEach(userAnswer => {
+        const correctAnswer = correctAnswers.find(q => q.questionId === userAnswer.questionId);
+        if (correctAnswer && userAnswer.answerId === correctAnswer.correctId) {
+            Grade++;
+        }
+    });
 
         console.log("Grade:", Grade);
 
@@ -724,10 +719,9 @@ console.log(sessionData)
         jobs: jobs
     });
 }
-    } catch (error) {
-        next(error);
-    } 
+    
 };
+
 
 
 //-------------------------------------------FullStackQuiz---------------------------------------------------------------//
