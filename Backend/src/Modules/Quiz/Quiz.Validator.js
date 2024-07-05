@@ -92,14 +92,14 @@ jobId:joi.string().guid({ version: ['uuidv4'] }).required(),
 
 export const SubmitQuiz={
 
-  body:  joi.object({
-    answer: joi.array().items(
-        joi.object({
-            questionId: joi.string().guid({ version: ['uuidv4'] }).required(),
-            answerId: joi.string().guid({ version: ['uuidv4'] }).required()
-        })
-    ).required()
-}),
+//   body:  joi.object({
+//     // answer: joi.array().items(
+//     //     joi.object({
+//     //         questionId: joi.string().guid({ version: ['uuidv4'] }).required(),
+//     //         answerId: joi.string().guid({ version: ['uuidv4'] }).required()
+//     //     })
+//     // ).required(),
+// }).required(),
   query: joi.object().keys({
 /// uuid
 jobId:joi.string().guid({ version: ['uuidv4'] }).optional(),
