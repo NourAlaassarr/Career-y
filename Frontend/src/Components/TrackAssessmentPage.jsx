@@ -57,7 +57,7 @@ const TrackAssessmentPage = () => {
       console.log(answerArray);
       const response = await httpPost(
         "Quiz/SubmitQuiz",
-        { answer: answerArray, session: quizSession },
+        { answer: answerArray, quizId: quiz.QuizId, jobId: id },
         { headers: { token: session.token } }
       );
       console.log("Quiz submitted:", response);
