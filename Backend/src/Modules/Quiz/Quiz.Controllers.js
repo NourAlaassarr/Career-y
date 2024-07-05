@@ -582,7 +582,7 @@ export const GetTrackQuiz = async (req, res, next) => {
 
 //SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
-    const { answer } = req.body;
+    const { answer,sessionData } = req.body;
 
     let session;
     let driver;
@@ -594,11 +594,11 @@ export const SubmitQuiz = async (req, res, next) => {
         let Grade = 0;
 
         // Retrieve quiz and correct answers from the session
-        const quiz = req.session.quiz;
-        const correctAnswers = req.session.answers;
-        const randomQuestions = req.session.randomQuestions;
-        const SkillId =req.session.SkillId
-        const jobId=req.session.jobId
+        const quiz = sessionData.quiz;
+        const correctAnswers = sessionData.answers;
+        const randomQuestions = sessionData.randomQuestions;
+        const SkillId =sessionData.SkillId
+        const jobId=sessionData.jobId
 
         console.log(SkillId)
         console.log("Quiz from session:", quiz);
