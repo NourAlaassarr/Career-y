@@ -409,7 +409,7 @@ export const GetBackendTrackQuiz = async (req, res, next) => {
             skillQuestions.push({ id: questionId, ...question, options, correctAnswerId });
         })
 
-        req.session.SkillId = SkillId;
+        // req.session.SkillId = SkillId;
         console.log(skillQuestions);
 
         // Get random questions and prepare the response
@@ -417,11 +417,18 @@ export const GetBackendTrackQuiz = async (req, res, next) => {
         const randomSkillQuestions = getRandomElements(skillQuestions, 5);
 
         const randomQuestions = [...randomQuizQuestions, ...randomSkillQuestions];
-        const questionIdsAndCorrectIds = randomQuestions.map(question => ({
-            questionId: question.id,
-            correctId: question.correctAnswerId
-        }));
-        console.log(questionIdsAndCorrectIds);
+        console.log(randomQuestions)
+        // const questionIdsAndCorrectIds = randomQuestions.map(question => ({
+        //     questionId: question.id,
+        //     correctId: question.correctAnswerId
+        // }));
+        // console.log(questionIdsAndCorrectIds);
+
+
+        const quizId = uuidv4();
+
+        // Store the random questions in the in-memory store with the quizId
+        quizzes.set(quizId, randomQuestions);
         // Format questions as required in the output
         const formattedQuestions = randomQuestions.map((question, index) => ({
             id: question.id,
@@ -435,12 +442,12 @@ export const GetBackendTrackQuiz = async (req, res, next) => {
         }));
 
         // Store data in session
-        req.session.quiz = formattedQuestions;
-        req.session.answers = questionIdsAndCorrectIds;
-        req.session.randomQuestions = randomQuestions;
-        req.session.jobId = jobId;
+        // req.session.quiz = formattedQuestions;
+        // req.session.answers = questionIdsAndCorrectIds;
+        // req.session.randomQuestions = randomQuestions;
+        // req.session.jobId = jobId;
         session.close();
-        res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions });
+        res.status(200).json({ Message: 'Random Quiz', Questions: formattedQuestions,QuizId: quizId });
     };
 //Career guide (all except Backend & Fullstack)
 export const GetTrackQuiz = async (req, res, next) => {
@@ -483,7 +490,7 @@ export const GetTrackQuiz = async (req, res, next) => {
                 }
                 skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
             });
-            req.session.skillId = SkillId;
+            // req.session.skillId = SkillId;
            
         }
 
@@ -530,7 +537,7 @@ export const GetTrackQuiz = async (req, res, next) => {
                 }
                 skillsMap.get(skillName).push({ id: questionId, ...question, options, correctAnswerId });
             });
-            req.session.SkillId = SkillId;
+            // req.session.SkillId = SkillId;
         }
 
         // Function to get random elements from an array
@@ -623,7 +630,7 @@ export const SubmitQuiz = async (req, res, next) => {
         // Determine pass status based on grade
         const totalQuestions = randomQuestions.length;
         const Pass = Grade > totalQuestions / 2;
-
+        quizzes.delete(quizId);
         if(!Pass)
             {
 
@@ -806,6 +813,11 @@ export const GetFullStackTrackQuiz = async (req, res, next) => {
             correctAnswerId: record.get('correctAnswerId')
           }));
 
+          const quizId = uuidv4();
+
+    // Store the random questions in the in-memory store with the quizId
+    quizzes.set(quizId, correctAnswers);
+
           console.log("correctAnswer",correctAnswers);
           console.log("combinedQuestions",combinedQuestions);
         req.session.combinedQuestions = combinedQuestions;
@@ -818,6 +830,7 @@ export const GetFullStackTrackQuiz = async (req, res, next) => {
         return res.status(200).json({
             message: 'Data fetched successfully',
             Questions: combinedQuestions,
+            QuizId: quizId,
         });
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -827,31 +840,26 @@ export const GetFullStackTrackQuiz = async (req, res, next) => {
 
 //i am using token in header
 export const submitFullstackTrackQuiz = async (req, res, next) => {
-    const { answer } = req.body;
+    const { answer,quizId,BackendId,BackendFrameWorkId,FrontendId,FrontendFrameWorkId } = req.body;
     const userId = req.authUser._id
     let session;
     const driver = await Neo4jConnection();
     session = driver.session();
     try {
-        console.log("helo")
-        console.log('Session Data:', req.session);
+        // console.log("helo")
+        // console.log('Session Data:', req.session);
 
-        const quiz = req.session.combinedQuestions;
-        const correctAnswers = req.session.correctAnswers;
-        const BackendId = req.session.BackendId;
-        const BackendFrameWorkId = req.session.BackendFrameWorkId;
-        const FrontendId = req.session.FrontendId;
-        const FrontendFrameWorkId = req.session.FrontendFrameWorkId;
+    
+        // const correctAnswers = req.session.correctAnswers;
+        // const BackendId = req.session.BackendId;
+        // const BackendFrameWorkId = req.session.BackendFrameWorkId;
+        // const FrontendId = req.session.FrontendId;
+        // const FrontendFrameWorkId = req.session.FrontendFrameWorkId;
+        // quizzes.delete(quizId);
 
-        console.log('Quiz:', quiz);
-        console.log('Correct Answers:', correctAnswers);
-        console.log('BackendId:', BackendId);
-        console.log('BackendFrameWorkId:', BackendFrameWorkId);
-        console.log('FrontendId:', FrontendId);
-        console.log('FrontendFrameWorkId:', FrontendFrameWorkId);
-
-        if (!quiz || !correctAnswers) {
-            return res.status(400).json({ error: 'Quiz session not found.' });
+        const correctAnswers = quizzes.get(quizId);
+        if (!correctAnswers) {
+            return res.status(400).json({ error: 'Invalid quiz ID or quiz has expired.' });
         }
         let Grade = 0;
         answer.forEach(userAnswer => {
@@ -861,7 +869,7 @@ export const submitFullstackTrackQuiz = async (req, res, next) => {
             }
         });
 
-        const totalQuestions = quiz.length;
+        const totalQuestions = correctAnswers.length;
         const Pass = Grade > totalQuestions / 2;
         console.log('Grade:', Grade);
         console.log('totalQuestions:', totalQuestions);
