@@ -16,7 +16,7 @@ router.post('/AddQuiz',isAuth(QuizApiRoles.Add_Quiz),asyncHandler(QuizController
 router.post('/AddQuestionsToQuiz',isAuth(QuizApiRoles.Add_Quiz),ValidationCoreFunction(QuizValidation.AddQuestionsToNode),asyncHandler(QuizControllers.AddQuestionsToQuiz))
 
 
-router.get('/Quiz',isAuth(QuizApiRoles.GetQuiz),ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
+router.get('/Quiz',ValidationCoreFunction(QuizValidation.GetQuiz),asyncHandler(QuizControllers.GetQuiz))
 router.get('/AllQuizzes',ValidationCoreFunction(QuizValidation.GetAllQuizzes),asyncHandler(QuizControllers.GetAllQuizzes))
 
 //Topic Quiz 
