@@ -19,6 +19,7 @@ import SignupForm from "./pages/SignUp";
 import SkillResources from "./pages/Roadmaps/Roadmap/SkillResources";
 import Admin from "./Components/Admin/Admin";
 import DeleteUsers from "./Components/Admin/DeleteUsers";
+import WhatWeOffer from "./Components/WhatWeOffer";
 
 function App() {
   return (
@@ -55,6 +56,7 @@ function App() {
         <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
+        <Route path="/courses" element={<WhatWeOffer />} />
       </Routes>
     </Router>
   );
