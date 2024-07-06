@@ -111,8 +111,8 @@ export const UpdateCourse = {
     Courselink: joi.string().uri().optional(),
     CourseName: joi.string().optional(),
     CourseDescription: joi.string().optional(),
-    Duration: joi.number().integer().min(1).optional(),
-    prerequisites: joi.array().items(joi.string()).optional(),
+    Duration: joi.string().optional(),
+    prerequisites: joi.string().optional(),
     language: joi.string().optional()
   }).required(),
   query: joi.object().keys({

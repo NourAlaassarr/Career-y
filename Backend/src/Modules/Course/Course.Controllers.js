@@ -235,9 +235,10 @@ export const UpdateCourse = async(req,res,next)=>{
         const owner = result.records[0]?.get('user');
 
        // Check if the user is an admin
-    const isAdmin = req.authUser.isAdmin; 
+    const isAdmin = req.authUser.role; 
+    console.log(isAdmin)
 
-    if (!owner && !isAdmin) {
+    if (!owner && isAdmin!='admin') {
         return next(new Error("Unauthorized: Only course owner or admin can update the course.", { cause: 403 })) ;
     }
     // Construct the update query dynamically
