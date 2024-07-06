@@ -15,7 +15,7 @@ App.use(session({
         maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
     } }
 }));
-
+// Basic routes
 App.get('/', (req, res) => {
     res.send('Home route works!');
   });
@@ -24,13 +24,43 @@ App.get('/', (req, res) => {
     res.send('Test route works!');
   });
   
-  const port = process.env.PORT || 3000;
-  App.listen(port, () => {
-    console.log(`Server running on port ${port}`);
+  // Error handling middleware
+  App.use((err, req, res, next) => {
+    console.error('Runtime error:', err);
+    res.status(500).send('Something went wrong!');
   });
-// App.use((err, req, res, next) => {
-//     console.error('Runtime error:', err);
-//     res.status(500).send('Something went wrong!');
+  
+  const port =  3000;
+  
+  App.listen(port, (err) => {
+    if (err) {
+      console.error('Error starting server:', err);
+    } else {
+      console.log(`Server running on port ${port}`);
+    }
+  });
+  
+  // Initialize app with additional setup
+  try {
+    initiateApp(App, express);
+  } catch (error) {
+    console.error('Error during app initialization:', error);
+  }
+  
+  export default App;
+
+// App.get('/', (req, res) => {
+//     res.send('Home route works!');
 //   });
+  
+//   App.get('/test', (req, res) => {
+//     res.send('Test route works!');
+//   });
+  
+//   const port = process.env.PORT || 3000;
+//   App.listen(port, () => {
+//     console.log(`Server running on port ${port}`);
+//   });
+
 // initiateApp(App,express)
-export default App; 
+// export default App; 
