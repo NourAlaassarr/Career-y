@@ -15,9 +15,22 @@ App.use(session({
         maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
     } }
 }));
-App.use((err, req, res, next) => {
-    console.error('Runtime error:', err);
-    res.status(500).send('Something went wrong!');
+
+App.get('/', (req, res) => {
+    res.send('Home route works!');
   });
-initiateApp(App,express)
+  
+  App.get('/test', (req, res) => {
+    res.send('Test route works!');
+  });
+  
+  const port = process.env.PORT || 3000;
+  App.listen(port, () => {
+    console.log(`Server running on port ${port}`);
+  });
+// App.use((err, req, res, next) => {
+//     console.error('Runtime error:', err);
+//     res.status(500).send('Something went wrong!');
+//   });
+// initiateApp(App,express)
 export default App; 
