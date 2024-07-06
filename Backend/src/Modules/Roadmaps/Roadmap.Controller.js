@@ -1,7 +1,9 @@
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from "axios";
 import { v4 as uuidv4 } from 'uuid';
+import {emailTemplate}from'../../utils/EmailTemplate.js'
 
+import {sendmailService}from'../../Services/SendEmailService.js'
 //Get Roadmap of Specific Track ID
 export const GetRoadmap = async (req, res, next) => {
     const { TrackId } = req.query;
