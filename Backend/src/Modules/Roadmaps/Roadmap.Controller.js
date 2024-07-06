@@ -73,7 +73,15 @@ export const GetRoadmap = async (req, res, next) => {
                 };
             });
         }
-        res.json({ Message: 'Success', RoadMap: skills });
+        res.json({
+          Message: "Success",
+          roadmapSkills: skills,
+          roadmapDetails: {
+            name: TrackCheckResult.records[0].get("job").properties.name,
+            description:
+              TrackCheckResult.records[0].get("job").properties.description,
+          },
+        });
         session.close();
 };
 

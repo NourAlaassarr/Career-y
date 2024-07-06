@@ -15,13 +15,13 @@ export const Roadmap = () => {
   const navigate = useNavigate();
 
   const getRoadmap = useCallback(async () => {
-    const { RoadMap, Name, Description } = await httpGet(
+    const { roadmapSkills, roadmapDetails } = await httpGet(
       `Roadmap/GetRoadmap?TrackId=${id}`
     );
-    console.log(RoadMap);
-    setSkills(RoadMap);
-    setName(Name);
-    setDescription(Description);
+    console.log(roadmapSkills);
+    setSkills(roadmapSkills);
+    setName(roadmapDetails.name);
+    setDescription(roadmapDetails.description);
   }, [id]);
 
   useEffect(() => {
@@ -38,7 +38,7 @@ export const Roadmap = () => {
           {description}
         </S.StyledTypography>
         <Separator text="Skills" />
-        <Grid container>
+        <Grid paddingLeft={2.5} container>
           {skills.map((skill) => (
             <S.StyledLabelBox key={skill} text={skill.name} />
           ))}
