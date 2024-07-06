@@ -7,8 +7,8 @@ export const AddCourse = {
     body: joi.object().required().keys({
         CourseName: joi.string().required(),
         CourseDescription: joi.string().required(),
-        Duration: joi.number().integer().min(1).required(),
-        prerequisites: joi.array().items(joi.string()).optional(),
+        Duration: joi.string().required(),
+        prerequisites: joi.string().required(),
         language: joi.string().required(),
         Courselink: joi.string().uri().required()
     }).required(),
