@@ -11,9 +11,7 @@ export const Roadmaps = () => {
   const navigate = useNavigate();
 
   const getRoadmaps = useCallback(async () => {
-    const { Jobs } = await httpGet(
-      "Roadmap/GetAllTracks"
-    );
+    const { Jobs } = await httpGet("Roadmap/GetAllTracks");
     setRoadmaps(Jobs);
   }, []);
 
@@ -42,6 +40,7 @@ export const Roadmaps = () => {
       {/* List of Roadmaps from api */}
       <Grid
         container
+        spacing={1}
         sx={{
           paddingRight: "60px",
           paddingLeft: "70px",
@@ -52,23 +51,26 @@ export const Roadmaps = () => {
           <Grid
             item
             key={roadmap.Nodeid}
-            sx={{
-              minHeight: "70px",
-              minWidth: "calc(25% - 20px)",
-              textAlign: "center",
-              alignContent: "center",
-              backgroundColor: "#057a8d",
-              color: "#fff",
-              borderRadius: "10px",
-              marginBottom: "20px",
-              marginRight: "20px",
-              cursor: "pointer",
-            }}
+            xs={12}
+            sm={6}
+            md={3}
             onClick={() => {
               navigate(`${roadmap.Nodeid}`);
             }}
           >
-            {roadmap.name}
+            <Box
+              sx={{
+                backgroundColor: "#057a8d",
+                minHeight: "60px",
+                textAlign: "center",
+                alignContent: "center",
+                color: "#fff",
+                borderRadius: "10px",
+                cursor: "pointer",
+              }}
+            >
+              {roadmap.name}
+            </Box>
           </Grid>
         ))}
       </Grid>

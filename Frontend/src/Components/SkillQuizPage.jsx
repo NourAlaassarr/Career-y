@@ -72,6 +72,8 @@ const SkillQuizPage = () => {
   };
 
   const currentQuestion = questions[currentQuestionIndex];
+  const formatTime = (time) =>
+    `${Math.floor(time / 60)}:${("0" + (time % 60)).slice(-2)}`;
 
   return (
     <div className="skill-quiz-page">
@@ -97,14 +99,6 @@ const SkillQuizPage = () => {
               </label>
             ))}
           </div>
-          <div className="navigation-buttons">
-            {currentQuestionIndex > 0 && (
-              <button onClick={handlePreviousQuestion}>Previous</button>
-            )}
-            {currentQuestionIndex < questions.length - 1 && (
-              <button onClick={handleNextQuestion}>Next</button>
-            )}
-          </div>
         </div>
       ) : (
         <p>Loading questions...</p>
@@ -114,6 +108,19 @@ const SkillQuizPage = () => {
           Submit
         </button>
       )}
+      <div className="navigation-buttons">
+        {currentQuestionIndex > 0 && (
+          <button onClick={handlePreviousQuestion}>Previous</button>
+        )}
+        {currentQuestionIndex < questions.length - 1 && (
+          <button onClick={handleNextQuestion}>Next</button>
+        )}
+        {currentQuestionIndex === questions.length - 1 && (
+          <button className="submit-button" onClick={handleSubmit}>
+            Submit
+          </button>
+        )}
+      </div>
       {grade !== null && (
         <div className="grade-container">
           <p>Your Grade: {grade}%</p>
