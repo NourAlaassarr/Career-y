@@ -15,6 +15,9 @@ App.use(session({
         maxAge: 2 * 60 * 60 * 1000 // 2 hours in milliseconds
     } }
 }));
-
+App.use((err, req, res, next) => {
+    console.error('Runtime error:', err);
+    res.status(500).send('Something went wrong!');
+  });
 initiateApp(App,express)
 export default App; 
