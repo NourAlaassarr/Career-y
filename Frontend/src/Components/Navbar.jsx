@@ -64,9 +64,9 @@ export const Navbar = () => {
           </Typography>
         </Button>
         <Typography
-          variant="h6"
+          variant="h5"
           component="div"
-          sx={{ flexGrow: 1, ml: "15%" }}
+          sx={{ flexGrow: 1, ml: "10%" }}
         >
           Career-Y
         </Typography>
