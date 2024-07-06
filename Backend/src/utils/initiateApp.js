@@ -12,12 +12,24 @@ import {Neo4jConnection}from'../../DB/Neo4j/Neo4j.js'
 export const initiateApp= async(App,express)=>{
     const Port =process.env.PORT || 5000
     App.use(express.json())
-    
+    App.use(express.urlencoded({ extended: true }));
     App.use(cors()) // allow anyone
 
     await Neo4jConnection()
     // DBconnection()
-    
+    App.get('/', (req, res) => {
+        res.send('Home route works!');
+      });
+      
+      App.get('/test', (req, res) => {
+        res.send('Test route works!');
+      });
+      
+      // Error handling middleware
+      App.use((err, req, res, next) => {
+        console.error('Runtime error:', err);
+        res.status(500).send('Something went wrong!');
+      });
     App.use('/Auth',router.AuthRoutes)
     App.use('/Quiz',router.QuizRoutes)
     App.use('/Job',router.JobRoutes)

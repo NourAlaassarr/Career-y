@@ -1,100 +1,136 @@
-/* Overall container for the Add Skills Page */
-.add-skills-page {
-    padding: 20px;
-    background-color: #f8f9fa;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Page header styling */
-  .add-skills-page h2 {
-    color: #333;
-    margin-bottom: 20px;
-    font-size: 1.8rem;
-    text-align: center;
-  }
-  
-  /* Styling for paragraphs */
-  .add-skills-page p {
-    color: #555;
-    margin-bottom: 10px;
-    font-size: 1rem;
-    text-align: center;
-  }
-  
-  /* Styling for the input fields */
-  .add-skills-page input[type="number"],
-  .add-skills-page input[type="text"] {
-    padding: 10px;
-    margin-bottom: 15px;
-    width: 100%;
-    box-sizing: border-box;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 1rem;
-  }
-  
-  /* Specific styling for the number input */
-  .add-skills-page input[type="number"] {
-    margin-bottom: 20px;
-  }
-  
-  /* Add some spacing between each skill input */
-  .skill-input {
-    margin-bottom: 10px;
-  }
-  
-  /* Style for the container holding the skill inputs */
-  .skills-container {
-    margin-top: 10px;
-  }
-  
-  /* Placeholder text styling */
-  .add-skills-page input::placeholder {
-    color: #aaa;
-  }
-  
-  /* Add some interactive styles */
-  .add-skills-page input:focus {
-    border-color: #007bff;
-    outline: none;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-  }
-  
-  /* Example button styling */
-  button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    background-color: #1d2329;
-    color: white;
-    font-size: 1rem;
-    cursor: pointer;
-    margin-top: 20px;
-    display: block;
-    width: 100%;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Responsive adjustments */
-  @media (max-width: 600px) {
-    .add-skills-page {
-      padding: 15px;
-      border-radius: 0;
-    }
-  
-    .add-skills-page h2 {
-      font-size: 1.5rem;
-    }
-  
-    .add-skills-page p {
-      font-size: 0.9rem;
-    }
-  }
-  
+/* AddSkills2Page.css */
+
+.add-skills2-page {
+  font-family: Arial, sans-serif;
+  padding: 20px;
+  background-color: #f4f4f9;
+  max-width: 800px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.search-bar:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.header-sentence {
+  font-size: 20px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #333;
+  text-align: center;
+}
+
+.skills-container {
+  display: flex;
+  gap: 20px;
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.skills-list, .existing-skills-list, .selected-skills-list {
+  flex: 1;
+  background: #fafafa;
+  padding: 15px;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  overflow-y: auto;
+}
+
+.skills-list label, .existing-skills-list ul, .selected-skills-list ul {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.skill-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.skill-item input {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.skill-item:hover {
+  background-color: #f0f0f0;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #28a745;
+  color: white;
+  font-size: 18px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 800px;
+}
+
+.submit-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.submit-button:hover:not(:disabled) {
+  background-color: #218838;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+h3 {
+  font-size: 18px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.error-message {
+  color: red;
+  font-weight: bold;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.loading-message {
+  font-size: 18px;
+  color: #007bff;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.success-message {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  text-align: center;
+}

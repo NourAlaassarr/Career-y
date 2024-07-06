@@ -220,22 +220,26 @@ const quizImageMap = {
   rxdart: RX,
 };
 
+
 const QuizPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
+  const session = JSON.parse(localStorage.getItem("session"));
+  const [searchTerm, setSearchTerm] = useState('');
   const [quizzes, setQuizzes] = useState([]);
 
   useEffect(() => {
     const fetchQuizzes = async () => {
       try {
-        const response = await httpGet("/Quiz/AllQuizzes");
-        console.log("Quizzes fetched:", response); // Debug log
+        const response = await httpGet('Quiz/AllQuizzes', {
+          headers: { token: session.token },
+        });
+        console.log('Quizzes fetched:', response); // Debug log
         if (response && response.Quizzes) {
           setQuizzes(response.Quizzes);
         } else {
-          console.error("Unexpected response structure:", response);
+          console.error('Unexpected response structure:', response);
         }
       } catch (error) {
-        console.error("Error fetching quizzes:", error);
+        console.error('Error fetching quizzes:', error);
       }
     };
 
@@ -263,7 +267,9 @@ const QuizPage = () => {
         onChange={handleSearchChange}
         className="search-input"
       />
-      <div className="instruction-text">CHOOSE THE QUIZ TO START</div>
+      <div className="instruction-text">
+        CHOOSE THE QUIZ TO START
+      </div>
       <div className="quizzes-container">
         {filteredQuizzes.map((quiz) => (
           <Link key={quiz.id} to={`/quiz/${quiz.id}`} className="quiz-link">

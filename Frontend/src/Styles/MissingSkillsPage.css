@@ -1,0 +1,50 @@
+.missing-skills-page {
+  padding: 20px;
+  text-align: center;
+}
+
+.gap-skills-container, .recommended-tracks-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.gap-skill, .recommended-track {
+  margin: 10px;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 200px;
+  text-align: center;
+}
+
+.mandatory {
+  border-color: red;
+}
+
+.optional {
+  border-color: green;
+}
+
+.mandatory-label {
+  display: block;
+  margin-top: 5px;
+  color: red;
+  font-weight: bold;
+}
+
+.optional-label {
+  display: block;
+  margin-top: 5px;
+  color: green;
+  font-weight: bold;
+}
+
+.recommended-track .track-name {
+  font-weight: bold;
+}
+
+.recommended-track .track-description {
+  margin-top: 5px;
+  color: #555;
+}
