@@ -1,42 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { httpGet } from '../axios/axiosUtils'; // Ensure the correct import path
-import '../Styles/MissingSkillsPage.css'; // Create and style your CSS file
+import React, { useState, useEffect } from "react";
+import { httpGet } from "../axios/axiosUtils"; // Ensure the correct import path
+import "../Styles/MissingSkillsPage.css"; // Create and style your CSS file
 
 const MissingSkillsPage = () => {
   const [gapSkills, setGapSkills] = useState([]);
   const [recommendedTracks, setRecommendedTracks] = useState([]);
-  const session = JSON.parse(localStorage.getItem('session'));
+  const session = JSON.parse(localStorage.getItem("session"));
 
   useEffect(() => {
     const fetchGapSkills = async () => {
       try {
-        const response = await httpGet('User/GapSkills', {
-          headers: { 'token': session.token }
+        const response = await httpGet("User/GapSkills", {
+          headers: { token: session.token },
         });
         console.log("Gap skills fetched:", response); // Debug log
         if (response && response.gapSkills) {
           setGapSkills(response.gapSkills);
         } else {
-          console.error('Unexpected response structure:', response);
+          console.error("Unexpected response structure:", response);
         }
       } catch (error) {
-        console.error('Error fetching gap skills:', error);
+        console.error("Error fetching gap skills:", error);
       }
     };
 
     const fetchRecommendedTracks = async () => {
       try {
-        const response = await httpGet('User/RecommendTracks', {
-          headers: { 'token': session.token }
+        const response = await httpGet("User/RecommendTracks", {
+          headers: { token: session.token },
         });
         console.log("Recommended tracks fetched:", response); // Debug log
         if (response && response.jobs) {
           setRecommendedTracks(response.jobs);
         } else {
-          console.error('Unexpected response structure:', response);
+          console.error("Unexpected response structure:", response);
         }
       } catch (error) {
-        console.error('Error fetching recommended tracks:', error);
+        console.error("Error fetching recommended tracks:", error);
       }
     };
 
@@ -50,7 +50,12 @@ const MissingSkillsPage = () => {
       <div className="gap-skills-container">
         {gapSkills.length > 0 ? (
           gapSkills.map((skill, index) => (
-            <div key={index} className={`gap-skill ${skill.mandatory ? 'mandatory' : 'optional'}`}>
+            <div
+              key={index}
+              className={`gap-skill ${
+                skill.mandatory ? "mandatory" : "optional"
+              }`}
+            >
               <span className="skill-name">{skill.Skill}</span>
               {skill.mandatory ? (
                 <span className="mandatory-label">Mandatory</span>

@@ -22,8 +22,6 @@ import ReactNative from "../../images/logo/React Native.png";
 import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
 import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
 
-
-
 const CareerGuidancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [tracks, setTracks] = useState([]);
@@ -112,15 +110,19 @@ const CareerGuidancePage = () => {
             key={track.Nodeid}
             className="track-link"
           >
-            <div className="track-image">
-              <img
-                src={getTrackImage(track)}
-                alt={`${track.name} Image`}
-                className="track-img"
-              />
+            <div className="track-item">
+              <div className="track-image">
+                <img
+                  src={getTrackImage(track)}
+                  alt={`${track.name} Image`}
+                  className="track-img"
+                />
+              </div>
+              <div className="track-text">
+                <div className="track-name">{track.name}</div>
+                <div className="track-description">{track.description}</div>
+              </div>
             </div>
-            <div className="track-name">{track.name}</div>
-            <div className="track-description">{track.description}</div>
           </Link>
         ))}
       </div>
@@ -129,4 +131,3 @@ const CareerGuidancePage = () => {
 };
 
 export default CareerGuidancePage;
-

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { httpGet, httpPost } from "../axios/axiosUtils"; // Ensure the correct import path
-import "../Styles/CareerGuidancePage.css";
+import "../Styles/CareerGoalPage.css";
 
 // Import track images
 import Android from "../../images/logo/Android.png";
@@ -21,7 +21,6 @@ import GameDevelopment from "../../images/logo/Game Development.png";
 import ReactNative from "../../images/logo/React Native.png";
 import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
 import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
-
 
 const CareerGoalPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,11 +50,10 @@ const CareerGoalPage = () => {
     try {
       await httpPost(
         `User/AddCareerGoal?CareerGoalId=${careerGoalId}`,
-        { CareerGoalId: careerGoalId },
-        { headers: { 'token': session.token } }
+        null,
+        { headers: { token: session.token } }
       );
       navigate(`/track/${careerGoalId}/showMissingSkills`);
-      
     } catch (error) {
       console.error("Error posting career goal:", error);
     }
@@ -100,14 +98,14 @@ const CareerGoalPage = () => {
       case "robotics automation technician":
         return RoboticsAutomationTechnician;
       case "business intelligence developer":
-        return BusinessIntelligenceDeveloper;  
+        return BusinessIntelligenceDeveloper;
       default:
         return null; // Default image or no image
     }
   };
 
   return (
-    <div className="career-guidance-page">
+    <div className="career-goal-page">
       <input
         type="text"
         placeholder="Search for tracks..."
@@ -115,9 +113,7 @@ const CareerGoalPage = () => {
         onChange={(e) => setSearchTerm(e.target.value)}
         className="search-input"
       />
-      <div className="instruction-text">
-        CHOOSE YOUR CAREER GOAL
-      </div>
+      <div className="instruction-text">CHOOSE YOUR CAREER GOAL</div>
       <div className="tracks-container">
         {filteredTracks.map((track) => (
           <div

@@ -1,6 +1,6 @@
 import React from "react";
 import officeImage from "../../images/office.png"; // Adjust the path as needed
-import "./../styles/About.css";
+import "../Styles/About.css";
 
 const AboutSection = () => {
   return (

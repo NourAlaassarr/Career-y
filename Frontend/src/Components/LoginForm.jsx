@@ -1,9 +1,12 @@
 import { useState } from "react";
 import { httpPost } from "../axios/axiosUtils";
+import Logo from "../../images/Logo4.png"
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
@@ -14,22 +17,25 @@ const LoginForm = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    // Perform login logic here
-    const response = await httpPost("Auth/SignIn", {
-      Email: email,
-      Password: password,
-    });
-    localStorage.setItem(
-      "session",
-      JSON.stringify({
-        id: response.updatedUserNode._id,
-        token: response.updatedUserNode.token,
-      })
-    );
-    // Reset form fields
-    setEmail("");
-    setPassword("");
+    try {
+      e.preventDefault();
+      const response = await httpPost("Auth/SignIn", {
+        Email: email,
+        Password: password,
+      });
+      localStorage.setItem(
+        "session",
+        JSON.stringify({
+          id: response.updatedUserNode._id,
+          token: response.updatedUserNode.token,
+        })
+      );
+      setEmail("");
+      setPassword("");
+      navigate('/');
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -37,7 +43,7 @@ const LoginForm = () => {
       <form className="signin-form" onSubmit={handleSubmit}>
         <div className="logo-container">
           <div className="logo">
-            <img src="./Logo1.png" alt="Logo" className="logo-image" />
+            <img src={Logo} alt="Logo" className="logo-image" />
           </div>
           <p
             style={{
