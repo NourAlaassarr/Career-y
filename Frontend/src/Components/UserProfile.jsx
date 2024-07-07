@@ -20,12 +20,12 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const token = localStorage.getItem('token'); 
-        if (!token) {
+        const session = JSON.parse(localStorage.getItem('session')); 
+        if (!session.token) {
           throw new Error("No token found");
         }
 
-        const data = await httpGet("User/GetUserDetails", token); 
+        const data = await httpGet("User/GetUserDetails", {headers: {token: session.token}}); 
         setUser(data);
       } catch (error) {
         console.error("Error fetching user data:", error);
@@ -64,7 +64,7 @@ export default function ProfilePage() {
                   fluid
                 />
                 <p className="text-muted mb-1">
-                  {user.title || "Full Stack Developer"}
+                  {user.title || "Software Developer"}
                 </p>
               </MDBCardBody>
             </MDBCard>
@@ -77,7 +77,7 @@ export default function ProfilePage() {
                       key={index}
                       className="d-flex justify-content-between align-items-center p-3"
                     >
-                      <MDBCardText>{skill}</MDBCardText>
+                      <MDBCardText>{skill.name}</MDBCardText>
                     </MDBListGroupItem>
                   ))}
                 </MDBListGroup>
@@ -127,11 +127,11 @@ export default function ProfilePage() {
                       className="mb-1"
                       style={{ fontSize: ".77rem" }}
                     >
-                      {user.careerGoal.title}
+                      {user.CareerGoal[0]}
                     </MDBCardText>
                     <MDBProgress className="rounded">
                       <MDBProgressBar
-                        width={user.careerGoal.progress}
+                        width={user.CareerGoal[1]}
                         valuemin={0}
                         valuemax={100}
                       />

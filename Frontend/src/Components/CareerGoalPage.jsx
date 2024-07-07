@@ -60,7 +60,7 @@ const CareerGoalPage = () => {
   };
 
   const filteredTracks = tracks.filter((track) =>
-    track.name.toLowerCase().includes(searchTerm.toLowerCase())
+    track.name != undefined && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getTrackImage = (track) => {
@@ -111,24 +111,24 @@ const CareerGoalPage = () => {
         placeholder="Search for tracks..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input"
+        className="career-goal-search-input"
       />
-      <div className="instruction-text">CHOOSE YOUR CAREER GOAL</div>
-      <div className="tracks-container">
+      <div className="career-goal-instruction-text">CHOOSE YOUR CAREER GOAL</div>
+      <div className="career-goal-tracks-container">
         {filteredTracks.map((track) => (
           <div
             key={track.Nodeid}
-            className="track-link"
+            className="career-goal-track-link"
             onClick={() => handleTrackClick(track.Nodeid)}
           >
-            <div className="track-image">
+            <div className="career-goal-track-image">
               <img
                 src={getTrackImage(track)}
                 alt={`${track.name} Image`}
-                className="track-img"
+                className="career-goal-track-img"
               />
             </div>
-            <div className="track-name">{track.name}</div>
+            <div className="career-goal-track-name">{track.name}</div>
             {/* <div className="track-description">{track.description}</div> */}
           </div>
         ))}

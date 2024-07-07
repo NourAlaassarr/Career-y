@@ -45,11 +45,12 @@ const CareerGuidancePage = () => {
   }, []);
 
   const filteredTracks = tracks.filter((track) =>
-    track.name.toLowerCase().includes(searchTerm.toLowerCase())
+    track.name != undefined && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Function to get track image based on track name
   const getTrackImage = (track) => {
+    console.log(track);
     // Adjust this switch statement to match each track name with its corresponding image
     switch (track.name.toLowerCase()) {
       case "android developer":
@@ -104,7 +105,7 @@ const CareerGuidancePage = () => {
         CHOOSE THE CAREER PATH YOU WANT TO TRACK YOUR PROGRESS IN
       </div>
       <div className="tracks-container">
-        {filteredTracks.map((track) => (
+        {filteredTracks.filter((track) => track.name != undefined).map((track) => (
           <Link
             to={`/track/${track.Nodeid}/assessment`}
             key={track.Nodeid}

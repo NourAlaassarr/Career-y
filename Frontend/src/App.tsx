@@ -9,6 +9,8 @@ import CareerGuidancePage from "./Components/CareerGuidancePage";
 import QuizPage from "./Components/QuizPage";
 import SkillQuizPage from "./Components/SkillQuizPage";
 import TrackAssessmentPage from "./Components/TrackAssessmentPage";
+import ShowingMissingSkills from "./Components/ShowingMissingSkills";
+import MissingSkillsPage from "./Components/MissingSkillsPage";
 import CareerGoalPage from "./Components/CareerGoalPage";
 import JobPage from "./Components/JobPage";
 import TrackCoursePage from "./Components/TrackCoursePage";
@@ -53,7 +55,7 @@ function App() {
           }
         />
         <Route path="/roadmaps/:id/skill/:id" element={<RequireAuth><SkillResources /></RequireAuth>} />
-        <Route path="/UserProfile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
+        <Route path="/user-profile" element={<RequireAuth><ProfilePage /></RequireAuth>} />
         <Route path="/jobs" element={<RequireAuth><JobList /></RequireAuth>} />
         <Route path="/add-skills" element={<RequireAuth><AddSkillsPage /></RequireAuth>} />
         <Route path="/career-guidance" element={<RequireAuth><CareerGuidancePage /></RequireAuth>} />
@@ -62,6 +64,8 @@ function App() {
         <Route path="/track/:id/assessment" element={<RequireAuth><TrackAssessmentPage /></RequireAuth>} />
         <Route path="/job" element={<RequireAuth><JobPage /></RequireAuth>} />
         <Route path="/track/:id/course" element={<RequireAuth><TrackCoursePage /></RequireAuth>} />
+        <Route path="/track/:id/showMissingSkills" element={<RequireAuth><ShowingMissingSkills /></RequireAuth>} />
+        <Route path="/track/:id/missingSkills" element={<RequireAuth><MissingSkillsPage /></RequireAuth>} />
         <Route path="/quiz/:skill/grade" element={<RequireAuth><QuizGradePage /></RequireAuth>} />
         <Route path="/career-goal" element={<RequireAuth><CareerGoalPage /></RequireAuth>} />
         <Route path="/login" element={<LoginForm />} />
