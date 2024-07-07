@@ -790,7 +790,7 @@ timestamp
 const fetchBackendQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching backend quiz...');
-        const response = await axios.get(`http://localhost:8000/Quiz/GetBackendTrackQuiz`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/GetBackendTrackQuiz`, {
             params: { jobId, SkillId },
             headers: {
                 token: token, 
@@ -822,7 +822,7 @@ const fetchBackendQuiz = async (jobId, SkillId, token) => {
 const fetchFrontendTrackQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching track quiz...');
-        const response = await axios.get('http://localhost:8000/Quiz/GetTrackQuiz', {
+        const response = await axios.get('https://career-y-production.up.railway.app/Quiz/GetTrackQuiz', {
             params: { jobId, SkillId },
             headers: {
                 token: token,
@@ -1034,7 +1034,7 @@ const fetchSkills = async (jobId, SkillId, token) => {
     console.log('Fetching skills...');
     console.log(token)
     try {
-        const response = await axios.get(`http://localhost:8000/Quiz/fetchSkillsIfFailed`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/fetchSkillsIfFailed`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });
@@ -1124,7 +1124,7 @@ export const FetchJobIfPass = async (jobId, SkillId, token) => {
     console.log('Fetching JOBOFFERS...');
 
     try {
-        const response = await axios.get(`http://localhost:8000/Quiz/fetchJobsOffers`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/fetchJobsOffers`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });
