@@ -96,7 +96,7 @@ export const Roadmaps = () => {
       <Separator text="Career Roadmaps" />
       {/* List of Roadmaps from api */}
       <Box display="flex" flexWrap="wrap" gap="20px" justifyContent="center" marginX={2}>
-        {roadmaps.map((roadmap) => (
+        {roadmaps.filter((roadmap) => roadmap.name != undefined).map((roadmap) => (
           <S.StyledLink
             key={roadmap.Nodeid}
             to={`${roadmap.Nodeid}`}
