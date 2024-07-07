@@ -13,7 +13,7 @@ router.delete('/DeleteCourse',isAuth(CourseApiRoles.DeleteCourse),ValidationCore
 //Admins Only
 router.patch('/ApproveCourse',isAuth(CourseApiRoles.ApproveCourse),ValidationCoreFunction(Validator.ApproveCourse),asyncHandler(CourseControllers.ApproveCourse))
 
-router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),ValidationCoreFunction(Validator.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
+router.get('/GetAllCourses',ValidationCoreFunction(Validator.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
 
 router.get('/GetALLUnapprovedCourses',isAuth(CourseApiRoles.GetCourseDetails),ValidationCoreFunction(Validator.UnApprovedCourses),asyncHandler(CourseControllers.GetALLUnapprovedCourses))
 
