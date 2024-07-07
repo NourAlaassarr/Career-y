@@ -5,6 +5,59 @@ import { v4 as uuidv4 } from 'uuid';
 import {convertNeo4jDatetimeToISO} from "../../utils/ConverNeo4jDateTimes.js";
 
 //UserGet All Grades+QuizName Neo4j
+// export const GetALLMarksAndGrades = async (req, res, next) => {
+//     const UserId = req.authUser._id;
+
+//     let session;
+//     const driver = await Neo4jConnection();
+//     session = driver.session();
+
+//     try {
+//         const AllInfo = await session.run(
+//             `MATCH (u:User {_id: $UserId})
+//              OPTIONAL MATCH (u)-[took:TOOK]->(quiz:Skill)
+//              OPTIONAL MATCH (u)-[tookTrack:TOOK_TRACK_QUIZ]->(trackQuiz:Job)
+//              RETURN u, 
+//              [quiz IN COLLECT({
+//                 QuizName: quiz.name, 
+//                 TotalQuestions: took.TotalQuestions,
+//                 Grade: took.Grade, 
+//                 Pass: took.Pass 
+//              }) WHERE quiz.QuizName IS NOT NULL] AS takenQuizzes,
+//              [trackQuiz IN COLLECT({
+//                 TrackId: trackQuiz.Nodeid, 
+//                 TrackName: trackQuiz.name,
+//                 Grade: tookTrack.grade, 
+//                 TotalQuestions: tookTrack.TotalQuestions, 
+//                 Pass: tookTrack.pass 
+//              }) WHERE trackQuiz.TrackId IS NOT NULL] AS trackQuizzes,
+//              EXISTS((u)-[:TOOK_TRACK_QUIZ]->(:Job)) AS hasTakenTrackQuiz`,
+//             { UserId }
+//         );
+
+//         const user = AllInfo.records[0].get("u").properties;
+//         const takenQuizzes = AllInfo.records[0].get("takenQuizzes");
+//         const trackQuizzes = AllInfo.records[0].get("trackQuizzes");
+//         const hasTakenTrackQuiz = AllInfo.records[0].get("hasTakenTrackQuiz");
+
+//         res.status(200).json({ 
+//             Message: "DONE", 
+//             user, 
+//             takenQuizzes, 
+//             trackQuizzes,
+//             hasTakenTrackQuiz 
+//         });
+//     } catch (error) {
+//         console.error('Error fetching marks and grades:', error);
+//         next(error);
+//     } finally {
+//         if (session) {
+//             await session.close();
+//         }
+//     }
+// };
+
+
 export const GetALLMarksAndGrades = async (req, res, next) => {
     const UserId = req.authUser._id;
 
@@ -17,32 +70,30 @@ export const GetALLMarksAndGrades = async (req, res, next) => {
             `MATCH (u:User {_id: $UserId})
              OPTIONAL MATCH (u)-[took:TOOK]->(quiz:Skill)
              OPTIONAL MATCH (u)-[tookTrack:TOOK_TRACK_QUIZ]->(trackQuiz:Job)
-             RETURN u, 
-             [quiz IN COLLECT({
+             RETURN 
+             [quiz IN COLLECT(DISTINCT {
                 QuizName: quiz.name, 
                 TotalQuestions: took.TotalQuestions,
                 Grade: took.Grade, 
                 Pass: took.Pass 
              }) WHERE quiz.QuizName IS NOT NULL] AS takenQuizzes,
-             [trackQuiz IN COLLECT({
+             [trackQuiz IN COLLECT(DISTINCT {
                 TrackId: trackQuiz.Nodeid, 
                 TrackName: trackQuiz.name,
-                Grade: tookTrack.grade, 
+                Grade: tookTrack.Grade, 
                 TotalQuestions: tookTrack.TotalQuestions, 
-                Pass: tookTrack.pass 
+                Pass: tookTrack.Pass 
              }) WHERE trackQuiz.TrackId IS NOT NULL] AS trackQuizzes,
              EXISTS((u)-[:TOOK_TRACK_QUIZ]->(:Job)) AS hasTakenTrackQuiz`,
             { UserId }
         );
 
-        const user = AllInfo.records[0].get("u").properties;
         const takenQuizzes = AllInfo.records[0].get("takenQuizzes");
         const trackQuizzes = AllInfo.records[0].get("trackQuizzes");
         const hasTakenTrackQuiz = AllInfo.records[0].get("hasTakenTrackQuiz");
 
         res.status(200).json({ 
             Message: "DONE", 
-            user, 
             takenQuizzes, 
             trackQuizzes,
             hasTakenTrackQuiz 
@@ -56,6 +107,8 @@ export const GetALLMarksAndGrades = async (req, res, next) => {
         }
     }
 };
+
+
 
 //Add CareerGoal
 export const AddCareerGoal = async (req, res, next) => {
