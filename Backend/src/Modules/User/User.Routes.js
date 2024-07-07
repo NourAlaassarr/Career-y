@@ -17,7 +17,7 @@ router.get('/RecommendTracks',isAuth(UserApiRoles.RecommendTracks),ValidationCor
 router.get('/GetUserDetails',isAuth(UserApiRoles.GetUserDetails),ValidationCoreFunction(UserValidation.GetUserDetails),asyncHandler(UserContollers.GetUserDetails))
 
 router.get('/CareerGoalUserProgress',isAuth(UserApiRoles.CareerGoalUserProgress),ValidationCoreFunction(UserValidation.CareerGoalUserProgress),asyncHandler(UserContollers.CareerGoalUserProgress))
-router.get('/GetAllSklls',isAuth(UserApiRoles.GetALLUserSkills),ValidationCoreFunction(UserValidation.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
+router.get('/GetAllSkills',isAuth(UserApiRoles.GetALLUserSkills),ValidationCoreFunction(UserValidation.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
 
 router.post('/AddFeedBack',isAuth(UserApiRoles.AddFeedBack),ValidationCoreFunction(UserValidation.AddFeedBack),asyncHandler(UserContollers.AddFeedBack))
 router.patch('/UpdateFeedBack',isAuth(UserApiRoles.UpdateFeedBack),ValidationCoreFunction(UserValidation.Update),asyncHandler(UserContollers.UpdateFeedBack))

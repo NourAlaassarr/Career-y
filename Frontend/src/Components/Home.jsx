@@ -1,16 +1,16 @@
 import Footer from "./Footer";
-import HeroSection from "./HomeBody";
 import AboutSection from "./About";
 import ProjectSection from "./Projectsection";
+import {HeroSection} from "../pages/Homepage"
 
 const Home = () => {
   return (
-    <div>
+    <>
       <HeroSection />
       <AboutSection />
       <ProjectSection />
       <Footer />
-    </div>
+    </>
   );
 };
 

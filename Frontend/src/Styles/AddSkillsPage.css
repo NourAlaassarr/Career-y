@@ -1,27 +1,24 @@
-/* AddSkills2Page.css */
-
 .add-skills2-page {
   font-family: Arial, sans-serif;
-  padding: 20px;
-  background-color: #f4f4f9;
-  max-width: 800px;
   margin: 0 auto;
+  padding: 32px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  max-width: 100%;
 }
 
 .search-bar {
   width: 100%;
   padding: 10px;
-  margin-bottom: 20px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  margin: 20px 0;
+  border: 1px solid #0c8195;
+  border-radius: 20px;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  background-color: transparent;
+  color: #0c8195;
 }
 
 .search-bar:focus {
@@ -30,10 +27,10 @@
 }
 
 .header-sentence {
-  font-size: 20px;
+  font-size: 25px;
   margin-bottom: 20px;
   font-weight: bold;
-  color: #333;
+  color: #0c8195;
   text-align: center;
 }
 
@@ -44,17 +41,21 @@
   overflow-y: auto;
 }
 
-.skills-list, .existing-skills-list, .selected-skills-list {
+.skills-list,
+.existing-skills-list,
+.selected-skills-list {
   flex: 1;
   background: #fafafa;
   padding: 15px;
-  border: 1px solid #eee;
+  border: 1px solid #0c8195;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow-y: auto;
 }
 
-.skills-list label, .existing-skills-list ul, .selected-skills-list ul {
+.skills-list label,
+.existing-skills-list ul,
+.selected-skills-list ul {
   display: block;
   margin-bottom: 10px;
 }
@@ -68,6 +69,9 @@
 .skill-item input {
   margin-right: 10px;
   cursor: pointer;
+  appearance: auto;
+  -webkit-appearance: auto;
+  -moz-appearance: auto;
 }
 
 .skill-item:hover {

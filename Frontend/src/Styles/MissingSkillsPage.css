@@ -1,50 +1,148 @@
+:root {
+  --primary-color: #0c8195;
+  --secondary-color: #f11111;
+  --accent-color: #00c853;
+  --background-color: #ffffff;
+  --dark-bg: #333;
+  --light-text: #f5f5f5;
+  --font-family: "Arial", sans-serif;
+  --border-radius: 10px;
+  --box-shadow-strong: 0 6px 20px rgb(255, 255, 255);
+  --box-shadow-light: 0 2px 6px rgb(255, 254, 254);
+  --transition-fast: 0.2s;
+  --transition-normal: 0.4s;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--dark-bg);
+}
+
 .missing-skills-page {
-  padding: 20px;
-  text-align: center;
-}
-
-.gap-skills-container, .recommended-tracks-container {
+  padding: 40px;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 
-.gap-skill, .recommended-track {
-  margin: 10px;
-  padding: 10px;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  width: 200px;
-  text-align: center;
+h2 {
+  color: var(--primary-color);
+  font-size: 26px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
 }
 
-.mandatory {
-  border-color: red;
+/* Styling for skill and track containers with subtle animations */
+.gap-skills-container,
+.recommended-tracks-container {
+  width: 100%;
+
+  background: var(--light-text);
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  transition: all var(--transition-normal) ease;
+  transform: scale(1);
 }
 
-.optional {
-  border-color: green;
+.gap-skill,
+.recommended-track {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast);
+  cursor: pointer;
+}
+
+.gap-skill:hover,
+.recommended-track:hover {
+  border: solid 2px #0c8195;
+
+  color: var(--light-text);
+}
+
+.gap-skill:focus,
+.recommended-track:focus {
+  outline: none;
+  border: 2px solid var(--accent-color);
+}
+
+/* Dynamic labels with animation for added emphasis */
+.mandatory-label,
+.optional-label {
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: var(--light-text);
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: pulse 1.5s infinite;
 }
 
 .mandatory-label {
-  display: block;
-  margin-top: 5px;
-  color: red;
-  font-weight: bold;
+  border: 2px solid var(--secondary-color);
 }
 
 .optional-label {
-  display: block;
-  margin-top: 5px;
-  color: green;
-  font-weight: bold;
+  border: 2px solid var(--accent-color);
 }
 
-.recommended-track .track-name {
-  font-weight: bold;
+/* Keyframe animations for pulsing effect on labels */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
-.recommended-track .track-description {
-  margin-top: 5px;
-  color: #555;
+/* Responsive adjustments for better mobile experience */
+@media (max-width: 768px) {
+  .gap-skills-container,
+  .recommended-tracks-container {
+    width: 95%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .gap-skill,
+  .recommended-track {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Support for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #ffffff;
+    --dark-bg: #e0e0e0;
+    --light-text: #424242;
+  }
+
+  body {
+    background-color: var(--background-color);
+    color: var(--dark-bg);
+  }
+
+  .gap-skills-container,
+  .recommended-tracks-container {
+    background: var(--dark-bg);
+    color: var(--light-text);
+  }
 }

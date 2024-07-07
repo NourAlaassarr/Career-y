@@ -30,11 +30,13 @@ const AddSkillsPage = () => {
         }
 
         // Fetch user's already added skills
-        const userSkillsResponse = await httpGet("User/GetAllSklls", {
+        const userSkillsResponse = await httpGet("User/GetAllSkills", {
           headers: { token: session.token },
         });
         if (userSkillsResponse && userSkillsResponse.skills) {
-          const userSkillIds = userSkillsResponse.skills.map((skill) => skill.Nodeid);
+          const userSkillIds = userSkillsResponse.skills.map(
+            (skill) => skill.Nodeid
+          );
           setExistingSkills(userSkillIds);
         } else {
           console.error("Unexpected response structure:", userSkillsResponse);
@@ -65,7 +67,9 @@ const AddSkillsPage = () => {
   const handleSkillChange = (e) => {
     const skillNodeid = e.target.value;
     if (selectedSkills.includes(skillNodeid)) {
-      setSelectedSkills(selectedSkills.filter((skill) => skill !== skillNodeid));
+      setSelectedSkills(
+        selectedSkills.filter((skill) => skill !== skillNodeid)
+      );
     } else {
       setSelectedSkills([...selectedSkills, skillNodeid]);
     }
@@ -120,9 +124,10 @@ const AddSkillsPage = () => {
         onChange={handleSearchChange}
         className="search-bar"
       />
-      <div className="header-sentence">Choose the skills you want to add</div>
-      {successMessage && <div className="success-message">{successMessage}
-      </div>}
+      <div className="header-sentence">CHOOSE THE SKILLS YOU WANT TO ADD</div>
+      {successMessage && (
+        <div className="success-message">{successMessage}</div>
+      )}
       <div className="skills-container">
         <div className="skills-list">
           {filteredSkills.map((skill, index) => (
@@ -137,33 +142,40 @@ const AddSkillsPage = () => {
             </label>
           ))}
         </div>
-        <div className="existing-skills-list">
-          <h3>Existing Skills:</h3>
-          <ul>
-            {existingSkills.map((skillId, index) => (
-              <li key={index}>{skills.find((skill) => skill.Nodeid === skillId)?.name}</li>
-            ))}
-          </ul>
-        </div>
         <div className="selected-skills-list">
           {selectedSkills.length > 0 && (
             <div>
-              <h3>Selected Skills:</h3>
+              <h3>SELECTED SKILLS:</h3>
               <ul>
                 {selectedSkills.map((skillId, index) => (
-                  <li key={index}>{skills.find((skill) => skill.Nodeid === skillId)?.name}</li>
+                  <li key={index}>
+                    {skills.find((skill) => skill.Nodeid === skillId)?.name}
+                  </li>
                 ))}
               </ul>
             </div>
           )}
         </div>
+        <div className="existing-skills-list">
+          <h3>YOUR SKILLS:</h3>
+          <ul>
+            {existingSkills.map((skillId, index) => (
+              <li key={index}>
+                {skills.find((skill) => skill.Nodeid === skillId)?.name}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
       {newSkills && (
-        <button className="submit-button" disabled={selectedSkills.length === 0} onClick={handleSubmit}>
+        <button
+          className="submit-button"
+          disabled={selectedSkills.length === 0}
+          onClick={handleSubmit}
+        >
           Submit
         </button>
       )}
-      
     </div>
   );
 };
