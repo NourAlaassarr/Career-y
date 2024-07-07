@@ -9,9 +9,9 @@ export const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    // await httpPost("Auth/LogOut", null, {headers: {token: session.token}});
+    await httpPost("Auth/LogOut", null, {headers: {token: session.token}});
     localStorage.removeItem('session');
-    navigate('/');
+    navigate('/login');
   }
   console.log(session);
   return (

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { httpPost, httpGet,httpDelete } from "../../axios/axiosUtils";
+import { httpGet,httpDelete } from "../../axios/axiosUtils";
 //import '../Styles/DeleteUsers.css';
 
 const DeleteUsers = () => {
