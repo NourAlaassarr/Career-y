@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as UserContollers from './User.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
-import { ValidationCoreFunction } from "../../middleware/validation.js";
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 import {UserApiRoles}from './User.endpoints.js'
 import * as UserValidation from './User.validation.js'
 const router = Router()
