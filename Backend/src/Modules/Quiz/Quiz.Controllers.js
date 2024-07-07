@@ -587,6 +587,7 @@ export const GetTrackQuiz = async (req, res, next) => {
 //SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
     const { answer, quizId, SkillId, jobId } = req.body;
+    const UserId = req.authUser._id;
     if (!answer || !quizId) {
         return res.status(400).json({ error: 'Invalid request. Missing required data.' });
     }
@@ -631,6 +632,59 @@ export const SubmitQuiz = async (req, res, next) => {
         const totalQuestions = randomQuestions.length;
         const Pass = Grade > totalQuestions / 2;
         quizzes.delete(quizId);
+        const timestamp = new Date().toISOString();
+
+
+//    Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+    const quizAttemptsResult = await session.run(
+    "MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ]->(j:Job {Nodeid: $jobId}) RETURN r.timestamp AS lastAttempt",
+    { UserId, jobId }
+);
+
+if (quizAttemptsResult.records.length > 0) {
+    const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+    const lastAttemptDate = new Date(lastAttempt);
+    const currentDate = new Date();
+
+    console.log("Last Attempt Timestamp:", lastAttempt);
+    console.log("Last Attempt Date:", lastAttemptDate);
+    console.log("Current Date:", currentDate);
+
+    // Check if 24 hours have passed since the last attempt
+    const timeDifference = currentDate - lastAttemptDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    console.log("Hours Difference:", hoursDifference);
+
+    if (hoursDifference < 24) {
+        return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+    } else {
+        // Remove existing relationships
+        await session.run(
+            `
+            MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ|PASSED|FAILED]->(q:Job {Nodeid: $jobId})
+            DELETE r
+            `,
+            { UserId, jobId }
+        );
+    }
+}
+// Create the relationship if it doesn't exist
+const createTookRelationQuery = `
+MATCH (u:User {_id: $UserId}), (j:Job {Nodeid: $jobId}) 
+MERGE (u)-[:TOOK_TRACK_QUIZ { Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass, timestamp: $timestamp }]->(j)
+`;
+
+await session.run(createTookRelationQuery, {
+UserId,
+jobId,
+Grade,
+totalQuestions,
+Pass,
+timestamp
+});
+
+
         if(!Pass)
             {
 
@@ -875,18 +929,56 @@ export const submitFullstackTrackQuiz = async (req, res, next) => {
         console.log('totalQuestions:', totalQuestions);
         quizzes.delete(quizId);
 const fixedTrackId = '697f3adc-4fc4-4ef8-bffd-bd3cf243375f';
+const timestamp = new Date().toISOString();
 
+
+
+//    Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+    const quizAttemptsResult = await session.run(
+    "MATCH (u:User {_id: $userId})-[r:TOOK_TRACK_QUIZ]->(j:Job {Nodeid: $fixedTrackId}) RETURN r.timestamp AS lastAttempt",
+    { userId, fixedTrackId }
+);
+
+if (quizAttemptsResult.records.length > 0) {
+    const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+    const lastAttemptDate = new Date(lastAttempt);
+    const currentDate = new Date();
+
+    console.log("Last Attempt Timestamp:", lastAttempt);
+    console.log("Last Attempt Date:", lastAttemptDate);
+    console.log("Current Date:", currentDate);
+
+    // Check if 24 hours have passed since the last attempt
+    const timeDifference = currentDate - lastAttemptDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    console.log("Hours Difference:", hoursDifference);
+
+    if (hoursDifference < 24) {
+        return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+    } else {
+        // Remove existing relationships
+        await session.run(
+            `
+            MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ|PASSED|FAILED]->(q:Job {Nodeid: $fixedTrackId})
+            DELETE r
+            `,
+            { userId, fixedTrackId }
+        );
+    }
+}
 // Record the quiz result in the database for the fixed track
 await session.run(
     `MATCH (u:User {_id: $userId})
      MATCH (t:Job {Nodeid: $fixedTrackId})
-     CREATE (u)-[:TOOK_TRACK_QUIZ {pass: $Pass, grade: $Grade,TotalQuestions: $totalQuestions}]->(t)`,
+     CREATE (u)-[:TOOK_TRACK_QUIZ {Pass: $Pass, Grade: $Grade,TotalQuestions: $totalQuestions,timestamp: $timestamp}]->(t)`,
     {
         userId,
         Pass,
         Grade,
         fixedTrackId,
-        totalQuestions
+        totalQuestions,
+        timestamp
     }
 );
 
