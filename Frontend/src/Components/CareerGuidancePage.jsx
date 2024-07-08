@@ -22,6 +22,7 @@ import GameDevelopment from "../../images/logo/Game Development.png";
 import ReactNative from "../../images/logo/React Native.png";
 import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
 import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
+
 const CareerGuidancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [tracks, setTracks] = useState([]);
@@ -47,9 +48,7 @@ const CareerGuidancePage = () => {
   const filteredTracks = tracks.filter((track) =>
     track.name && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
   //Function to get track image based on track name
-    const getTrackImage = (track) => {
     switch (track.name.toLowerCase()) {
       case "android developer":
         return Android;
@@ -103,7 +102,7 @@ const CareerGuidancePage = () => {
         CHOOSE THE CAREER PATH YOU WANT TO TRACK YOUR PROGRESS IN
       </div>
       <div className="tracks-container">
-        {filteredTracks.map((track) => (
+        {filteredTracks.filter((track) => track.name != undefined).map((track) => (
           <Link
             to={
               track.name && (track.name.toLowerCase() === "frontend" || track.name.toLowerCase() === "backend")
@@ -113,15 +112,19 @@ const CareerGuidancePage = () => {
             key={track.Nodeid}
             className="track-link"
           >
-            <div className="track-image">
-              <img
-                src={getTrackImage(track)}
-                alt={`${track.name || "Track"} Image`}
-                className="track-img"
-              />
+            <div className="track-item">
+              <div className="track-image">
+                <img
+                  src={getTrackImage(track)}
+                  alt={`${track.name} Image`}
+                  className="track-img"
+                />
+              </div>
+              <div className="track-text">
+                <div className="track-name">{track.name}</div>
+                <div className="track-description">{track.description}</div>
+              </div>
             </div>
-            <div className="track-name">{track.name}</div>
-            <div className="track-description">{track.description}</div>
           </Link>
         ))}
       </div>

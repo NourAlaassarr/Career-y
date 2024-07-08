@@ -4,7 +4,7 @@ import * as JobControllers from'./Job.Controllers.js'
 import { asyncHandler } from '../../utils/ErrorHandling.js';
 import  {isAuth} from'../../Middleware/auth.js'
 import {JobApis}from'./Job.endpoints.js'
-
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 
 //Admin Only 
 router.post('/AddJob',isAuth(JobApis.Add_JobOffer),asyncHandler(JobControllers.AddJobOffer))

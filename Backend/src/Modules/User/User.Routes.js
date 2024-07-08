@@ -2,7 +2,7 @@ import { Router } from "express";
 import * as UserContollers from './User.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
-import { ValidationCoreFunction } from "../../middleware/validation.js";
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 import {UserApiRoles}from './User.endpoints.js'
 import * as UserValidation from './User.validation.js'
 const router = Router()
@@ -17,7 +17,7 @@ router.get('/RecommendTracks',isAuth(UserApiRoles.RecommendTracks),ValidationCor
 router.get('/GetUserDetails',isAuth(UserApiRoles.GetUserDetails),ValidationCoreFunction(UserValidation.GetUserDetails),asyncHandler(UserContollers.GetUserDetails))
 
 router.get('/CareerGoalUserProgress',isAuth(UserApiRoles.CareerGoalUserProgress),ValidationCoreFunction(UserValidation.CareerGoalUserProgress),asyncHandler(UserContollers.CareerGoalUserProgress))
-router.get('/GetAllSklls',isAuth(UserApiRoles.GetALLUserSkills),ValidationCoreFunction(UserValidation.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
+router.get('/GetAllSkills',isAuth(UserApiRoles.GetALLUserSkills),ValidationCoreFunction(UserValidation.GetALLUserSkills),asyncHandler(UserContollers.GetALLUserSkills))
 
 router.post('/AddFeedBack',isAuth(UserApiRoles.AddFeedBack),ValidationCoreFunction(UserValidation.AddFeedBack),asyncHandler(UserContollers.AddFeedBack))
 router.patch('/UpdateFeedBack',isAuth(UserApiRoles.UpdateFeedBack),ValidationCoreFunction(UserValidation.Update),asyncHandler(UserContollers.UpdateFeedBack))

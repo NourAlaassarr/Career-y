@@ -1,9 +1,21 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import Logo from "../../images/LogoMini.png";
+import { httpPost } from "../axios/axiosUtils";
+import { FaUser } from "react-icons/fa";
 
 export const Navbar = () => {
-  return (
+  const session = JSON.parse(localStorage.getItem("session"));
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await httpPost("Auth/LogOut", null, { headers: { token: session.token } });
+    localStorage.removeItem("session");
+    navigate("/login");
+  };
+  console.log(session);
+  return session ? (
     <AppBar
       sx={{ backgroundColor: "white", color: "#057a8d" }}
       position="sticky"
@@ -63,14 +75,53 @@ export const Navbar = () => {
             Career Guidance
           </Typography>
         </Button>
-        <Typography
-          variant="h5"
-          component="div"
-          sx={{ flexGrow: 1, ml: "10%" }}
+        <img
+          src={Logo}
+          width="50px"
+          height="50px"
+          style={{ position: "absolute", marginLeft: "50%" }}
+        />
+        <Button
+          color="inherit"
+          component={Link}
+          to="/login"
+          onClick={() => handleLogout()}
+          sx={{ marginLeft: "auto" }}
         >
-          Career-Y
-        </Typography>
-        <Button color="inherit" component={Link} to="/login">
+          <Typography
+            textTransform="capitalize"
+            fontWeight="bold"
+            fontSize="16px"
+          >
+            Sign Out
+          </Typography>
+        </Button>
+        <Button
+          startIcon={<FaUser />}
+          color="inherit"
+          component={Link}
+          to="/user-profile"
+        />
+      </Toolbar>
+    </AppBar>
+  ) : (
+    <AppBar
+      sx={{ backgroundColor: "white", color: "#057a8d" }}
+      position="sticky"
+    >
+      <Toolbar>
+        <img
+          src={Logo}
+          width="50px"
+          height="50px"
+          style={{ position: "absolute", marginLeft: "50%" }}
+        />
+        <Button
+          color="inherit"
+          component={Link}
+          to="/login"
+          sx={{ marginLeft: "auto" }}
+        >
           <Typography
             textTransform="capitalize"
             fontWeight="bold"
@@ -86,6 +137,15 @@ export const Navbar = () => {
             fontSize="16px"
           >
             Sign Up
+          </Typography>
+        </Button>
+        <Button color="inherit" component={Link} to="/admin">
+          <Typography
+            textTransform="capitalize"
+            fontWeight="bold"
+            fontSize="16px"
+          >
+            Admin
           </Typography>
         </Button>
       </Toolbar>

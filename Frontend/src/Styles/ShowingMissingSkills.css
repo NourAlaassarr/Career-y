@@ -1,41 +1,39 @@
-/* ShowingMissingSkills.css */
-
 .showing-missing-skills {
-    font-family: Arial, sans-serif;
-    text-align: center;
-    padding: 40px;
-    background-color: #f9f9f9;
-    max-width: 600px;
-    margin: 0 auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    background-color: #ffffff;
-  }
-  
-  .showing-missing-skills h1 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #333;
-  }
-  
-  .showing-missing-skills p {
-    font-size: 16px;
-    margin-bottom: 20px;
-    color: #666;
-  }
-  
-  .show-missing-skills-button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  .show-missing-skills-button:hover {
-    background-color: #0056b3;
-  }
-  
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+  background-color: #f9f9f9;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: 2px solid #0c8195;
+}
+
+.showing-missing-skills h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.showing-missing-skills p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.show-missing-skills-button {
+  padding: 10px 20px;
+  background-color: #0c8195;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-missing-skills-button:hover {
+  background-color: #0056b3;
+}

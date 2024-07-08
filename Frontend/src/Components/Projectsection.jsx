@@ -1,6 +1,6 @@
 import React from "react";
 
-import "./../styles/ProjectSection.css";
+import "../Styles/ProjectSection.css";
 import roadmapImage from "../../images/project/roadmap.jpg"; // Adjust the path as needed
 import quizImage from "../../images/project/quiz.jpg";
 import skillsImage from "../../images/project/skills.jpg";

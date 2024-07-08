@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import { httpGet, httpPost } from "../axios/axiosUtils"; // Ensure the correct import path
-import "../Styles/CareerGuidancePage.css";
+import "../Styles/CareerGoalPage.css";
 
 // Import track images
 import Android from "../../images/logo/Android.png";
@@ -21,7 +21,6 @@ import GameDevelopment from "../../images/logo/Game Development.png";
 import ReactNative from "../../images/logo/React Native.png";
 import RoboticsAutomationTechnician from "../../images/logo/robotic-process-automation.png";
 import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
-
 
 const CareerGoalPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -51,18 +50,17 @@ const CareerGoalPage = () => {
     try {
       await httpPost(
         `User/AddCareerGoal?CareerGoalId=${careerGoalId}`,
-        { CareerGoalId: careerGoalId },
-        { headers: { 'token': session.token } }
+        null,
+        { headers: { token: session.token } }
       );
       navigate(`/track/${careerGoalId}/showMissingSkills`);
-      
     } catch (error) {
       console.error("Error posting career goal:", error);
     }
   };
 
   const filteredTracks = tracks.filter((track) =>
-    track.name.toLowerCase().includes(searchTerm.toLowerCase())
+    track.name != undefined && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const getTrackImage = (track) => {
@@ -100,39 +98,37 @@ const CareerGoalPage = () => {
       case "robotics automation technician":
         return RoboticsAutomationTechnician;
       case "business intelligence developer":
-        return BusinessIntelligenceDeveloper;  
+        return BusinessIntelligenceDeveloper;
       default:
         return null; // Default image or no image
     }
   };
 
   return (
-    <div className="career-guidance-page">
+    <div className="career-goal-page">
       <input
         type="text"
         placeholder="Search for tracks..."
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="search-input"
+        className="career-goal-search-input"
       />
-      <div className="instruction-text">
-        CHOOSE YOUR CAREER GOAL
-      </div>
-      <div className="tracks-container">
+      <div className="career-goal-instruction-text">CHOOSE YOUR CAREER GOAL</div>
+      <div className="career-goal-tracks-container">
         {filteredTracks.map((track) => (
           <div
             key={track.Nodeid}
-            className="track-link"
+            className="career-goal-track-link"
             onClick={() => handleTrackClick(track.Nodeid)}
           >
-            <div className="track-image">
+            <div className="career-goal-track-image">
               <img
                 src={getTrackImage(track)}
                 alt={`${track.name} Image`}
-                className="track-img"
+                className="career-goal-track-img"
               />
             </div>
-            <div className="track-name">{track.name}</div>
+            <div className="career-goal-track-name">{track.name}</div>
             {/* <div className="track-description">{track.description}</div> */}
           </div>
         ))}

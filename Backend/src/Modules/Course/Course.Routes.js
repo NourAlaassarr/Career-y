@@ -4,7 +4,7 @@ import * as CourseControllers from'./Course.Controllers.js'
 import { asyncHandler } from '../../utils/ErrorHandling.js';
 import  {isAuth} from'../../Middleware/auth.js'
 import{CourseApiRoles}from'./Course.endpoints.js'
-import { ValidationCoreFunction } from "../../middleware/validation.js";
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 import * as Validator from './Course.Validation.js'
 //Admins Only
 router.post('/AddCourse',isAuth(CourseApiRoles.Add_Course),ValidationCoreFunction(Validator.AddCourse),asyncHandler(CourseControllers.AddCourse));
@@ -13,7 +13,7 @@ router.delete('/DeleteCourse',isAuth(CourseApiRoles.DeleteCourse),ValidationCore
 //Admins Only
 router.patch('/ApproveCourse',isAuth(CourseApiRoles.ApproveCourse),ValidationCoreFunction(Validator.ApproveCourse),asyncHandler(CourseControllers.ApproveCourse))
 
-router.get('/GetAllCourses',isAuth(CourseApiRoles.GetAllCourses),ValidationCoreFunction(Validator.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
+router.get('/GetAllCourses',ValidationCoreFunction(Validator.GetAllCourses),asyncHandler(CourseControllers.GetALLCourses))
 
 router.get('/GetALLUnapprovedCourses',isAuth(CourseApiRoles.GetCourseDetails),ValidationCoreFunction(Validator.UnApprovedCourses),asyncHandler(CourseControllers.GetALLUnapprovedCourses))
 
