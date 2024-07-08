@@ -364,14 +364,15 @@ const token = generateToken({
     signature: process.env.RESET_PASS_TOKEN,
     expiresIn: '1h',
 })
-const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+// const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+const ResetPasswordLink = `https://career-y-production.up.railway.app/Auth/reset/${token}`
     const isEmailSent = sendmailService({
         to: Email,
         subject: 'Reset Password',
         message: emailTemplate({
             link: ResetPasswordLink,
             linkData: 'Click here to Reset Password',
-            subject: 'Reset Password'
+            subject: 'Reset Password'A
         })
     })
     if (!isEmailSent) {
