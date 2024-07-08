@@ -1,7 +1,7 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./Components/Home";
-import {Roadmaps} from "./pages/Roadmaps";
+import { Roadmaps } from "./pages/Roadmaps";
 import ProfilePage from "./Components/UserProfile";
 import JobList from "./Components/JobList";
 import AddSkillsPage from "./Components/AddSkillsPage";
@@ -12,10 +12,25 @@ import TrackAssessmentPage from "./Components/TrackAssessmentPage";
 import JobPage from "./Components/JobPage";
 import TrackCoursePage from "./Components/TrackCoursePage";
 import QuizGradePage from "./Components/QuizGradePage";
-import {Roadmap} from "./pages/Roadmaps/Roadmap";
+import { Roadmap } from "./pages/Roadmaps/Roadmap";
 import Navbar from "./Components/Navbar";
 import LoginForm from "./Components/LoginForm";
 import SignupForm from "./pages/SignUp";
+import Admin from "./Components/Admin/Admin";
+import AddQuiz from "./Components/Admin/AddQuiz";
+import AddQuestions from "./Components/Admin/AddQuestions";
+import GetAllUsers from "./Components/Admin/GetAllUsers";
+import DeleteUsers from "./Components/Admin/DeleteUsers";
+import AddCourse from "./Components/Admin/AddCourse";
+import DeleteCourse from "./Components/Admin/DeleteCourse";
+import UpdateResource from "./Components/Admin/UpdateResource";
+import AddJobOffer from "./Components/Admin/AddJobOffer";
+import AddSkillToRoadmap from "./Components/Admin/AddSkillToRoadmap";
+import DeleteSkillFromRoadmap from "./Components/Admin/DeleteSkillFromRoadmap";
+import DeleteJobOffer from "./Components/Admin/DeleteJobOffer";
+import UpdateJobOffer from "./Components/Admin/UpdateJobOffer";
+import UpdateCourse from "./Components/Admin/UpdateCourse";
+import ApproveCourse from "./Components/Admin/ApproveCourse";
 
 function App() {
   return (
@@ -31,10 +46,7 @@ function App() {
         <Route path="/career-guidance" element={<CareerGuidancePage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/quiz/:skill" element={<SkillQuizPage />} />
-        <Route
-          path="/track/:id/assessment"
-          element={<TrackAssessmentPage />}
-        />
+        <Route path="/track/:id/assessment" element={<TrackAssessmentPage />} />
         <Route path="/job" element={<JobPage />} />
         <Route path="/track/:id/course" element={<TrackCoursePage />} />
         <Route
@@ -52,6 +64,24 @@ function App() {
         <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/add-quiz" element={<AddQuiz />} />
+        <Route path="/add-questions" element={<AddQuestions />} />
+        <Route path="/get-all-users" element={<GetAllUsers />} />
+        <Route path="/delete-users" element={<DeleteUsers />} />
+        <Route path="/add-course" element={<AddCourse />} />
+        <Route path="/delete-course" element={<DeleteCourse />} />
+        <Route path="/update-resourse" element={<UpdateResource />} />
+        <Route path="/add-job-offer" element={<AddJobOffer />} />
+        <Route path="/add-skill-to-roadmap" element={<AddSkillToRoadmap />} />
+        <Route
+          path="/delete-skill-from-roadmap"
+          element={<DeleteSkillFromRoadmap />}
+        />
+        <Route path="/delete-job-offer" element={<DeleteJobOffer />} />
+        <Route path="/update-job-offer" element={<UpdateJobOffer />} />
+        <Route path="update-course" element={<UpdateCourse />} />
+        <Route path="approve-course" element={<ApproveCourse />} />
       </Routes>
     </Router>
   );

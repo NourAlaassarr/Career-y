@@ -88,6 +88,15 @@ export const Navbar = () => {
             Sign Up
           </Typography>
         </Button>
+        <Button color="inherit" component={Link} to="/admin">
+          <Typography
+            textTransform="capitalize"
+            fontWeight="bold"
+            fontSize="16px"
+          >
+            Admin
+          </Typography>
+        </Button>
       </Toolbar>
     </AppBar>
   );
