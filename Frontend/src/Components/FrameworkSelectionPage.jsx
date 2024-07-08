@@ -11,7 +11,7 @@ const FrameworkSelectionPage = () => {
   useEffect(() => {
     const fetchFrameworks = async () => {
       try {
-        const session = JSON.parse(localStorage.getItem("session")); // Retrieve session from localStorage
+        const session = JSON.parse(sessionStorage.getItem("session")); // Retrieve session from localStorage
         const response = await httpGet(`Quiz/SpecificFramework?jobId=${jobId}`, {
           headers: { 'token': session?.token } // Pass token in headers, ensure session is valid
         });

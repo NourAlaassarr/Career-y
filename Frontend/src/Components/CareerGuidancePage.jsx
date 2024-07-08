@@ -48,6 +48,7 @@ const CareerGuidancePage = () => {
   const filteredTracks = tracks.filter((track) =>
     track.name && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const getTrackImage = (track) => {
   //Function to get track image based on track name
     switch (track.name.toLowerCase()) {
       case "android developer":

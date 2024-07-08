@@ -33,13 +33,13 @@ const Footer = () => {
         <ul>
           <li>
             <Box display="inline-flex">
-              <LocalPhoneIcon sx={{mr: 1}} />
+              <LocalPhoneIcon sx={{mr: 1, color: "#7C7B82"}} />
               <Typography color="#7C7B82">+22 123 456 789</Typography>
             </Box>
           </li>
           <li>
             <Box display="inline-flex">
-              <AlternateEmailIcon sx={{mr: 1}} />
+              <AlternateEmailIcon sx={{mr: 1, color: "#7C7B82"}} />
               <Typography color="#7C7B82">Career_y@gmail.com</Typography>
             </Box>
           </li>
@@ -49,19 +49,19 @@ const Footer = () => {
         <ul>
           <li>
             <Box display="inline-flex">
-              <XIcon sx={{mr: 1}} />
+              <XIcon sx={{mr: 1, color: "#7C7B82"}} />
               <Typography color="#7C7B82">Career_y</Typography>
             </Box>
           </li>
           <li>
             <Box display="inline-flex">
-              <FacebookIcon sx={{mr: 1}} />
+              <FacebookIcon sx={{mr: 1, color: "#7C7B82"}} />
               <Typography color="#7C7B82">Career_y</Typography>
             </Box>
           </li>
           <li>
             <Box display="inline-flex">
-              <InstagramIcon sx={{mr: 1}} />
+              <InstagramIcon sx={{mr: 1, color: "#7C7B82"}} />
               <Typography color="#7C7B82">Career_y</Typography>
             </Box>
           </li>

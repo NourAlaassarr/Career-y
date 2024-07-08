@@ -21,12 +21,12 @@ body {
     margin-bottom: 20px;
 }
 
-h1 {
+.message-box h1 {
     color: #4CAF50;
     margin: 0;
 }
 
-p {
+.message-box p {
     color: #777;
     margin: 10px 0;
 }

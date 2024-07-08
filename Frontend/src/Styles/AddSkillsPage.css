@@ -50,6 +50,7 @@
   border: 1px solid #0c8195;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  max-height: 400px;
   overflow-y: auto;
 }
 
@@ -109,7 +110,7 @@ ul {
   padding: 0;
 }
 
-h3 {
+.add-skills2-page h3 {
   font-size: 18px;
   color: #555;
   margin-bottom: 10px;
