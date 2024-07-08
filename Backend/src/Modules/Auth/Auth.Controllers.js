@@ -341,7 +341,7 @@ const result = await session.run("MATCH (u:User {_id: $UserId}) RETURN u", {
 
 //forget pass
 export const ForgetPassword= async(req,res,next)=>{
-    console.log("helllllllllllld")
+    // console.log("helllllllllllld")
     const {Email}=req.body
     let session;
     const driver = await Neo4jConnection();
@@ -365,7 +365,7 @@ const token = generateToken({
     signature: process.env.RESET_PASS_TOKEN,
     expiresIn: '1h',
 })
-const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+const ResetPasswordLink = `${req.protocol}s://${req.headers.host}/Auth/reset/${token}`
 console.log(req.protocol)
 console.log(req.headers.host)
 // const ResetPasswordLink = `https://career-y-production.up.railway.app/Auth/reset/${token}`
