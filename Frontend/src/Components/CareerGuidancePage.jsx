@@ -3,15 +3,16 @@ import { Link } from "react-router-dom";
 import { httpGet } from "../axios/axiosUtils"; // Ensure the correct import path
 import "../Styles/CareerGuidancePage.css";
 
-// Import track images
+
+// // Import track images
 import Android from "../../images/logo/Android.png";
 import Backend from "../../images/logo/backend.png";
 import DataAnalyst from "../../images/logo/Data Analyst.png";
 import FullStack from "../../images/logo/FullStack.png";
 import Frontend from "../../images/logo/frontend.png";
 import Security from "../../images/logo/security.png";
-import DataArchitect from "../../images/logo/database-management.png"; // Example, replace with correct image
-import DataEngineer from "../../images/logo/Data Engineering .png"; // Example, replace with correct image
+import DataArchitect from "../../images/logo/database-management.png";
+import DataEngineer from "../../images/logo/Data Engineering .png";
 import DataScientist from "../../images/logo/Data Science.png";
 import DatabaseAdministrator from "../../images/logo/Database Administration.png";
 import EmbeddedSystems from "../../images/logo/Embedded Systems.png";
@@ -45,13 +46,9 @@ const CareerGuidancePage = () => {
   }, []);
 
   const filteredTracks = tracks.filter((track) =>
-    track.name != undefined && track.name.toLowerCase().includes(searchTerm.toLowerCase())
+    track.name && track.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
-
-  // Function to get track image based on track name
-  const getTrackImage = (track) => {
-    console.log(track);
-    // Adjust this switch statement to match each track name with its corresponding image
+  //Function to get track image based on track name
     switch (track.name.toLowerCase()) {
       case "android developer":
         return Android;
@@ -107,7 +104,11 @@ const CareerGuidancePage = () => {
       <div className="tracks-container">
         {filteredTracks.filter((track) => track.name != undefined).map((track) => (
           <Link
-            to={`/track/${track.Nodeid}/assessment`}
+            to={
+              track.name && (track.name.toLowerCase() === "frontend" || track.name.toLowerCase() === "backend")
+                ? `/track/${track.Nodeid}/framework`
+                : `/track/${track.Nodeid}/assessment`
+            }
             key={track.Nodeid}
             className="track-link"
           >

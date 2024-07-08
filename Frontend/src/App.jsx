@@ -22,6 +22,8 @@ import AddQuestions from "./Components/Admin/AddQuestions";
 import GetAllUsers from "./Components/Admin/GetAllUsers";
 import DeleteUsers from "./Components/Admin/DeleteUsers";
 import AddCourse from "./Components/Admin/AddCourse";
+import TrackQuizGradePage from "./Components/TrackQuizGradePage";
+import FrameworkSelectionPage from "./Components/FrameworkSelectionPage";
 import DeleteCourse from "./Components/Admin/DeleteCourse";
 import UpdateResource from "./Components/Admin/UpdateResource";
 import AddJobOffer from "./Components/Admin/AddJobOffer";
@@ -46,22 +48,22 @@ function App() {
         <Route path="/career-guidance" element={<CareerGuidancePage />} />
         <Route path="/quiz" element={<QuizPage />} />
         <Route path="/quiz/:skill" element={<SkillQuizPage />} />
+
         <Route path="/track/:id/assessment" element={<TrackAssessmentPage />} />
+        <Route path="/track/:id/skill/:skillId/assessment" element={<TrackAssessmentPage />} />
+        <Route path="/track/:jobId/framework" element={<FrameworkSelectionPage />} />
+        <Route path="/track/:id/grade" element={<TrackQuizGradePage />} />
+        {/* t8eer */}
+        {/* <Route path="/track/:id/skill/:skillId/grade" element={<TrackQuizGradePage />} /> */}
+
         <Route path="/job" element={<JobPage />} />
         <Route path="/track/:id/course" element={<TrackCoursePage />} />
-        <Route
-          path="/track/:id/assessment/option1"
-          element={<TrackAssessmentPage option="1" />}
-        />
-        <Route
-          path="/track/:id/assessment/option2"
-          element={<TrackAssessmentPage option="2" />}
-        />
-        <Route
-          path="/track/:id/assessment/option3"
-          element={<TrackAssessmentPage option="3" />}
-        />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/delete-users" element={<DeleteUsers />} />
+        <Route path="/add-course" element={<AddCourse />} />
+        <Route path="/add-job-offer" element={<AddJobOffer />} />
         <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
+        <Route path="/track/:id/grade" element={<TrackQuizGradePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
         <Route path="/admin" element={<Admin2 />} />
