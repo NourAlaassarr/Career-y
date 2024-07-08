@@ -3,7 +3,7 @@ import * as AuthControllers from './Auth.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
 import * as Validator from './Auth.Validator.js'
-import { ValidationCoreFunction } from "../../middleware/validation.js";
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 import{AuthRolesApi}from'./Auth.endpoints.js'
 const router = Router()
 

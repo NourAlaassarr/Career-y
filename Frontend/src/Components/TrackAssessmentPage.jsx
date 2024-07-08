@@ -1,3 +1,4 @@
+// 3 frameworks bs amt7anhom
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { httpGet, httpPost } from "../axios/axiosUtils"; // Ensure the correct import path
@@ -5,12 +6,12 @@ import "../Styles/TrackAssessmentPage.css";
 import Countdown from "react-countdown";
 
 const TrackAssessmentPage = () => {
-  const { id } = useParams();
+  const { id, skillId } = useParams();
 
   const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
   const [quiz, setQuiz] = useState([]);
-  const [answers, setAnswers] = useState([]);
+  const [answers, setAnswers] = useState({});
   const [time, setTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -18,9 +19,16 @@ const TrackAssessmentPage = () => {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await httpGet(`Quiz/GetTrackQuiz?jobId=${id}`, {
-          headers: { token: session.token },
-        });
+        const response = skillId
+          ? await httpGet(
+              `Quiz/GetBackendTrackQuiz?jobId=${id}&SkillId=${skillId}`,
+              {
+                headers: { token: session?.token },
+              }
+            )
+          : await httpGet(`Quiz/GetTrackQuiz?jobId=${id}`, {
+              headers: { token: session.token },
+            });
         console.log("Quiz fetched:", response);
 
         if (response) {
@@ -44,6 +52,7 @@ const TrackAssessmentPage = () => {
       questionId: questionId,
       answerId: answers[questionId],
     }));
+
     const quizSession = {
       quiz: quiz,
       correctAnswers: answers,
@@ -51,7 +60,6 @@ const TrackAssessmentPage = () => {
       SkillId: null,
       jobId: id,
     };
-    console.log(quizSession);
 
     try {
       console.log(answerArray);
@@ -62,6 +70,10 @@ const TrackAssessmentPage = () => {
       );
       console.log("Quiz submitted:", response);
       navigate("/track/${id}/grade", { state: { result: response } });
+      //navigate("/track/${id}/skill/${skillId}/grade", { state: { result: response } });
+
+      // Redirect to framework selection page after quiz submission
+      //navigate(`/track/${id}/framework`);
     } catch (error) {
       console.error("Error submitting quiz:", error);
       setIsSubmitting(false);

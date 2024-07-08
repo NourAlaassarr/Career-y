@@ -4,6 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from 'axios';
 import { tr } from 'date-fns/locale';
+import {convertNeo4jDatetimeToISO,convertNeo4jDateToISO} from "../../utils/ConverNeo4jDateTimes.js";
+
 const quizzes = new Map();
 //Add Quiz Neo4j(Admins)
 export const AddQuizNode = async (req, res, next) => {
@@ -587,6 +589,7 @@ export const GetTrackQuiz = async (req, res, next) => {
 //SubmitTrackQuiz
 export const SubmitQuiz = async (req, res, next) => {
     const { answer, quizId, SkillId, jobId } = req.body;
+    const UserId = req.authUser._id;
     if (!answer || !quizId) {
         return res.status(400).json({ error: 'Invalid request. Missing required data.' });
     }
@@ -631,6 +634,59 @@ export const SubmitQuiz = async (req, res, next) => {
         const totalQuestions = randomQuestions.length;
         const Pass = Grade > totalQuestions / 2;
         quizzes.delete(quizId);
+        const timestamp = new Date().toISOString();
+
+
+//    Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+    const quizAttemptsResult = await session.run(
+    "MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ]->(j:Job {Nodeid: $jobId}) RETURN r.timestamp AS lastAttempt",
+    { UserId, jobId }
+);
+
+if (quizAttemptsResult.records.length > 0) {
+    const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+    const lastAttemptDate = new Date(lastAttempt);
+    const currentDate = new Date();
+
+    console.log("Last Attempt Timestamp:", lastAttempt);
+    console.log("Last Attempt Date:", lastAttemptDate);
+    console.log("Current Date:", currentDate);
+
+    // Check if 24 hours have passed since the last attempt
+    const timeDifference = currentDate - lastAttemptDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    console.log("Hours Difference:", hoursDifference);
+
+    if (hoursDifference < 24) {
+        return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+    } else {
+        // Remove existing relationships
+        await session.run(
+            `
+            MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ|PASSED|FAILED]->(q:Job {Nodeid: $jobId})
+            DELETE r
+            `,
+            { UserId, jobId }
+        );
+    }
+}
+// Create the relationship if it doesn't exist
+const createTookRelationQuery = `
+MATCH (u:User {_id: $UserId}), (j:Job {Nodeid: $jobId}) 
+MERGE (u)-[:TOOK_TRACK_QUIZ { Grade: $Grade, TotalQuestions: $totalQuestions, Pass: $Pass, timestamp: $timestamp }]->(j)
+`;
+
+await session.run(createTookRelationQuery, {
+UserId,
+jobId,
+Grade,
+totalQuestions,
+Pass,
+timestamp
+});
+
+
         if(!Pass)
             {
 
@@ -712,10 +768,13 @@ export const SubmitQuiz = async (req, res, next) => {
 
     const jobs = result.records.map(record => {
         const jobNode = record.get('JobOffer') || record.get('JobOffer');
-        return {
-            Nodeid: jobNode.properties.Nodeid,
-            ...jobNode.properties
-        };
+            return {
+                Nodeid: jobNode.properties.Nodeid,
+                ...jobNode.properties,
+                date_posted: convertNeo4jDateToISO(jobNode.properties.date_posted) || "Invalid date",
+                date_modified: convertNeo4jDatetimeToISO(jobNode.properties.date_modified) || "Invalid date"
+
+            };
     });
 
     console.log("Job Offers:", jobs);
@@ -736,7 +795,7 @@ export const SubmitQuiz = async (req, res, next) => {
 const fetchBackendQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching backend quiz...');
-        const response = await axios.get(`http://localhost:8000/Quiz/GetBackendTrackQuiz`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/GetBackendTrackQuiz`, {
             params: { jobId, SkillId },
             headers: {
                 token: token, 
@@ -768,7 +827,7 @@ const fetchBackendQuiz = async (jobId, SkillId, token) => {
 const fetchFrontendTrackQuiz = async (jobId, SkillId, token) => {
     try {
         console.log('Fetching track quiz...');
-        const response = await axios.get('http://localhost:8000/Quiz/GetTrackQuiz', {
+        const response = await axios.get('https://career-y-production.up.railway.app/Quiz/GetTrackQuiz', {
             params: { jobId, SkillId },
             headers: {
                 token: token,
@@ -875,18 +934,56 @@ export const submitFullstackTrackQuiz = async (req, res, next) => {
         console.log('totalQuestions:', totalQuestions);
         quizzes.delete(quizId);
 const fixedTrackId = '697f3adc-4fc4-4ef8-bffd-bd3cf243375f';
+const timestamp = new Date().toISOString();
 
+
+
+//    Check if the user has already taken the quiz and retrieve the timestamp of the last attempt
+    const quizAttemptsResult = await session.run(
+    "MATCH (u:User {_id: $userId})-[r:TOOK_TRACK_QUIZ]->(j:Job {Nodeid: $fixedTrackId}) RETURN r.timestamp AS lastAttempt",
+    { userId, fixedTrackId }
+);
+
+if (quizAttemptsResult.records.length > 0) {
+    const lastAttempt = quizAttemptsResult.records[0].get("lastAttempt");
+    const lastAttemptDate = new Date(lastAttempt);
+    const currentDate = new Date();
+
+    console.log("Last Attempt Timestamp:", lastAttempt);
+    console.log("Last Attempt Date:", lastAttemptDate);
+    console.log("Current Date:", currentDate);
+
+    // Check if 24 hours have passed since the last attempt
+    const timeDifference = currentDate - lastAttemptDate;
+    const hoursDifference = timeDifference / (1000 * 60 * 60);
+
+    console.log("Hours Difference:", hoursDifference);
+
+    if (hoursDifference < 24) {
+        return next(new Error("You can retake the quiz after 24 hours", { cause: 400 }));
+    } else {
+        // Remove existing relationships
+        await session.run(
+            `
+            MATCH (u:User {_id: $UserId})-[r:TOOK_TRACK_QUIZ|PASSED|FAILED]->(q:Job {Nodeid: $fixedTrackId})
+            DELETE r
+            `,
+            { userId, fixedTrackId }
+        );
+    }
+}
 // Record the quiz result in the database for the fixed track
 await session.run(
     `MATCH (u:User {_id: $userId})
      MATCH (t:Job {Nodeid: $fixedTrackId})
-     CREATE (u)-[:TOOK_TRACK_QUIZ {pass: $Pass, grade: $Grade,TotalQuestions: $totalQuestions}]->(t)`,
+     CREATE (u)-[:TOOK_TRACK_QUIZ {Pass: $Pass, Grade: $Grade,TotalQuestions: $totalQuestions,timestamp: $timestamp}]->(t)`,
     {
         userId,
         Pass,
         Grade,
         fixedTrackId,
-        totalQuestions
+        totalQuestions,
+        timestamp
     }
 );
 
@@ -942,7 +1039,7 @@ const fetchSkills = async (jobId, SkillId, token) => {
     console.log('Fetching skills...');
     console.log(token)
     try {
-        const response = await axios.get(`http://localhost:8000/Quiz/fetchSkillsIfFailed`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/fetchSkillsIfFailed`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });
@@ -1032,7 +1129,7 @@ export const FetchJobIfPass = async (jobId, SkillId, token) => {
     console.log('Fetching JOBOFFERS...');
 
     try {
-        const response = await axios.get(`http://localhost:8000/Quiz/fetchJobsOffers`, {
+        const response = await axios.get(`https://career-y-production.up.railway.app/Quiz/fetchJobsOffers`, {
             params: { jobId, SkillId },
             headers: { 'token': token }
         });

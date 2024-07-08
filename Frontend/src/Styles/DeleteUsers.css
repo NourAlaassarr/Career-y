@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+.delete-users-page {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.delete-users-title {
+  font-size: 32px;
+  margin-bottom: 20px;
+  color: #0c8195;
+}
+
+.delete-users-button {
+  padding: 10px 20px;
+  background-color: #0c8195;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.delete-users-button:hover {
+  background-color: #f1c111;
+  transform: translateY(-2px);
+}
+
+.users-list {
+  list-style-type: none;
+  padding: 0;
+}
+
+.user-item {
+  padding: 15px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.user-item p {
+  margin: 5px 0;
+}
+
+.delete-button {
+  padding: 5px 10px;
+  background-color: #ff4c4c;
+  color: white;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.delete-button:hover {
+  background-color: #ff1a1a;
+}
+
+.no-users-message {
+  font-size: 18px;
+  color: #999;
+}
+
+.message {
+  margin-top: 20px;
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 5px;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}

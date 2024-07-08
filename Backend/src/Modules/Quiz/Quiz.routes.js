@@ -3,7 +3,7 @@ import * as QuizControllers from './Quiz.Controllers.js'
 import { asyncHandler } from "../../utils/ErrorHandling.js";
 import  {isAuth} from'../../Middleware/auth.js'
 import {QuizApiRoles} from './Quiz.endpoints.js'
-import { ValidationCoreFunction } from "../../middleware/validation.js";
+import { ValidationCoreFunction } from '../../Middleware/Validation.js'
 import * as QuizValidation from './Quiz.Validator.js'
 
 const router = Router()
