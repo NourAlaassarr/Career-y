@@ -4,6 +4,7 @@ import roadmaps from "../../../images/roadmaps.png";
 import skills from "../../../images/skills.png";
 import quiz from "../../../images/quiz.png";
 import courses from "../../../images/online-learning.png";
+import job from "../../../images/job.png";
 import { Box, Grid, Typography } from "@mui/material";
 import * as S from "./styled";
 
@@ -49,14 +50,14 @@ export const HeroSection = () => {
           height="550px"
           style={{
             position: "absolute",
-            bottom: "-1%",
+            bottom: "5%",
             left: "55%",
             zIndex: 10,
           }}
         />
       </Grid>
       <Grid container>
-        <Grid item md={12} ml="18%" padding="8px 0px">
+        <Grid item md={12} ml="25%" padding="8px 0px">
           <Typography variant="h4" textTransform="uppercase" color="#000">
             we can help{" "}
             <Typography variant="h4" color="#f1c111" textTransform="uppercase" display="inline">
@@ -261,6 +262,54 @@ export const HeroSection = () => {
                 }}
               >
                 Learning to imporve yourself
+              </Typography>
+            </Box>
+          </S.StyledLink>
+          <S.StyledLink to={`/courses`}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              textAlign="center"
+              sx={{
+                hover: {
+                  transform: "translateY(-5px)",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: " #0c8195",
+                  color: "#f1c111",
+                },
+              }}
+            >
+              <Typography
+                color="#0c8195"
+                fontSize="18px"
+                fontWeight="600"
+                sx={{
+                  hover: { color: "#f1c111" },
+                }}
+              >
+                Jobs
+              </Typography>
+              <img
+                src={job}
+                alt={`${job} logo`}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "contain",
+                  marginTop: "16px",
+                  marginBottom: "24px",
+                }}
+              />
+              <Typography
+                color="#0c8195"
+                fontSize="18px"
+                fontWeight="600"
+                sx={{
+                  hover: { color: "#f1c111" },
+                }}
+              >
+                Jumpstart your career
               </Typography>
             </Box>
           </S.StyledLink>

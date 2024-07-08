@@ -1,11 +1,21 @@
 // //mn 8er el api
 import React from "react";
-import { useLocation } from "react-router-dom";
-import "../Styles/TrackQuizGradePage.css";
+import { useLocation, useNavigate } from "react-router-dom";
+import {
+  Accordion,
+  AccordionDetails,
+  Box,
+  Grid,
+  Link,
+  Typography,
+} from "@mui/material";
+import "../../Styles/TrackQuizGradePage.css";
+import * as S from "./styled";
 
 const TrackQuizGradePage = () => {
   const location = useLocation();
   const { result } = location.state;
+  const navigate = useNavigate();
 
   return (
     <div className="track-quiz-grade-page">
@@ -15,19 +25,79 @@ const TrackQuizGradePage = () => {
       {result.mandatorySkills && (
         <div>
           <h2>you must learn these Mandatory Skills:</h2>
-          <ul>
-            {result.mandatorySkills.map((skill) => (
-              <li key={skill.Nodeid}>
-                {skill.name}
-                <ul>
-                  <li>Video Resource: {skill.video_resource}</li>
-                  <li>Level: {skill.level}</li>
-                  <li>Type: {skill.type}</li>
-                  <li>Reading Resource: {skill.reading_resource}</li>
-                </ul>
-              </li>
-            ))}
-          </ul>
+          {result.mandatorySkills.map((skill) => (
+            <Grid item xs={12} key={skill.name} paddingTop={2}>
+              <Accordion key={skill.name} defaultExpanded={false}>
+                <S.BorderBox>
+                  <S.StyledAccordionSummary
+                    sx={{
+                      flexDirection: "row-reverse",
+                      padding: "8px 16px",
+                    }}
+                    expandIcon={
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20.1316 17.5117L21.9016 15.7417L12.0016 5.84172L2.10156 15.7417L3.87156 17.5117L12.0016 9.38172L20.1316 17.5117Z"
+                          fill="#4E4B66"
+                        />
+                      </svg>
+                    }
+                  >
+                    <Box padding="8px" />
+                    <Typography color="#057a8d" variant="h5">
+                      {skill.name}
+                    </Typography>
+                  </S.StyledAccordionSummary>
+                </S.BorderBox>
+                <AccordionDetails sx={{ padding: "0px" }}>
+                  <S.SkillDetailsGrid container>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Level</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <Typography>{skill.level}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Type</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={3}
+                      sm={6}
+                      xs={6}
+                      className="lastItem"
+                    >
+                      <Typography>{skill.type}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={12}
+                      sm={12}
+                      xs={12}
+                      className="lastItem"
+                      onClick={() =>
+                        navigate(`skill/${skill.Nodeid}`)
+                      }
+                      sx={{
+                        cursor: "pointer",
+                        "&:hover": { textDecoration: "underline" },
+                      }}
+                    >
+                      <S.KeyTypography padding="8px 0px">
+                        Click here for related resources
+                      </S.KeyTypography>
+                    </S.DetailGrid>
+                  </S.SkillDetailsGrid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          ))}
         </div>
       )}
       {result.specificSkill && (

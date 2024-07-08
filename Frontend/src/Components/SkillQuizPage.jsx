@@ -16,6 +16,7 @@ const SkillQuizPage = () => {
   const [grade, setGrade] = useState(null);
   const [endTime, setEndTime] = useState(0); // Timer end time in milliseconds
   const [timerEnded, setTimerEnded] = useState(false);
+  const [message, setMessage] = useState();
 
   // Countdown renderer
   const renderer = ({ minutes, seconds, completed }) => {
@@ -40,8 +41,7 @@ const SkillQuizPage = () => {
         if (data && data.Questions) {
           setQuizName(data.QuizName || 'Quiz');
           setQuestions(data.Questions);
-          // Calculate end time based on questions length
-          const endTime = Date.now() + (data.Questions.length * 60000 + 1000); // 60 seconds per question + 5 seconds buffer
+          const endTime = Date.now() + (data.Questions.length * 60000 + 1000);
           setEndTime(endTime);
         } else {
           console.error('Unexpected response structure:', data);
@@ -70,6 +70,7 @@ const SkillQuizPage = () => {
       setGrade(Grade);
       navigate(`/quiz/${skill}/grade`, { state: { grade: Grade, totalQuestions: TotalQuestions } });
     } catch (error) {
+      setMessage(error.response.data.Message);
       console.error('Error submitting quiz:', error);
     }
   }, [answers, navigate, session.token, skill]);
@@ -82,20 +83,16 @@ const SkillQuizPage = () => {
     });
   };
 
-  // Function to navigate to the next question
   const handleNextQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
-  // Function to navigate to the previous question
   const handlePreviousQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex - 1);
   };
 
-  // Get current question
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Format time into minutes and seconds
   const formatTime = (time) => `${Math.floor(time / 60000)}:${("0" + ((time % 60000) / 1000)).slice(-2)}`;
 
   return (

@@ -12,3 +12,8 @@ export interface SkillProperties {
   type: string;
   reading_resource: string;
 }
+
+export interface FullStackType {
+  job: string;
+  skills: SkillType[];
+}

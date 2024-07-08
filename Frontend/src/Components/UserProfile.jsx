@@ -1,148 +1,185 @@
-import { useEffect, useState } from "react";
-import { httpGet } from '../axios/axiosUtils.tsx';
-import {
-  MDBCol,
-  MDBContainer,
-  MDBRow,
-  MDBCard,
-  MDBCardText,
-  MDBCardBody,
-  MDBCardImage,
-  MDBProgress,
-  MDBProgressBar,
-  MDBListGroup,
-  MDBListGroupItem,
-} from "mdb-react-ui-kit";
+// src/UserProfilePage.jsx
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { httpGet } from "../axios/axiosUtils";
+import "./../Styles/ProfilePage.css";
 
-export default function ProfilePage() {
-  const [user, setUser] = useState(null);
+const UserProfile = () => {
+  const [userDetails, setUserDetails] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [quizzes, setQuizzes] = useState([]);
+  const [trackQuizzes, setTrackQuizzes] = useState([]);
+  const session = JSON.parse(sessionStorage.getItem("session"));
 
   useEffect(() => {
-    const fetchUserData = async () => {
+    const fetchUserDetails = async () => {
       try {
-        const session = JSON.parse(sessionStorage.getItem('session')); 
-        if (!session.token) {
-          throw new Error("No token found");
-        }
+        const userResponse = await httpGet("User/GetUserDetails", {
+          headers: { token: session.token },
+        });
+        setUserDetails(userResponse);
 
-        const data = await httpGet("User/GetUserDetails", {headers: {token: session.token}}); 
-        setUser(data);
-      } catch (error) {
-        console.error("Error fetching user data:", error);
+        const quizzesResponse = await httpGet("User/GetAllMarks", {
+          headers: { token: session.token },
+        });
+        setQuizzes(quizzesResponse.takenQuizzes);
+        setTrackQuizzes(quizzesResponse.trackQuizzes);
+      } catch (err) {
+        setError(err.response?.data?.message || err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchUserData();
-  }, []);
+    fetchUserDetails();
+  }, [session.token]);
 
-  if (!user) {
-    return <div>Loading...</div>;
-  }
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error}</div>;
+
+  const addFeedbackPath = "/feedback";
+  const updateFeedbackPath = "/update-feedback";
+
   return (
-    <section
-      style={{
-        backgroundColor: "#eee",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100vh",
-      }}
-    >
-      <MDBContainer className="py-5">
-        <MDBRow>
-          <MDBCol lg="4">
-            <MDBCard className="mb-4">
-              <MDBCardBody className="text-center">
-                <MDBCardImage
-                  src={
-                    user.avatar ||
-                    "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
-                  }
-                  alt="avatar"
-                  className="rounded-circle"
-                  style={{ width: "150px" }}
-                  fluid
-                />
-                <p className="text-muted mb-1">
-                  {user.title || "Software Developer"}
-                </p>
-              </MDBCardBody>
-            </MDBCard>
+    <div className="profile-container">
+      <h1 className="profile-title">User Profile</h1>
+      {userDetails && (
+        <div className="profile-content">
+          <div className="personal-info">
+            <h2>Personal Information</h2>
+            <p>
+              <strong>Name:</strong> {userDetails.UserName}
+            </p>
+            <p>
+              <strong>Email:</strong> {userDetails.Email}
+            </p>
+            <p>
+              <strong>Career Goal:</strong> {userDetails.CareerGoal[0]}
+            </p>
+            <p>
+              <strong>Role:</strong> {userDetails.role}
+            </p>
+          </div>
 
-            <MDBCard className="mb-4 mb-lg-0">
-              <MDBCardBody className="p-0">
-                <MDBListGroup flush className="rounded-3">
-                  {user.skills.map((skill, index) => (
-                    <MDBListGroupItem
-                      key={index}
-                      className="d-flex justify-content-between align-items-center p-3"
+          <div className="skills-section">
+            <h2>Skills</h2>
+            {userDetails.skills.length > 0 ? (
+              <ul className="skills-list">
+                {userDetails.skills.map((skill) => (
+                  <li key={skill.Nodeid} className="skill-item">
+                    {skill.name}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No skills found.</p>
+            )}
+          </div>
+
+          <div className="feedbacks-section">
+            <h2>Feedbacks</h2>
+            {userDetails.feedbacks.length > 0 ? (
+              <ul className="feedbacks-list">
+                {userDetails.feedbacks.map((feedback) => (
+                  <li key={feedback.FeedbackId} className="feedback-item">
+                    <p>
+                      <strong>Feedback:</strong> {feedback.feedback}
+                    </p>
+                    <p>
+                      <strong>Date Created:</strong> {feedback.createdAt}
+                    </p>
+                    {feedback.updatedAt && (
+                      <p>
+                        <strong>Date Updated:</strong> {feedback.updatedAt}
+                      </p>
+                    )}
+                    <Link
+                      to={{
+                        pathname: updateFeedbackPath,
+                        state: { initialFeedback: feedback.feedback },
+                      }}
                     >
-                      <MDBCardText>{skill.name}</MDBCardText>
-                    </MDBListGroupItem>
-                  ))}
-                </MDBListGroup>
-              </MDBCardBody>
-            </MDBCard>
-          </MDBCol>
+                      <button className="update-feedback-btn">
+                        Update Feedback
+                      </button>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>No feedbacks found.</p>
+            )}
 
-          <MDBCol lg="8">
-            <MDBCard className="mb-4">
-              <MDBCardBody>
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Username</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">
-                      {user.username}
-                    </MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-                <MDBRow>
-                  <MDBCol sm="3">
-                    <MDBCardText>Email</MDBCardText>
-                  </MDBCol>
-                  <MDBCol sm="9">
-                    <MDBCardText className="text-muted">
-                      {user.email}
-                    </MDBCardText>
-                  </MDBCol>
-                </MDBRow>
-                <hr />
-              </MDBCardBody>
-            </MDBCard>
+            {userDetails.feedbacks.length === 0 && (
+              <Link to={addFeedbackPath}>
+                <button className="add-feedback-btn">Add Feedback</button>
+              </Link>
+            )}
+          </div>
 
-            <MDBRow>
-              <MDBCol md="6">
-                <MDBCard className="mb-4 mb-md-0">
-                  <MDBCardBody>
-                    <MDBCardText className="mb-4">
-                      <span className="text-primary font-italic me-1">
-                        Career Goal
-                      </span>{" "}
-                      Progress
-                    </MDBCardText>
-                    <MDBCardText
-                      className="mb-1"
-                      style={{ fontSize: ".77rem" }}
-                    >
-                      {user.CareerGoal[0]}
-                    </MDBCardText>
-                    <MDBProgress className="rounded">
-                      <MDBProgressBar
-                        width={user.CareerGoal[1]}
-                        valuemin={0}
-                        valuemax={100}
-                      />
-                    </MDBProgress>
-                  </MDBCardBody>
-                </MDBCard>
-              </MDBCol>
-            </MDBRow>
-          </MDBCol>
-        </MDBRow>
-      </MDBContainer>
-    </section>
+          <div className="quizzes-section">
+            <h2>Quizzes and Grades</h2>
+            {quizzes.length > 0 || trackQuizzes.length > 0 ? (
+              <div>
+                <h3>Skill Quizzes</h3>
+                {quizzes.length > 0 ? (
+                  <ul className="quizzes-list">
+                    {quizzes.map((quiz, index) => (
+                      <li key={index} className="quiz-item">
+                        <p>
+                          <strong>Quiz Name:</strong> {quiz.QuizName}
+                        </p>
+                        <p>
+                          <strong>Total Questions:</strong>{" "}
+                          {quiz.TotalQuestions}
+                        </p>
+                        <p>
+                          <strong>Grade:</strong> {quiz.Grade || 0}
+                        </p>
+                        <p>
+                          <strong>Pass:</strong> {quiz.Pass ? "Yes" : "No"}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No skill quizzes taken.</p>
+                )}
+
+                <h3>Track Quizzes</h3>
+                {trackQuizzes.length > 0 ? (
+                  <ul className="quizzes-list">
+                    {trackQuizzes.map((trackQuiz, index) => (
+                      <li key={index} className="quiz-item">
+                        <p>
+                          <strong>Track Name:</strong> {trackQuiz.TrackName}
+                        </p>
+                        <p>
+                          <strong>Total Questions:</strong>{" "}
+                          {trackQuiz.TotalQuestions}
+                        </p>
+                        <p>
+                          <strong>Grade:</strong> {trackQuiz.Grade || 0}
+                        </p>
+                        <p>
+                          <strong>Pass:</strong> {trackQuiz.Pass ? "Yes" : "No"}
+                        </p>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No track quizzes taken.</p>
+                )}
+              </div>
+            ) : (
+              <p>No quizzes or grades found.</p>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
-}
+};
+
+export default UserProfile;
