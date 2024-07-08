@@ -372,7 +372,7 @@ const ResetPasswordLink = `https://career-y-production.up.railway.app/Auth/reset
         message: emailTemplate({
             link: ResetPasswordLink,
             linkData: 'Click here to Reset Password',
-            subject: 'Reset Password'A
+            subject: 'Reset Password',
         })
     })
     if (!isEmailSent) {
