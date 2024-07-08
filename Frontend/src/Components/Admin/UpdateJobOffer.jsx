@@ -3,16 +3,16 @@ import { httpPut } from "../../axios/axiosUtils";
 import "./../../Styles/UpdateJobOffer.css"; // Import the CSS file
 
 const UpdateJobOffer = () => {
-  const [jobOfferId, setJobOfferId] = useState("");
-  const [companyName, setCompanyName] = useState("");
-  const [jobDescription, setJobDescription] = useState("");
-  const [jobRequirements, setJobRequirements] = useState("");
-  const [salaryRange, setSalaryRange] = useState("");
-  const [datePosted, setDatePosted] = useState("");
-  const [employmentType, setEmploymentType] = useState("");
-  const [title, setTitle] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
-  const session = JSON.parse(localStorage.getItem("session"));
+    const [jobOfferId, setJobOfferId] = useState('');
+    const [companyName, setCompanyName] = useState('');
+    const [jobDescription, setJobDescription] = useState('');
+    const [jobRequirements, setJobRequirements] = useState('');
+    const [salaryRange, setSalaryRange] = useState('');
+    const [datePosted, setDatePosted] = useState('');
+    const [employmentType, setEmploymentType] = useState('');
+    const [title, setTitle] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();

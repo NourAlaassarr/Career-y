@@ -6,7 +6,7 @@
 //     const [loading, setLoading] = useState(false);
 //     const [error, setError] = useState(null);
 //     const [statusMessage, setStatusMessage] = useState('');
-//     const session = JSON.parse(localStorage.getItem("session"));
+//     const session = JSON.parse(sessionStorage.getItem("session"));
 
 //     const handleFeedbackSubmit = async (e) => {
 //         e.preventDefault();
@@ -66,7 +66,7 @@ const FeedBack = () => {
     const [feedback, setFeedback] = useState(initialFeedback);
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
     const navigate = useNavigate();
 
     useEffect(() => {

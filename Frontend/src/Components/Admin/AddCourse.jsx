@@ -3,16 +3,18 @@ import { httpPost } from "../../axios/axiosUtils";
 import "./../../Styles/AddCourse.css"; // Import the CSS file
 
 const AddCourse = () => {
-  const [jobId, setJobId] = useState("");
-  const [message, setMessage] = useState("");
-  const [success, setSuccess] = useState(false);
-  const [courseName, setCourseName] = useState("");
-  const [courseDescription, setCourseDescription] = useState("");
-  const [duration, setDuration] = useState("");
-  const [prerequisites, setPrerequisites] = useState("");
-  const [language, setLanguage] = useState("");
-  const [courseLink, setCourseLink] = useState("");
-  const session = JSON.parse(localStorage.getItem("session"));
+    const [jobId, setJobId] = useState('');
+    const [message, setMessage] = useState('');
+    const [success, setSuccess] = useState(false);
+    const [courseName, setCourseName] = useState('');
+    const [courseDescription, setCourseDescription] = useState('');
+    const [duration, setDuration] = useState('');
+    const [prerequisites, setPrerequisites] = useState('');
+    const [language, setLanguage] = useState('');
+    const [courseLink, setCourseLink] = useState('');
+    const session = JSON.parse(sessionStorage.getItem("session"));
+
+    
 
   const handleError = (error) => {
     if (error.response) {

@@ -7,7 +7,7 @@ const DeleteCourse = () => {
   const [success, setSuccess] = useState(false);
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState(null);
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
 
   const fetchCourses = async () => {
     try {

@@ -3,9 +3,10 @@ import { httpGet, httpPatch } from "../../axios/axiosUtils";
 import "./../../Styles/ApprovedCourses.css";
 
 const ApproveCourse = () => {
-  const [unapprovedCourses, setUnapprovedCourses] = useState([]);
-  const [statusMessage, setStatusMessage] = useState("");
-  const session = JSON.parse(localStorage.getItem("session"));
+    const [unapprovedCourses, setUnapprovedCourses] = useState([]);
+    const [statusMessage, setStatusMessage] = useState('');
+    const session = JSON.parse(sessionStorage.getItem("session"));
+    console.log(session)
 
   useEffect(() => {
     const fetchUnapprovedCourses = async () => {

@@ -3,6 +3,7 @@ import workingGirlImage from "../../../images/working-girl.png";
 import roadmaps from "../../../images/roadmaps.png";
 import skills from "../../../images/skills.png";
 import quiz from "../../../images/quiz.png";
+import courses from "../../../images/online-learning.png";
 import { Box, Grid, Typography } from "@mui/material";
 import * as S from "./styled";
 
@@ -48,14 +49,14 @@ export const HeroSection = () => {
           style={{
             position: "absolute",
             bottom: "-1%",
-            left: "50%",
+            left: "55%",
             zIndex: 10,
           }}
         />
       </Grid>
       <Grid container>
         <Grid item md={12} ml="18%" padding="8px 0px">
-          <Typography variant="h4" textTransform="uppercase">
+          <Typography variant="h4" textTransform="uppercase" color="#000">
             we can help{" "}
             <Typography variant="h4" color="#f1c111" textTransform="uppercase" display="inline">
               you
@@ -211,6 +212,54 @@ export const HeroSection = () => {
                 }}
               >
                 Testing yourself to track your progress
+              </Typography>
+            </Box>
+          </S.StyledLink>
+          <S.StyledLink to={`/courses`}>
+            <Box
+              display="flex"
+              flexDirection="column"
+              alignItems="center"
+              textAlign="center"
+              sx={{
+                hover: {
+                  transform: "translateY(-5px)",
+                  boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+                  backgroundColor: " #0c8195",
+                  color: "#f1c111",
+                },
+              }}
+            >
+              <Typography
+                color="#0c8195"
+                fontSize="18px"
+                fontWeight="600"
+                sx={{
+                  hover: { color: "#f1c111" },
+                }}
+              >
+                Courses
+              </Typography>
+              <img
+                src={courses}
+                alt={`${courses} logo`}
+                style={{
+                  width: "100px",
+                  height: "100px",
+                  objectFit: "contain",
+                  marginTop: "16px",
+                  marginBottom: "24px",
+                }}
+              />
+              <Typography
+                color="#0c8195"
+                fontSize="18px"
+                fontWeight="600"
+                sx={{
+                  hover: { color: "#f1c111" },
+                }}
+              >
+                Learning to imporve yourself
               </Typography>
             </Box>
           </S.StyledLink>

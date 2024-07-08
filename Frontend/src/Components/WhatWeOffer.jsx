@@ -5,7 +5,7 @@ import '../Styles/WhatWeOffer.css'; // Make sure to create and import this CSS f
 const WhatWeOffer = () => {
   const [courses, setCourses] = useState([]);
   const [error, setError] = useState(null);
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
 
   useEffect(() => {
     const fetchCourses = async () => {

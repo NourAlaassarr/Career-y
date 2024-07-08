@@ -3,9 +3,9 @@ import { httpDelete } from "../../axios/axiosUtils";
 import "./../../Styles/DeleteJobOffer.css"; // Import the CSS file
 
 const DeleteJobOffer = () => {
-  const [jobOfferId, setJobOfferId] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
-  const session = JSON.parse(localStorage.getItem("session"));
+    const [jobOfferId, setJobOfferId] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();

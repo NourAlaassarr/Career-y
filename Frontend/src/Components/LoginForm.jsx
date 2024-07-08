@@ -23,7 +23,7 @@ const LoginForm = () => {
         Email: email,
         Password: password,
       });
-      localStorage.setItem(
+      sessionStorage.setItem(
         "session",
         JSON.stringify({
           id: response.updatedUserNode._id,

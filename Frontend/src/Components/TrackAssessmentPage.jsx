@@ -7,8 +7,9 @@ import Countdown from "react-countdown";
 
 const TrackAssessmentPage = () => {
   const { id, skillId } = useParams();
+
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
-  const session = JSON.parse(localStorage.getItem("session"));
   const [quiz, setQuiz] = useState([]);
   const [answers, setAnswers] = useState({});
   const [time, setTime] = useState(null);

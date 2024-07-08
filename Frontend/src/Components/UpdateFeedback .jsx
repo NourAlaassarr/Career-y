@@ -9,8 +9,7 @@ const UpdateFeedback = () => {
     const [updatedFeedback, setUpdatedFeedback] = useState(feedback);
     const [loading, setLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
-    const session = JSON.parse(localStorage.getItem("session"));
-    const navigate = useNavigate();
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
     useEffect(() => {
         setUpdatedFeedback(feedback);

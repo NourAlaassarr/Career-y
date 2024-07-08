@@ -3,15 +3,15 @@ import { httpPut } from "../../axios/axiosUtils";
 import "./../../Styles/UpdateCourse.css";
 
 const UpdateCourse = () => {
-  const [courseId, setCourseId] = useState("");
-  const [courseLink, setCourseLink] = useState("");
-  const [courseName, setCourseName] = useState("");
-  const [courseDescription, setCourseDescription] = useState("");
-  const [duration, setDuration] = useState("");
-  const [prerequisites, setPrerequisites] = useState("");
-  const [language, setLanguage] = useState("");
-  const [statusMessage, setStatusMessage] = useState("");
-  const session = JSON.parse(localStorage.getItem("session"));
+    const [courseId, setCourseId] = useState('');
+    const [courseLink, setCourseLink] = useState('');
+    const [courseName, setCourseName] = useState('');
+    const [courseDescription, setCourseDescription] = useState('');
+    const [duration, setDuration] = useState('');
+    const [prerequisites, setPrerequisites] = useState('');
+    const [language, setLanguage] = useState('');
+    const [statusMessage, setStatusMessage] = useState('');
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
