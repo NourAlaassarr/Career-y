@@ -1,3 +1,4 @@
+import "./../../Styles/AddQuestion.css";
 import React, { useState } from "react";
 import { httpPost } from "../../axios/axiosUtils";
 
@@ -29,7 +30,6 @@ const AddQuestions = () => {
       const response = await httpPost(
         `Quiz/AddQuestionsToQuiz?SkillId=${skillId}`,
         { Questions: [questionData] },
-
         { headers: { token: session.token } }
       );
       const { message, success } = response;
@@ -57,7 +57,7 @@ const AddQuestions = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Add Questions</h1>
       <form onSubmit={handleQuestionSubmit}>
         <div>
@@ -119,7 +119,9 @@ const AddQuestions = () => {
         <button type="submit">Add Question</button>
       </form>
       {message && (
-        <div style={{ color: success ? "green" : "red" }}>{message}</div>
+        <div className={`message ${success ? "success" : "error"}`}>
+          {message}
+        </div>
       )}
     </div>
   );

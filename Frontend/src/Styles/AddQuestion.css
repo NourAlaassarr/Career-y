@@ -1,0 +1,75 @@
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  background-color: #f9f9f9;
+}
+
+h1 {
+  text-align: center;
+  color: #0c8195;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the form elements */
+}
+
+form > div {
+  width: 100%; /* Make each input field take the full width */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center the input fields and labels */
+}
+
+label {
+  margin: 10px 0 5px;
+  color: #333;
+  align-self: flex-start; /* Align labels to the start */
+}
+
+input {
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 16px;
+  width: 90%; /* Set input field width to 90% */
+}
+
+button {
+  padding: 10px;
+  background-color: #0c8195;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 50%; /* Set button width to 50% */
+}
+
+button:hover {
+  background-color: #096a75;
+}
+
+.message {
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 5px;
+  text-align: center;
+}
+
+.message.success {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.message.error {
+  background-color: #f8d7da;
+  color: #721c24;
+}
