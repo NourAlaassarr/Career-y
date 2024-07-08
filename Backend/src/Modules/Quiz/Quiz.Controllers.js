@@ -770,8 +770,7 @@ timestamp
             return {
                 Nodeid: jobNode.properties.Nodeid,
                 ...jobNode.properties,
-                date_posted: convertNeo4jDatetimeToISO(jobNode.properties.date_posted),
-                date_modified: convertNeo4jDatetimeToISO(jobNode.properties.date_modified)
+                date_modified: convertNeo4jDatetimeToISO(jobNode.properties.date_modified)|| "Invalid date"
 
             };
     });
