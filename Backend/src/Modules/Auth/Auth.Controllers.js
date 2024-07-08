@@ -365,7 +365,7 @@ const token = generateToken({
     signature: process.env.RESET_PASS_TOKEN,
     expiresIn: '1h',
 })
-const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+const ResetPasswordLink = `${req.protocol}s://${req.headers.host}/Auth/reset/${token}`
 console.log(req.protocol)
 console.log(req.headers.host)
 // const ResetPasswordLink = `https://career-y-production.up.railway.app/Auth/reset/${token}`
