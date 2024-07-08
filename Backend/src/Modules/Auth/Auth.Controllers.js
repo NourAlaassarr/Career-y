@@ -284,12 +284,67 @@ const result = await session.run("MATCH (u:User {_id: $UserId}) RETURN u", {
 }
 
 //forget pass
+// export const ForgetPassword= async(req,res,next)=>{
+//     const {Email}=req.body
+//     let session;
+//     const driver = await Neo4jConnection();
+//     session = driver.session(); 
+//     const numericNanoid = customAlphabet('1234567890', 4);
+
+//     const result = await session.run(
+//         'MATCH (u:User {Email: $Email}) RETURN u',
+//         { Email }
+//     );
+
+//     if (result.records.length === 0) {
+//         return next(new Error("User Not Found",{cause:404}))
+// }
+// const Code =numericNanoid();
+// const HashedCode = pkg.hashSync(Code,+process.env.SALT_ROUNDS)
+// const token = generateToken({
+//     payload: {
+//         Email,
+//         sentCode: HashedCode,
+//     },
+//     signature: process.env.RESET_PASS_TOKEN,
+//     expiresIn: '1h',
+// })
+// const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${token}`
+//     const isEmailSent = sendmailService({
+//         to: Email,
+//         subject: 'Reset Password',
+//         message: emailTemplate({
+//             link: ResetPasswordLink,
+//             linkData: `Click here to Reset Password`,
+//             subject: `Your OTP is ${Code}`
+//         })
+//     })
+//     if (!isEmailSent) {
+//         return next(new Error('Failed to send Reset Password Email', { cause: 400 }))
+//     }
+    
+//     session = driver.session();
+//     const updateuser = await session.run(
+//     'MATCH (u:User {Email: $email}) ' +
+//     'SET u.Code = $hashedCode ' +
+//     'RETURN u',
+//     { email:Email, hashedCode: HashedCode }
+// );
+
+// const updatedUser = result.records[0].get('u').properties;
+
+// session.close();
+
+
+// res.status(200).json({ Message: 'Done', updatedUser, ResetPasswordLink })
+// }
+
+//forget pass
 export const ForgetPassword= async(req,res,next)=>{
     const {Email}=req.body
     let session;
     const driver = await Neo4jConnection();
     session = driver.session(); 
-    const numericNanoid = customAlphabet('1234567890', 4);
 
     const result = await session.run(
         'MATCH (u:User {Email: $Email}) RETURN u',
@@ -299,7 +354,7 @@ export const ForgetPassword= async(req,res,next)=>{
     if (result.records.length === 0) {
         return next(new Error("User Not Found",{cause:404}))
 }
-const Code =numericNanoid();
+const Code =nanoid()
 const HashedCode = pkg.hashSync(Code,+process.env.SALT_ROUNDS)
 const token = generateToken({
     payload: {
@@ -315,8 +370,8 @@ const ResetPasswordLink = `${req.protocol}://${req.headers.host}/Auth/reset/${to
         subject: 'Reset Password',
         message: emailTemplate({
             link: ResetPasswordLink,
-            linkData: `Click here to Reset Password`,
-            subject: `Your OTP is ${Code}`
+            linkData: 'Click here to Reset Password',
+            subject: 'Reset Password'
         })
     })
     if (!isEmailSent) {
@@ -341,37 +396,74 @@ res.status(200).json({ Message: 'Done', updatedUser, ResetPasswordLink })
 
 
 //reset pass
+// export const reset = async (req, res, next) => {
+//     const { token } = req.params;
+//     const { NewPassword,code } = req.body;
+//     const decoded = VerifyToken({ token, signature: process.env.RESET_PASS_TOKEN });
+//     const { Email,sentCode} = decoded;
+//     let session;
+//     const driver = await Neo4jConnection();
+//     session = driver.session(); 
+//     if(!code){
+//         return next(new Error('OTP Required', { cause: 400 }))
+//     }
+    
+//     const user = await session.run(
+//         'MATCH (u:User {Email: $email, Code: $code}) RETURN u',
+//         { email: Email, code: sentCode }
+//     );
+    
+//     if (user.records.length === 0) {
+//         // User not found
+//         return next(new Error('you already rest your password, try to login', { cause: 400 }))
+//     }
+//     const isValidOTP = pkg.compareSync(code, sentCode);
+
+//     if (!isValidOTP) {
+//         return next(new Error('Invalid or expired OTP', { cause: 400 }));
+//     }
+//     const NewPasswordHashed = pkg.hashSync(NewPassword, +process.env.SALT_ROUNDS);
+
+//     const ResetPassword = await session.run(
+//         'MATCH (u:User {Email: $email, Code: $code}) ' +
+//         'SET u.password = $newPassword, u.ConfirmPassword=$newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
+//         'RETURN u',
+//         {
+//             email: decoded?.Email,
+//             code: decoded?.sentCode,
+//             newPassword: NewPasswordHashed,
+//             changePassAt: Date.now()
+//         }
+//     );
+    
+    
+//     session.close(); // Close the Neo4j session
+//     res.status(200).json({ Message: 'Password Reset Successful'});
+// };
+
 export const reset = async (req, res, next) => {
     const { token } = req.params;
-    const { NewPassword,code } = req.body;
+    const { NewPassword } = req.body;
     const decoded = VerifyToken({ token, signature: process.env.RESET_PASS_TOKEN });
-    const { Email,sentCode} = decoded;
     let session;
     const driver = await Neo4jConnection();
     session = driver.session(); 
-    if(!code){
-        return next(new Error('OTP Required', { cause: 400 }))
-    }
+
+
     
     const user = await session.run(
         'MATCH (u:User {Email: $email, Code: $code}) RETURN u',
-        { email: Email, code: sentCode }
+        { email: decoded?.Email, code: decoded?.sentCode }
     );
     
     if (user.records.length === 0) {
         // User not found
         return next(new Error('you already rest your password, try to login', { cause: 400 }))
     }
-    const isValidOTP = pkg.compareSync(code, sentCode);
-
-    if (!isValidOTP) {
-        return next(new Error('Invalid or expired OTP', { cause: 400 }));
-    }
     const NewPasswordHashed = pkg.hashSync(NewPassword, +process.env.SALT_ROUNDS);
-
     const ResetPassword = await session.run(
         'MATCH (u:User {Email: $email, Code: $code}) ' +
-        'SET u.password = $newPassword, u.ConfirmPassword=$newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
+        'SET u.password = $newPassword, u.Code = null, u.ChangePassAt = $changePassAt ' +
         'RETURN u',
         {
             email: decoded?.Email,
@@ -386,8 +478,3 @@ export const reset = async (req, res, next) => {
     res.status(200).json({ Message: 'Password Reset Successful'});
 };
 
-
-export default{
-    signIn,
-    
-}
