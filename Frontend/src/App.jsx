@@ -16,7 +16,7 @@ import { Roadmap } from "./pages/Roadmaps/Roadmap";
 import Navbar from "./Components/Navbar";
 import LoginForm from "./Components/LoginForm";
 import SignupForm from "./pages/SignUp";
-import Admin from "./Components/Admin/Admin";
+import Admin2 from "./Components/Admin/Admin";
 import AddQuiz from "./Components/Admin/AddQuiz";
 import AddQuestions from "./Components/Admin/AddQuestions";
 import GetAllUsers from "./Components/Admin/GetAllUsers";
@@ -64,7 +64,7 @@ function App() {
         <Route path="/quiz/:skill/grade" element={<QuizGradePage />} />
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
-        <Route path="/admin" element={<Admin />} />
+        <Route path="/admin" element={<Admin2 />} />
         <Route path="/add-quiz" element={<AddQuiz />} />
         <Route path="/add-questions" element={<AddQuestions />} />
         <Route path="/get-all-users" element={<GetAllUsers />} />
