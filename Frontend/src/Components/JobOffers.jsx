@@ -5,7 +5,7 @@
 //     const [jobOffers, setJobOffers] = useState([]);
 //     const [loading, setLoading] = useState(true);
 //     const [error, setError] = useState(null);
-//     const session = JSON.parse(localStorage.getItem("session"));
+//     const session = JSON.parse(sessionStorage.getItem("session"));
 
 //     useEffect(() => {
 //         const fetchJobOffers = async () => {
@@ -67,7 +67,7 @@ const JobOffers = () => {
     const [jobOffers, setJobOffers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
     useEffect(() => {
         const fetchJobOffers = async () => {

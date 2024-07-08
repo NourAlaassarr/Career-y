@@ -4,7 +4,7 @@
 // const ApproveCourse = () => {
 //     const [courseId, setCourseId] = useState('');
 //     const [statusMessage, setStatusMessage] = useState('');
-//     const session = JSON.parse(localStorage.getItem("session"));
+//     const session = JSON.parse(sessionStorage.getItem("session"));
 
 //     const handleSubmit = async (e) => {
 //         e.preventDefault();
@@ -53,7 +53,7 @@
 //     const [unapprovedCourses, setUnapprovedCourses] = useState([]);
 //     const [selectedCourseId, setSelectedCourseId] = useState('');
 //     const [statusMessage, setStatusMessage] = useState('');
-//     const session = JSON.parse(localStorage.getItem("session"));
+//     const session = JSON.parse(sessionStorage.getItem("session"));
 
 //     useEffect(() => {
 //         const fetchUnapprovedCourses = async () => {
@@ -124,7 +124,7 @@ import { httpGet, httpPatch } from "../../axios/axiosUtils";
 const ApproveCourse = () => {
     const [unapprovedCourses, setUnapprovedCourses] = useState([]);
     const [statusMessage, setStatusMessage] = useState('');
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
     console.log(session)
 
     useEffect(() => {

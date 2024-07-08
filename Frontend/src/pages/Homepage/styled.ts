@@ -7,7 +7,7 @@ export const StyledLink = styled(Link)`
   align-items: center;
   text-decoration: none;
   color: #333;
-  width: 200px;
+  width: 160px;
   height: 240px;
   border: 5px solid #0c819550;
   border-radius: 32px;

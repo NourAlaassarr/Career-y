@@ -20,7 +20,7 @@ export const Roadmap = () => {
   const [courses, setCourses] = useState([]);
   const [name, setName] = useState();
   const [description, setDescription] = useState();
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
 
   const getRoadmap = useCallback(async () => {

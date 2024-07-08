@@ -11,7 +11,7 @@ const AddQuestions = () => {
     const [order, setOrder] = useState(1);
     const [message, setMessage] = useState('');
     const [success, setSuccess] = useState(false);
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
     const handleQuestionSubmit = async (e) => {
         e.preventDefault();

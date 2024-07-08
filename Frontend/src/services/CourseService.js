@@ -3,7 +3,7 @@
 import { httpGet } from "../axios/axiosUtils";
 
 export const getAllCourses = async () => {
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   console.log(session.token);
   try {
     const response = await httpGet("Course/GetAllCourses", {

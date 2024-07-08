@@ -25,7 +25,7 @@ import BusinessIntelligenceDeveloper from "../../images/logo/business.png";
 const CareerGoalPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [tracks, setTracks] = useState([]);
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
 
   useEffect(() => {

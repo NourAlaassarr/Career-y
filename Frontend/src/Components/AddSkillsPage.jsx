@@ -4,7 +4,7 @@ import { httpGet, httpPost } from "../axios/axiosUtils";
 import "../Styles/AddSkillsPage.css";
 
 const AddSkillsPage = () => {
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const [searchTerm, setSearchTerm] = useState("");
   const [skills, setSkills] = useState([]);
   const [existingSkills, setExistingSkills] = useState([]);

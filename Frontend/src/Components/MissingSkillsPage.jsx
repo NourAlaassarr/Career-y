@@ -5,7 +5,7 @@ import "../Styles/MissingSkillsPage.css"; // Create and style your CSS file
 const MissingSkillsPage = () => {
   const [gapSkills, setGapSkills] = useState([]);
   const [recommendedTracks, setRecommendedTracks] = useState([]);
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
 
   useEffect(() => {
     const fetchGapSkills = async () => {

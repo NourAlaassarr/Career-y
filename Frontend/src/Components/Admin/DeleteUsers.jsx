@@ -6,7 +6,7 @@ const DeleteUsers = () => {
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState([]);
     const [showUsers, setShowUsers] = useState(false);
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
     
     const handleError = (error) => {

@@ -12,7 +12,7 @@ const AddCourse = () => {
     const [prerequisites, setPrerequisites] = useState('');
     const [language, setLanguage] = useState('');
     const [courseLink, setCourseLink] = useState('');
-    const session = JSON.parse(localStorage.getItem("session"));
+    const session = JSON.parse(sessionStorage.getItem("session"));
 
     
 

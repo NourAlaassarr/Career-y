@@ -6,7 +6,7 @@ import Countdown from 'react-countdown';
 
 const SkillQuizPage = () => {
   const { skill } = useParams(); // Use from URL parameters
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
   
   const [quizName, setQuizName] = useState('');

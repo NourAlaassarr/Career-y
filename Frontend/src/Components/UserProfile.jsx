@@ -20,7 +20,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const session = JSON.parse(localStorage.getItem('session')); 
+        const session = JSON.parse(sessionStorage.getItem('session')); 
         if (!session.token) {
           throw new Error("No token found");
         }

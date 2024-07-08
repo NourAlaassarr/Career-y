@@ -222,7 +222,7 @@ const quizImageMap = {
 
 
 const QuizPage = () => {
-  const session = JSON.parse(localStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem("session"));
   const [searchTerm, setSearchTerm] = useState('');
   const [quizzes, setQuizzes] = useState([]);
 
