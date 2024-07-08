@@ -341,7 +341,7 @@ const result = await session.run("MATCH (u:User {_id: $UserId}) RETURN u", {
 
 //forget pass
 export const ForgetPassword= async(req,res,next)=>{
-    console.log("helllllllllllld")
+    // console.log("helllllllllllld")
     const {Email}=req.body
     let session;
     const driver = await Neo4jConnection();
