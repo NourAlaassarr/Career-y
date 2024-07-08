@@ -1,6 +1,10 @@
+// src/LoginForm.jsx
+import "./../Styles/LoginForm.css";
+
+// src/LoginForm.jsx
 import { useState } from "react";
 import { httpPost } from "../axios/axiosUtils";
-import Logo from "../../images/Logo4.png"
+import Logo from "../../images/Logo4.png";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = () => {
@@ -32,7 +36,7 @@ const LoginForm = () => {
       );
       setEmail("");
       setPassword("");
-      navigate('/');
+      navigate("/");
     } catch (error) {
       console.log(error.message);
     }
@@ -45,15 +49,6 @@ const LoginForm = () => {
           <div className="logo">
             <img src={Logo} alt="Logo" className="logo-image" />
           </div>
-          <p
-            style={{
-              color: "rgba(5, 122, 141, 1)",
-              fontWeight: "bold",
-              fontSize: "20px",
-            }}
-          >
-            CAREER<span style={{ color: "rgba(241, 193, 17, 1)" }}>-</span>Y
-          </p>
         </div>
         <input
           className="signin-input"
@@ -69,24 +64,14 @@ const LoginForm = () => {
           onChange={handlePasswordChange}
           placeholder="Password"
         />
-        <p>
-          {"Forgot your password? "}
-          <a
-            href="/reset-password"
-            style={{ color: "rgba(241, 193, 17, 1)", textDecoration: "none" }}
-          >
-            Reset Password
-          </a>
+        <p className="forgot-password">
+          Forgot your password? <a href="/reset-password">Reset Password</a>
         </p>
-        <button type="submit">Sign In</button>
-        <p>
-          {"Don't have an account? "}
-          <a
-            href="/sign-up"
-            style={{ color: "rgba(241, 193, 17, 1)", textDecoration: "none" }}
-          >
-            Sign up
-          </a>
+        <button type="submit" className="signin-button">
+          Sign In
+        </button>
+        <p className="signup-link">
+          Do not have an account? <a href="/sign-up">Sign up</a>
         </p>
       </form>
     </div>

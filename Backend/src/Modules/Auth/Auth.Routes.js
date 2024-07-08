@@ -15,7 +15,7 @@ router.post('/LogOut',isAuth(AuthRolesApi.LogOut),ValidationCoreFunction(Validat
 router.patch('/ChangePassword',isAuth(AuthRolesApi.ChangePassword),ValidationCoreFunction(Validator.ChangePassword),asyncHandler(AuthControllers.ChangePassword))
 router.get('/Confirm/:token',ValidationCoreFunction(Validator.ConfirmEmail),asyncHandler(AuthControllers.ConfirmEmail))
 router.patch('/ForgetPassword',ValidationCoreFunction(Validator.ForgetPassword),asyncHandler(AuthControllers.ForgetPassword))
-router.patch('/reset/:token',asyncHandler(AuthControllers.reset))
+router.patch('/reset/',asyncHandler(AuthControllers.reset))
 
 
 
