@@ -1,7 +1,32 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { httpGet, httpPost } from "../axios/axiosUtils";
-import "../Styles/AddSkillsPage.css";
+import { httpGet, httpPost } from "../../axios/axiosUtils";
+import "../../Styles/AddSkillsPage.css";
+import { Chip, styled } from "@mui/material";
+import * as S from "./styled";
+
+interface Skill {
+  Nodeid: number;
+  name: string;
+}
+
+interface SkillChipProps {
+  skill: Skill;
+  selectedSkills: number[];
+  handleSkillChange: (nodeId: number) => void;
+}
+
+const CustomChip = styled(Chip)(({ theme, selected }: {theme: any, selected?: boolean}) => ({
+  backgroundColor: selected ? '#0c8195' : 'primary',
+  minHeight: '32px',
+  marginRight: theme.spacing(1),
+  marginBottom: theme.spacing(1),
+  color: selected ? '#f1c111' : '',
+
+  '&:hover': {
+    backgroundColor: selected ? '#0c8195' : 'primary',
+  },
+}));
 
 const AddSkillsPage = () => {
   const session = JSON.parse(sessionStorage.getItem("session"));
@@ -64,14 +89,11 @@ const AddSkillsPage = () => {
     setSearchTerm(e.target.value);
   };
 
-  const handleSkillChange = (e) => {
-    const skillNodeid = e.target.value;
-    if (selectedSkills.includes(skillNodeid)) {
-      setSelectedSkills(
-        selectedSkills.filter((skill) => skill !== skillNodeid)
-      );
+  const handleSkillChange = (id) => {
+    if (selectedSkills.includes(id)) {
+      setSelectedSkills(selectedSkills.filter((skill) => skill !== id));
     } else {
-      setSelectedSkills([...selectedSkills, skillNodeid]);
+      setSelectedSkills([...selectedSkills, id]);
     }
     setNewSkills(true);
   };
@@ -131,15 +153,12 @@ const AddSkillsPage = () => {
       <div className="skills-container">
         <div className="skills-list">
           {filteredSkills.map((skill, index) => (
-            <label key={index} className="skill-item">
-              <input
-                type="checkbox"
-                value={skill.Nodeid}
-                checked={selectedSkills.includes(skill.Nodeid)}
-                onChange={handleSkillChange}
-              />
-              {skill.name}
-            </label>
+            <CustomChip
+              key={index}
+              label={skill.name}
+              onClick={() => handleSkillChange(skill.Nodeid)}
+              selected={selectedSkills.includes(skill.Nodeid)}
+            />
           ))}
         </div>
         <div className="selected-skills-list">
@@ -148,9 +167,7 @@ const AddSkillsPage = () => {
               <h3>SELECTED SKILLS:</h3>
               <ul>
                 {selectedSkills.map((skillId, index) => (
-                  <li key={index}>
-                    {skills.find((skill) => skill.Nodeid === skillId)?.name}
-                  </li>
+                  <CustomChip key={index} label={skills.find((skill) => skill.Nodeid === skillId)?.name}/>
                 ))}
               </ul>
             </div>
@@ -160,9 +177,7 @@ const AddSkillsPage = () => {
           <h3>YOUR SKILLS:</h3>
           <ul>
             {existingSkills.map((skillId, index) => (
-              <li key={index}>
-                {skills.find((skill) => skill.Nodeid === skillId)?.name}
-              </li>
+              <CustomChip key={index} label={skills.find((skill) => skill.Nodeid === skillId)?.name}/>
             ))}
           </ul>
         </div>

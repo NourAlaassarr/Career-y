@@ -8,7 +8,7 @@
   background-color: #f9f9f9;
 }
 
-h2 {
+.container h2 {
   text-align: center;
   color: #0c8195;
 }
@@ -22,12 +22,12 @@ h2 {
   color: #333;
 }
 
-ul {
+.container ul {
   list-style-type: none;
   padding: 0;
 }
 
-li {
+.container li {
   margin-bottom: 20px;
   padding: 20px;
   border: 1px solid #ccc;
@@ -35,7 +35,7 @@ li {
   background-color: #fff;
 }
 
-h3 {
+.container h3 {
   color: #0c8195;
 }
 
@@ -44,16 +44,16 @@ h3 {
   color: #333;
 }
 
-a {
+.container a {
   color: #0c8195;
   text-decoration: none;
 }
 
-a:hover {
+.container a:hover {
   text-decoration: underline;
 }
 
-button {
+.container button {
   padding: 10px 20px;
   background-color: #0c8195;
   color: white;
@@ -66,6 +66,6 @@ button {
   margin: 0 auto;
 }
 
-button:hover {
+.container button:hover {
   background-color: #096a75;
 }

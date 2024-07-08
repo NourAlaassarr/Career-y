@@ -8,14 +8,53 @@ const SkillQuizPage = () => {
   const { skill } = useParams(); // Use from URL parameters
   const session = JSON.parse(sessionStorage.getItem("session"));
   const navigate = useNavigate();
-  
+
   const [quizName, setQuizName] = useState('');
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState({});
   const [grade, setGrade] = useState(null);
-  const [time, setTime] = useState(null); // 5 minutes timer (300 seconds)
+  const [endTime, setEndTime] = useState(0); // Timer end time in milliseconds
+  const [timerEnded, setTimerEnded] = useState(false);
 
+  // Countdown renderer
+  const renderer = ({ minutes, seconds, completed }) => {
+    if (completed) {
+      // Timer has ended
+      setTimerEnded(true);
+      handleSubmit();
+      return <span>Time&apos;s up!</span>;
+    } else {
+      // Render a countdown timer
+      return <span>{minutes}:{seconds}</span>;
+    }
+  };
+
+  // Effect to fetch questions and start the timer
+  useEffect(() => {
+    const fetchQuestionsAndStartTimer = async () => {
+      try {
+        const data = await httpGet(`Quiz/Quiz?SkillId=${skill}`, {
+          headers: { 'token': session.token }
+        });
+        if (data && data.Questions) {
+          setQuizName(data.QuizName || 'Quiz');
+          setQuestions(data.Questions);
+          // Calculate end time based on questions length
+          const endTime = Date.now() + (data.Questions.length * 60000 + 1000); // 60 seconds per question + 5 seconds buffer
+          setEndTime(endTime);
+        } else {
+          console.error('Unexpected response structure:', data);
+        }
+      } catch (error) {
+        console.error('Error fetching questions:', error);
+      }
+    };
+
+    fetchQuestionsAndStartTimer();
+  }, [session.token, skill]);
+
+  // Function to handle submission of answers
   const handleSubmit = useCallback(async () => {
     try {
       const answerArray = Object.keys(answers).map(questionId => ({
@@ -35,27 +74,7 @@ const SkillQuizPage = () => {
     }
   }, [answers, navigate, session.token, skill]);
 
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        const data = await httpGet(`Quiz/Quiz?SkillId=${skill}`, {
-          headers: { 'token': session.token }
-        });
-        if (data && data.Questions) {
-          setQuizName(data.QuizName || 'Quiz');
-          setQuestions(data.Questions);
-          setTime(data.Questions.length * 60000 + 5000);
-        } else {
-          console.error('Unexpected response structure:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching questions:', error);
-      }
-    };
-
-    fetchQuestions();
-  }, [handleSubmit, session.token, skill]);
-
+  // Function to handle option change
   const handleOptionChange = (questionId, optionId) => {
     setAnswers({
       ...answers,
@@ -63,23 +82,32 @@ const SkillQuizPage = () => {
     });
   };
 
+  // Function to navigate to the next question
   const handleNextQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex + 1);
   };
 
+  // Function to navigate to the previous question
   const handlePreviousQuestion = () => {
     setCurrentQuestionIndex(currentQuestionIndex - 1);
   };
 
+  // Get current question
   const currentQuestion = questions[currentQuestionIndex];
-  const formatTime = (time) =>
-    `${Math.floor(time / 60)}:${("0" + (time % 60)).slice(-2)}`;
+
+  // Format time into minutes and seconds
+  const formatTime = (time) => `${Math.floor(time / 60000)}:${("0" + ((time % 60000) / 1000)).slice(-2)}`;
 
   return (
     <div className="skill-quiz-page">
       <h1>{quizName}</h1>
       <div className="quiz-info">
-        {time && <Countdown date={Date.now() + time} />}
+        {endTime > 0 && !timerEnded && (
+          <Countdown
+            date={endTime}
+            renderer={renderer}
+          />
+        )}
         <p>Question {currentQuestionIndex + 1} of {questions.length}</p>
       </div>
       {currentQuestion ? (
@@ -102,11 +130,6 @@ const SkillQuizPage = () => {
         </div>
       ) : (
         <p>Loading questions...</p>
-      )}
-      {currentQuestionIndex === questions.length - 1 && (
-        <button className="submit-button" onClick={handleSubmit}>
-          Submit
-        </button>
       )}
       <div className="navigation-buttons">
         {currentQuestionIndex > 0 && (

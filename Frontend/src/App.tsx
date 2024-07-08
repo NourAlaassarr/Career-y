@@ -4,7 +4,9 @@ import Home from "./Components/Home";
 import { Roadmaps } from "./pages/Roadmaps";
 import ProfilePage from "./Components/UserProfile";
 import JobList from "./Components/JobList";
-import AddSkillsPage from "./Components/AddSkillsPage";
+import AddSkillsPage from "./pages/AddSkills";
+import FrameworkSelectionPage from "./Components/FrameworkSelectionPage";
+import TrackQuizGradePage from "./Components/TrackQuizGradePage";
 import CareerGuidancePage from "./Components/CareerGuidancePage";
 import QuizPage from "./Components/QuizPage";
 import SkillQuizPage from "./Components/SkillQuizPage";
@@ -76,6 +78,7 @@ function App() {
         <Route path="/quiz" element={<RequireAuth><QuizPage /></RequireAuth>} />
         <Route path="/quiz/:skill" element={<RequireAuth><SkillQuizPage /></RequireAuth>} />
         <Route path="/track/:id/assessment" element={<RequireAuth><TrackAssessmentPage /></RequireAuth>} />
+        <Route path="/track/:id/skill/:skillId/assessment" element={<RequireAuth><TrackAssessmentPage /></RequireAuth>} />
         <Route path="/job" element={<RequireAuth><JobPage /></RequireAuth>} />
         <Route path="/track/:id/course" element={<RequireAuth><TrackCoursePage /></RequireAuth>} />
         <Route path="/track/:id/showMissingSkills" element={<RequireAuth><ShowingMissingSkills /></RequireAuth>} />
@@ -85,24 +88,26 @@ function App() {
         <Route path="/login" element={<LoginForm />} />
         <Route path="/sign-up" element={<SignupForm />} />
         <Route path="/courses" element={<RequireAuth><WhatWeOffer /></RequireAuth>} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/add-quiz" element={<AddQuiz />} />
-        <Route path="/add-questions" element={<AddQuestions />} />
-        <Route path="/get-all-users" element={<GetAllUsers />} />
-        <Route path="/delete-users" element={<DeleteUsers />} />
-        <Route path="/add-course" element={<AddCourse />} />
-        <Route path="/delete-course" element={<DeleteCourse />} />
-        <Route path="/update-resourse" element={<UpdateResource />} />
-        <Route path="/add-job-offer" element={<AddJobOffer />} />
-        <Route path="/add-skill-to-roadmap" element={<AddSkillToRoadmap />} />
+        <Route path="/admin" element={<RequireAuth><Admin /></RequireAuth>} />
+        <Route path="/add-quiz" element={<RequireAuth><AddQuiz /></RequireAuth>} />
+        <Route path="/add-questions" element={<RequireAuth><AddQuestions /></RequireAuth>} />
+        <Route path="/get-all-users" element={<RequireAuth><GetAllUsers /></RequireAuth>} />
+        <Route path="/delete-users" element={<RequireAuth><DeleteUsers /></RequireAuth>} />
+        <Route path="/add-course" element={<RequireAuth><AddCourse /></RequireAuth>} />
+        <Route path="/delete-course" element={<RequireAuth><DeleteCourse /></RequireAuth>} />
+        <Route path="/update-resourse" element={<RequireAuth><UpdateResource /></RequireAuth>} />
+        <Route path="/add-job-offer" element={<RequireAuth><AddJobOffer /></RequireAuth>} />
+        <Route path="/add-skill-to-roadmap" element={<RequireAuth><AddSkillToRoadmap /></RequireAuth>} />
         <Route
           path="/delete-skill-from-roadmap"
-          element={<DeleteSkillFromRoadmap />}
+          element={<RequireAuth><DeleteSkillFromRoadmap /></RequireAuth>}
         />
-        <Route path="/delete-job-offer" element={<DeleteJobOffer />} />
-        <Route path="/update-job-offer" element={<UpdateJobOffer />} />
-        <Route path="update-course" element={<UpdateCourse />} />
-        <Route path="approve-course" element={<ApproveCourse />} />
+        <Route path="/delete-job-offer" element={<RequireAuth><DeleteJobOffer /></RequireAuth>} />
+        <Route path="/update-job-offer" element={<RequireAuth><UpdateJobOffer /></RequireAuth>} />
+        <Route path="update-course" element={<RequireAuth><UpdateCourse /></RequireAuth>} />
+        <Route path="approve-course" element={<RequireAuth><ApproveCourse /></RequireAuth>} />
+        <Route path="/track/:jobId/framework" element={<RequireAuth><FrameworkSelectionPage /></RequireAuth>} />
+        <Route path="/track/:id/grade" element={<RequireAuth><TrackQuizGradePage /></RequireAuth>} />
       </Routes>
       <Footer />
     </Router>

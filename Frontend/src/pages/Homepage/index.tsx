@@ -23,6 +23,7 @@ export const HeroSection = () => {
             color="#ffffff"
             fontWeight="bold"
             letterSpacing={4}
+            textAlign="center"
             sx={{ textShadow: "4px 4px #00000025" }}
           >
             CAREER

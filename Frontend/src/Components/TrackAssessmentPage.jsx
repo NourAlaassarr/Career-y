@@ -1,49 +1,59 @@
-// 3 frameworks bs amt7anhom
-import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { httpGet, httpPost } from "../axios/axiosUtils"; // Ensure the correct import path
-import "../Styles/TrackAssessmentPage.css";
-import Countdown from "react-countdown";
+import React, { useState, useEffect, useCallback } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { httpGet, httpPost } from '../axios/axiosUtils';
+import '../Styles/TrackAssessmentPage.css';
+import Countdown from 'react-countdown';
 
 const TrackAssessmentPage = () => {
   const { id, skillId } = useParams();
-
-  const session = JSON.parse(sessionStorage.getItem("session"));
+  const session = JSON.parse(sessionStorage.getItem('session'));
   const navigate = useNavigate();
+
   const [quiz, setQuiz] = useState([]);
   const [answers, setAnswers] = useState({});
   const [time, setTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [endTime, setEndTime] = useState(0); // Timer end time in milliseconds
+  const [timerEnded, setTimerEnded] = useState(false);
 
   useEffect(() => {
-    const fetchQuiz = async () => {
+    const fetchQuizAndStartTimer = async () => {
       try {
         const response = skillId
           ? await httpGet(
               `Quiz/GetBackendTrackQuiz?jobId=${id}&SkillId=${skillId}`,
-              {
-                headers: { token: session?.token },
-              }
+              { headers: { token: session?.token } }
             )
           : await httpGet(`Quiz/GetTrackQuiz?jobId=${id}`, {
               headers: { token: session.token },
             });
-        console.log("Quiz fetched:", response);
 
-        if (response) {
+        if (response && response.Questions) {
           setQuiz(response);
-          setTime(response.Questions.length * 60000 + 5000);
+          const endTime = Date.now() + (response.Questions.length * 60000 + 5000); // Adjust time calculation as per your requirement
+          setEndTime(endTime);
         } else {
-          console.error("Unexpected response structure:", response);
+          console.error('Unexpected response structure:', response);
         }
       } catch (error) {
-        console.error("Error fetching quiz:", error);
+        console.error('Error fetching quiz:', error);
       }
     };
 
-    fetchQuiz();
-  }, [id, session.token]);
+    fetchQuizAndStartTimer();
+  }, [id, session.token, skillId]);
+
+  // Countdown renderer
+  const renderer = ({ minutes, seconds, completed }) => {
+    if (completed) {
+      setTimerEnded(true);
+      handleSubmit();
+      return <span>Time&apos;s up!</span>;
+    } else {
+      return <span>{minutes}:{seconds}</span>;
+    }
+  };
 
   const handleSubmit = async () => {
     setIsSubmitting(true);
@@ -62,20 +72,17 @@ const TrackAssessmentPage = () => {
     };
 
     try {
-      console.log(answerArray);
-      const response = await httpPost(
-        "Quiz/SubmitQuiz",
-        { answer: answerArray, quizId: quiz.QuizId, jobId: id },
-        { headers: { token: session.token } }
-      );
-      console.log("Quiz submitted:", response);
-      navigate("/track/${id}/grade", { state: { result: response } });
-      //navigate("/track/${id}/skill/${skillId}/grade", { state: { result: response } });
+      const response = await httpPost('Quiz/SubmitQuiz', {
+        answer: answerArray,
+        quizId: quiz.QuizId,
+        jobId: id,
+      }, {
+        headers: { token: session.token }
+      });
 
-      // Redirect to framework selection page after quiz submission
-      //navigate(`/track/${id}/framework`);
+      navigate(`/track/${id}/grade`, { state: { result: response } });
     } catch (error) {
-      console.error("Error submitting quiz:", error);
+      console.error('Error submitting quiz:', error);
       setIsSubmitting(false);
     }
   };
@@ -100,7 +107,7 @@ const TrackAssessmentPage = () => {
   return (
     <div className="track-assessment-page">
       <h1>Track Assessment</h1>
-      {time && <Countdown date={Date.now() + time} />}
+      {endTime > 0 && !timerEnded && <Countdown date={endTime} renderer={renderer} />}
       <div className="quiz-container">
         {quiz.Questions?.length && (
           <div className="question-block">
