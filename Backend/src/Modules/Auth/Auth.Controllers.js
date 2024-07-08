@@ -395,7 +395,7 @@ const updatedUser = result.records[0].get('u').properties;
 session.close();
 
 
-res.status(200).json({ Message: 'Done', updatedUser, ResetPasswordLink })
+res.status(200).json({ Message: 'Done', updatedUser,ForgetPassToken:token, ResetPasswordLink })
 }
 
 
