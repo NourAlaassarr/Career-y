@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from 'axios';
 import { tr } from 'date-fns/locale';
-import {convertNeo4jDatetimeToISO} from'../../utils/ConverNeo4jDateTimes'
+import {convertNeo4jDatetimeToISO} from "../../utils/ConverNeo4jDateTimes.js";
 const quizzes = new Map();
 //Add Quiz Neo4j(Admins)
 export const AddQuizNode = async (req, res, next) => {
