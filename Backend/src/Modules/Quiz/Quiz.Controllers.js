@@ -4,7 +4,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Neo4jConnection } from "../../../DB/Neo4j/Neo4j.js";
 import axios from 'axios';
 import { tr } from 'date-fns/locale';
-import {convertNeo4jDatetimeToISO} from "../../utils/ConverNeo4jDateTimes.js";
+import {convertNeo4jDatetimeToISO,convertNeo4jDateToISO} from "../../utils/ConverNeo4jDateTimes.js";
+
 const quizzes = new Map();
 //Add Quiz Neo4j(Admins)
 export const AddQuizNode = async (req, res, next) => {
@@ -770,7 +771,8 @@ timestamp
             return {
                 Nodeid: jobNode.properties.Nodeid,
                 ...jobNode.properties,
-                date_modified: convertNeo4jDatetimeToISO(jobNode.properties.date_modified)|| "Invalid date"
+                date_posted: convertNeo4jDateToISO(jobNode.properties.date_posted) || "Invalid date",
+                date_modified: convertNeo4jDatetimeToISO(jobNode.properties.date_modified) || "Invalid date"
 
             };
     });
