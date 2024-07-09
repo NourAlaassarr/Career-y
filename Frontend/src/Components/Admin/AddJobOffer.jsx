@@ -19,7 +19,7 @@ const AddJobOffer = () => {
 
     try {
       const response = await httpPost(
-        `http://localhost:8000/Job/AddJob?JobId=${jobId}`,
+        `Job/AddJob?JobId=${jobId}`,
         {
           CompanyName: companyName,
           JobDescription: jobDescription,

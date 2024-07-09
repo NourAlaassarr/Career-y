@@ -12,7 +12,7 @@ const DeleteJobOffer = () => {
 
     try {
       const response = await httpDelete(
-        `/Job/DeleteJobOffer?JobOfferId=${jobOfferId}`,
+        `Job/DeleteJobOffer?JobOfferId=${jobOfferId}`,
         {
           headers: { token: session.token },
         }

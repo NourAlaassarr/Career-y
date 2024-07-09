@@ -38,7 +38,7 @@ const DeleteCourse = () => {
 
   const handleDeleteCourse = async (courseId) => {
     try {
-      const response = await httpDelete(`/Course/DeleteCourse?CourseId=${courseId}`, { headers: { 'token': session.token } });
+      const response = await httpDelete(`Course/DeleteCourse?CourseId=${courseId}`, { headers: { 'token': session.token } });
       console.log('Delete Course Response:', response); // Debugging line to check the delete course response
       const { message, success } = response;
       setMessage(message);

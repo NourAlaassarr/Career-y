@@ -23,15 +23,22 @@
 
 // export default QuizGradePage;
 
-import React from 'react';
-import { useLocation } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import '../Styles/QuizGradePage.css';
 
 const QuizGradePage = () => {
   const location = useLocation();
   const { grade, totalQuestions } = location.state;
+  const navigate = useNavigate();
 
   const pass = grade > totalQuestions / 2;
+
+  useEffect(() => {
+    const timer = setTimeout(() => navigate('/quiz'), 5000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <div className="quiz-grade-page">

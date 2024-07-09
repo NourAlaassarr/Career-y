@@ -19,7 +19,7 @@ const UpdateJobOffer = () => {
 
     try {
       const response = await httpPut(
-        `/Job/UpdateJobOffer?JobOfferId=${jobOfferId}`,
+        `Job/UpdateJobOffer?JobOfferId=${jobOfferId}`,
         {
           CompanyName: companyName,
           JobDescription: jobDescription,

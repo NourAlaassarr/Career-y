@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { httpPatch } from "../axios/axiosUtils";
-// import '../Styles/ResetPassword.css';
+import '../Styles/ResetPassword.css';
+import { useNavigate } from "react-router-dom";
 const ResetPassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [code, setCode] = useState("");
@@ -16,7 +17,7 @@ const ResetPassword = () => {
         { NewPassword: newPassword },
         { headers: { token: passToken } }
       );
-      setSuccessMessage(response.data.Message);
+      setSuccessMessage(response.Message);
     } catch (error) {
       setErrorMessage(
         error.response.data.message || "Failed to reset password."
@@ -26,6 +27,7 @@ const ResetPassword = () => {
 
   return (
     <div className="reset-password-container">
+    <div className="reset-password-modal">
       <h2>Reset Password</h2>
       {errorMessage && <div className="message error">{errorMessage}</div>}
       {successMessage && <div className="message success">{successMessage}</div>}
@@ -39,6 +41,7 @@ const ResetPassword = () => {
         />
         <button onClick={handleResetPassword}>Reset Password</button>
       </div>
+    </div>
     </div>
   );
 };

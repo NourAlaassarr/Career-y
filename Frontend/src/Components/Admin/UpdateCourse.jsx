@@ -18,7 +18,7 @@ const UpdateCourse = () => {
 
     try {
       const response = await httpPut(
-        `/Course/UpdateCourse?CourseId=${courseId}`,
+        `Course/UpdateCourse?CourseId=${courseId}`,
         {
           Courselink: courseLink,
           CourseName: courseName,

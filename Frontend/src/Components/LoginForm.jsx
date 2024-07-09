@@ -32,11 +32,12 @@ const LoginForm = () => {
         JSON.stringify({
           id: response.updatedUserNode._id,
           token: response.updatedUserNode.token,
+          role: response.updatedUserNode.role
         })
       );
       setEmail("");
       setPassword("");
-      navigate("/");
+      response.updatedUserNode.role == 'admin' ? navigate("/admin") : navigate("/");
     } catch (error) {
       console.log(error.message);
     }
@@ -65,7 +66,7 @@ const LoginForm = () => {
           placeholder="Password"
         />
         <p className="forgot-password">
-          Forgot your password? <a href="/reset-password">Reset Password</a>
+          Forgot your password? <a href="/forget-password">Reset Password</a>
         </p>
         <button type="submit" className="signin-button">
           Sign In

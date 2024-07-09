@@ -8,6 +8,8 @@ const SignupForm = () => {
   const [email, setEmail] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleUsernameChange = (e) => {
     setUsername(e.target.value);
@@ -25,18 +27,27 @@ const SignupForm = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    httpPost("Auth/SignUp", {
-      UserName: username,
-      Email: email,
-      password,
-      ConfirmPassword: confirmPassword,
-    });
-    setUsername("");
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
+  const handleSubmit = async (e) => {
+    setErrorMessage(null);
+    setSuccessMessage(null);
+    try {
+      e.preventDefault();
+      const response = await httpPost("Auth/SignUp", {
+        UserName: username,
+        Email: email,
+        password,
+        ConfirmPassword: confirmPassword,
+      });
+      setSuccessMessage(response.Message);
+      setUsername("");
+      setEmail("");
+      setPassword("");
+      setConfirmPassword("");
+    } catch (error) {
+      setErrorMessage(
+        error.response.data.message || "Failed to sign up"
+      );
+    }
   };
 
   return (
@@ -74,6 +85,8 @@ const SignupForm = () => {
           onChange={handleConfirmPasswordChange}
           placeholder="Confirm Password"
         />
+        {errorMessage && <div className="message error">{errorMessage}</div>}
+        {successMessage && <div className="message success">{successMessage}</div>}
         <button type="submit" className="signup-button">
           Sign Up
         </button>
