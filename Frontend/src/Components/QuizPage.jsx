@@ -268,7 +268,7 @@ const QuizPage = () => {
         className="search-input"
       />
       <div className="instruction-text">
-        CHOOSE THE QUIZ TO START
+        CHOOSE THE QUIZ TO TEST YOUR KNOWLEDGE
       </div>
       <div className="quizzes-container">
         {filteredQuizzes.map((quiz) => (
