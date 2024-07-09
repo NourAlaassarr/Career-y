@@ -33,7 +33,7 @@ const SkillResources = () => {
 
   return (
     skill && (
-      <Box paddingTop={4}>
+      <Box height="100vh" paddingTop={4}>
         <S.StyledTypography variant="h4">
           {skillName} Resources
         </S.StyledTypography>

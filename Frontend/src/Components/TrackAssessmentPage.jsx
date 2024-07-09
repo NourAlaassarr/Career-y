@@ -14,29 +14,49 @@ const TrackAssessmentPage = () => {
   const [time, setTime] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [endTime, setEndTime] = useState(0); // Timer end time in milliseconds
+  const [message, setMessage] = useState();
+  const [endTime, setEndTime] = useState(0);
   const [timerEnded, setTimerEnded] = useState(false);
+  const frontFrameworks = JSON.parse(localStorage.getItem("front-frameworks"));
 
   useEffect(() => {
     const fetchQuizAndStartTimer = async () => {
       try {
-        const response = skillId
-          ? await httpGet(
+        let response;
+        if (skillId) {
+          const frameworkIds = frontFrameworks.map(
+            (framework) => framework.Nodeid
+          );
+          if (frameworkIds.length > 3) {
+            response = await httpGet(
               `Quiz/GetBackendTrackQuiz?jobId=${id}&SkillId=${skillId}`,
-              { headers: { token: session?.token } }
-            )
-          : await httpGet(`Quiz/GetTrackQuiz?jobId=${id}`, {
-              headers: { token: session.token },
-            });
+              {
+                headers: { token: session?.token },
+              }
+            );
+          } else {
+            response = await httpGet(
+              `Quiz/GetTrackQuiz?jobId=${id}&SkillId=${skillId}`,
+              {
+                headers: { token: session.token },
+              }
+            );
+          }
+        } else {
+          response = await httpGet(`Quiz/GetTrackQuiz?jobId=${id}`, {
+            headers: { token: session.token },
+          });
+        }
 
         if (response && response.Questions) {
           setQuiz(response);
-          const endTime = Date.now() + (response.Questions.length * 60000 + 5000); // Adjust time calculation as per your requirement
+          const endTime = Date.now() + (response.Questions.length * 60000 + 5000);
           setEndTime(endTime);
         } else {
           console.error('Unexpected response structure:', response);
         }
       } catch (error) {
+        setMessage(error.response.data.Message);
         console.error('Error fetching quiz:', error);
       }
     };
@@ -62,14 +82,6 @@ const TrackAssessmentPage = () => {
       questionId: questionId,
       answerId: answers[questionId],
     }));
-
-    const quizSession = {
-      quiz: quiz,
-      correctAnswers: answers,
-      randomQuestions: quiz.Questions,
-      SkillId: null,
-      jobId: id,
-    };
 
     try {
       const response = await httpPost('Quiz/SubmitQuiz', {
@@ -107,7 +119,9 @@ const TrackAssessmentPage = () => {
   return (
     <div className="track-assessment-page">
       <h1>Track Assessment</h1>
-      {endTime > 0 && !timerEnded && <Countdown date={endTime} renderer={renderer} />}
+      {endTime > 0 && !timerEnded && (
+        <Countdown date={endTime} renderer={renderer} />
+      )}
       <div className="quiz-container">
         {quiz.Questions?.length && (
           <div className="question-block">
@@ -162,6 +176,7 @@ const TrackAssessmentPage = () => {
         </button>
       )}
       {isSubmitting && <p>Submitting quiz...</p>}
+      {message && <div style={{ color: "red" }}>{message}</div>}
     </div>
   );
 };

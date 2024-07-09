@@ -11,6 +11,8 @@ import CareerGuidancePage from "./Components/CareerGuidancePage";
 import QuizPage from "./Components/QuizPage";
 import SkillQuizPage from "./Components/SkillQuizPage";
 import TrackAssessmentPage from "./Components/TrackAssessmentPage";
+import ResetPassword from "./Components/ResetPassword";
+import ForgetPassword from "./Components/ForgetPassword";
 import ShowingMissingSkills from "./Components/ShowingMissingSkills";
 import MissingSkillsPage from "./Components/MissingSkillsPage";
 import CareerGoalPage from "./Components/CareerGoalPage";
@@ -108,6 +110,8 @@ function App() {
         <Route path="approve-course" element={<RequireAuth><ApproveCourse /></RequireAuth>} />
         <Route path="/track/:jobId/framework" element={<RequireAuth><FrameworkSelectionPage /></RequireAuth>} />
         <Route path="/track/:id/grade" element={<RequireAuth><TrackQuizGradePage /></RequireAuth>} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/forget-password" element={<ForgetPassword />} />
       </Routes>
       <Footer />
     </Router>

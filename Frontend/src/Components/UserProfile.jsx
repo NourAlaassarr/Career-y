@@ -1,8 +1,7 @@
-// src/UserProfilePage.jsx
+//bel GetALLMarksAndGrades
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { httpGet } from "../axios/axiosUtils";
-import "./../Styles/ProfilePage.css";
 
 const UserProfile = () => {
   const [userDetails, setUserDetails] = useState(null);
@@ -10,7 +9,7 @@ const UserProfile = () => {
   const [error, setError] = useState(null);
   const [quizzes, setQuizzes] = useState([]);
   const [trackQuizzes, setTrackQuizzes] = useState([]);
-  const session = JSON.parse(sessionStorage.getItem("session"));
+  const session = JSON.parse(localStorage.getItem("session"));
 
   useEffect(() => {
     const fetchUserDetails = async () => {
@@ -42,140 +41,129 @@ const UserProfile = () => {
   const updateFeedbackPath = "/update-feedback";
 
   return (
-    <div className="profile-container">
-      <h1 className="profile-title">User Profile</h1>
+    <div>
+      <h1>User Profile</h1>
       {userDetails && (
-        <div className="profile-content">
-          <div className="personal-info">
-            <h2>Personal Information</h2>
-            <p>
-              <strong>Name:</strong> {userDetails.UserName}
-            </p>
-            <p>
-              <strong>Email:</strong> {userDetails.Email}
-            </p>
-            <p>
-              <strong>Career Goal:</strong> {userDetails.CareerGoal[0]}
-            </p>
-            <p>
-              <strong>Role:</strong> {userDetails.role}
-            </p>
-          </div>
+        <div>
+          <h2>Personal Information</h2>
+          <p>
+            <strong>Name:</strong> {userDetails.UserName}
+          </p>
+          <p>
+            <strong>Email:</strong> {userDetails.Email}
+          </p>
+          <p>
+            <strong>Career Goal:</strong> {userDetails.CareerGoal[0]}
+          </p>
+          <p>
+            <strong>Role:</strong> {userDetails.role}
+          </p>
 
-          <div className="skills-section">
-            <h2>Skills</h2>
-            {userDetails.skills.length > 0 ? (
-              <ul className="skills-list">
-                {userDetails.skills.map((skill) => (
-                  <li key={skill.Nodeid} className="skill-item">
-                    {skill.name}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No skills found.</p>
-            )}
-          </div>
+          <h2>Skills</h2>
+          {userDetails.skills.length > 0 ? (
+            <ul>
+              {userDetails.skills.map((skill) => (
+                <li key={skill.Nodeid}>
+                  <p>{skill.name}</p>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No skills found.</p>
+          )}
 
-          <div className="feedbacks-section">
-            <h2>Feedbacks</h2>
-            {userDetails.feedbacks.length > 0 ? (
-              <ul className="feedbacks-list">
-                {userDetails.feedbacks.map((feedback) => (
-                  <li key={feedback.FeedbackId} className="feedback-item">
+          <h2>Feedbacks</h2>
+          {userDetails.feedbacks.length > 0 ? (
+            <ul>
+              {userDetails.feedbacks.map((feedback) => (
+                <li key={feedback.FeedbackId}>
+                  <p>
+                    <strong>Feedback:</strong> {feedback.feedback}
+                  </p>
+                  <p>
+                    <strong>Date Created:</strong> {feedback.createdAt}
+                  </p>
+                  {feedback.updatedAt && (
                     <p>
-                      <strong>Feedback:</strong> {feedback.feedback}
+                      <strong>Date Updated:</strong> {feedback.updatedAt}
                     </p>
-                    <p>
-                      <strong>Date Created:</strong> {feedback.createdAt}
-                    </p>
-                    {feedback.updatedAt && (
+                  )}
+                  <Link
+                    to={{
+                      pathname: updateFeedbackPath,
+                      state: { initialFeedback: feedback.feedback },
+                    }}
+                  >
+                    <button>Update Feedback</button>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p>No feedbacks found.</p>
+          )}
+
+          {userDetails.feedbacks.length === 0 && (
+            <Link to={addFeedbackPath}>
+              <button>Add Feedback</button>
+            </Link>
+          )}
+
+          <h2>Quizzes and Grades</h2>
+          {quizzes.length > 0 || trackQuizzes.length > 0 ? (
+            <div>
+              <h3>Skill Quizzes</h3>
+              {quizzes.length > 0 ? (
+                <ul>
+                  {quizzes.map((quiz, index) => (
+                    <li key={index}>
                       <p>
-                        <strong>Date Updated:</strong> {feedback.updatedAt}
+                        <strong>Quiz Name:</strong> {quiz.QuizName}
                       </p>
-                    )}
-                    <Link
-                      to={{
-                        pathname: updateFeedbackPath,
-                        state: { initialFeedback: feedback.feedback },
-                      }}
-                    >
-                      <button className="update-feedback-btn">
-                        Update Feedback
-                      </button>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No feedbacks found.</p>
-            )}
+                      <p>
+                        <strong>Total Questions:</strong> {quiz.TotalQuestions}
+                      </p>
+                      <p>
+                        <strong>Grade:</strong> {quiz.Grade || 0}
+                      </p>
+                      <p>
+                        <strong>Pass:</strong> {quiz.Pass ? "Yes" : "No"}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No skill quizzes taken.</p>
+              )}
 
-            {userDetails.feedbacks.length === 0 && (
-              <Link to={addFeedbackPath}>
-                <button className="add-feedback-btn">Add Feedback</button>
-              </Link>
-            )}
-          </div>
-
-          <div className="quizzes-section">
-            <h2>Quizzes and Grades</h2>
-            {quizzes.length > 0 || trackQuizzes.length > 0 ? (
-              <div>
-                <h3>Skill Quizzes</h3>
-                {quizzes.length > 0 ? (
-                  <ul className="quizzes-list">
-                    {quizzes.map((quiz, index) => (
-                      <li key={index} className="quiz-item">
-                        <p>
-                          <strong>Quiz Name:</strong> {quiz.QuizName}
-                        </p>
-                        <p>
-                          <strong>Total Questions:</strong>{" "}
-                          {quiz.TotalQuestions}
-                        </p>
-                        <p>
-                          <strong>Grade:</strong> {quiz.Grade || 0}
-                        </p>
-                        <p>
-                          <strong>Pass:</strong> {quiz.Pass ? "Yes" : "No"}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No skill quizzes taken.</p>
-                )}
-
-                <h3>Track Quizzes</h3>
-                {trackQuizzes.length > 0 ? (
-                  <ul className="quizzes-list">
-                    {trackQuizzes.map((trackQuiz, index) => (
-                      <li key={index} className="quiz-item">
-                        <p>
-                          <strong>Track Name:</strong> {trackQuiz.TrackName}
-                        </p>
-                        <p>
-                          <strong>Total Questions:</strong>{" "}
-                          {trackQuiz.TotalQuestions}
-                        </p>
-                        <p>
-                          <strong>Grade:</strong> {trackQuiz.Grade || 0}
-                        </p>
-                        <p>
-                          <strong>Pass:</strong> {trackQuiz.Pass ? "Yes" : "No"}
-                        </p>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No track quizzes taken.</p>
-                )}
-              </div>
-            ) : (
-              <p>No quizzes or grades found.</p>
-            )}
-          </div>
+              <h3>Track Quizzes</h3>
+              {trackQuizzes.length > 0 ? (
+                <ul>
+                  {trackQuizzes.map((trackQuiz, index) => (
+                    <li key={index}>
+                      <p>
+                        <strong>Track Name:</strong> {trackQuiz.TrackName}
+                      </p>
+                      <p>
+                        <strong>Total Questions:</strong>{" "}
+                        {trackQuiz.TotalQuestions}
+                      </p>
+                      <p>
+                        <strong>Grade:</strong> {trackQuiz.Grade || 0}
+                      </p>
+                      <p>
+                        <strong>Pass:</strong> {trackQuiz.Pass ? "Yes" : "No"}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p>No track quizzes taken.</p>
+              )}
+            </div>
+          ) : (
+            <p>No quizzes or grades found.</p>
+          )}
         </div>
       )}
     </div>

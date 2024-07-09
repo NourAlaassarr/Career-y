@@ -182,7 +182,6 @@
 
 import React, { useState } from 'react';
 import { httpPut } from '../../axios/axiosUtils';
-import "../../Styles/UpdateResource.css";
 
 const UpdateResource = () => {
     const [skillId, setSkillId] = useState('');
@@ -221,9 +220,9 @@ const UpdateResource = () => {
     };
 
     return (
-        <div className='update-resource-page'>
-            <h2 className='update-resource-title'>Update Resource</h2>
-            <form className='update-resource-form' onSubmit={handleSubmit}>
+        <div>
+            <h2>Update Resource</h2>
+            <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="skillId">Skill ID:</label>
                     <input
