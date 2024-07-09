@@ -139,6 +139,7 @@ export const GetAllSkills= async(req,res,next)=>{
 //Update ResourcesAdmin + Send Notification for the Updation (Only Admins can do this)
 export const UpdateResource = async (req, res, next) => {
     const { Skillid } = req.query;
+    const { JobIds } = req.query;
     const { reading_resource, video_resource } = req.body
     const driver = await Neo4jConnection();
     let session = driver.session();
@@ -193,7 +194,7 @@ export const UpdateResource = async (req, res, next) => {
     // Collect all email addresses
     const emails = usersResult.records.map(record => record.get('email'));
     
-    const RoadMapLink = `${req.protocol}://${req.headers.host}/Roadmap/UpdatedSkill/${Skillid}`;
+    const RoadMapLink = `${req.headers.origin}/roadmaps/${JobIds}/skill/${Skillid}`;
     if (emails.length > 0) {
         for (let i = 0; i < emails.length; i++) {
         
@@ -221,6 +222,91 @@ export const UpdateResource = async (req, res, next) => {
     const updatedSkill = updateResult.records[0].get('s').properties;
     res.status(200).json(updatedSkill);
 }
+
+// export const UpdateResource = async (req, res, next) => {
+//     const { Skillid } = req.query;
+//     const { reading_resource, video_resource } = req.body
+//     const driver = await Neo4jConnection();
+//     let session = driver.session();
+//     // Check if Skill exists
+//     const SkillCheckResult = await session.run(
+//         'MATCH (s:Skill {Nodeid:$Skillid}) RETURN s',
+//         { Skillid }
+//     );
+//     if (SkillCheckResult.records.length === 0) {
+//         return next(new Error("Skill Doesn't exist", { cause: 404 }));
+//     }
+
+//     // Ensure resources are arrays and convert them to strings with new lines
+//     const readingResourceString = Array.isArray(reading_resource) ? reading_resource.join('\n') : reading_resource;
+//     const videoResourceString = Array.isArray(video_resource) ? video_resource.join('\n') : video_resource;
+
+//     // Update the reading_resource and video_resource properties
+//     const updateQuery = `
+//      MATCH (s:Skill {Nodeid: $Skillid})
+//      SET s.reading_resource = coalesce(s.reading_resource, '') + '\n' + $readingResourceString,
+//          s.video_resource = coalesce(s.video_resource, '') + '\n' + $videoResourceString
+//      RETURN s
+//  `;
+//     const updateResult = await session.run(updateQuery, {
+//         Skillid,
+//         readingResourceString,
+//         videoResourceString
+//     });
+//     const timestampQuery = `
+//             MATCH (j:Job)-[:REQUIRES]->(s:Skill {Nodeid: $Skillid})
+//             SET j.date_modified = apoc.date.format(timestamp(), 'ms', 'yyyy-MM-dd HH:mm:ss')
+//             WITH j
+//             OPTIONAL MATCH (Job)-[:REQUIRES]->(j)
+//             SET Job.date_modified = apoc.date.format(timestamp(), 'ms', 'yyyy-MM-dd HH:mm:ss')
+//             RETURN j, Job
+//         `;
+//     const timestampResult = await session.run(timestampQuery, { Skillid });
+
+
+//     //Send Email to users that have this skill/Roadmap // Query users whose CareerGoal property matches JobId or any parent JobId
+//     const usersQuery = `
+//     MATCH (j:Job {Nodeid: $JobId})
+//     OPTIONAL MATCH (j)-[:REQUIRES*]->(parentJob:Job)
+//     WITH COLLECT(j.Nodeid) + COLLECT(parentJob.Nodeid) AS jobIds
+//     MATCH (u:User)
+//     WHERE ANY(goal IN u.CareerGoal WHERE goal IN jobIds)
+//     RETURN DISTINCT u.Email AS email
+// `;
+//     const JobId = timestampResult.records[0].get('j').properties.Nodeid; // Assuming JobId is a property of the Job node
+//     const usersResult = await session.run(usersQuery, { JobId });
+
+//     // Collect all email addresses
+//     const emails = usersResult.records.map(record => record.get('email'));
+    
+//     const RoadMapLink = `${req.protocol}://${req.headers.host}/Roadmap/UpdatedSkill/${Skillid}`;
+//     if (emails.length > 0) {
+//         for (let i = 0; i < emails.length; i++) {
+        
+//         // Send email to the group of users
+//         const subject = 'Update on CareerGoal Skill';
+//         const message = emailTemplate({
+//             link: RoadMapLink,  // Adjust the link as needed
+//             linkData: "Skill Updation",
+//             subject: "There has been an update to the resources related to your career goal Roadmap."
+//         });
+
+//         const isEmailSent = await sendmailService({
+//             to: emails[i],
+//             subject: subject,
+//             message: message
+//         });
+
+//         if (!isEmailSent) {
+//             return next(new Error("Failed to Send Email", { cause: 400 }));
+//         }
+//     }
+//     }
+
+//     // Return the updated Skill node
+//     const updatedSkill = updateResult.records[0].get('s').properties;
+//     res.status(200).json(updatedSkill);
+// }
 
 //GetUpdatedSkill
 export const GetUpdatedSkill= async (req, res, next) => {

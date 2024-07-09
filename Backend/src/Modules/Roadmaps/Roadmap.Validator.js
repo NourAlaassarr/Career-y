@@ -91,7 +91,8 @@ export const UpdateResource = {
     video_resource: joi.string().uri().optional()
   }).required(),
   query: joi.object().keys({
-    Skillid: joi.string().uuid({ version: 'uuidv4' }).required()
+    Skillid: joi.string().uuid({ version: 'uuidv4' }).required(),
+    JobIds: joi.string().uuid({ version: 'uuidv4' }).required()
   }).required(),
   params: joi.object().keys({}).required()
 };

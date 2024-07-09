@@ -14,8 +14,8 @@ router.get('/GetAllTracks',ValidationCoreFunction(Validator.GetAllTracks),asyncH
 router.get('/SkillResources',ValidationCoreFunction(Validator.GetSkillResources),asyncHandler(RoadmapControllers.GetSkillResources))
 router.get('/AllSkills',ValidationCoreFunction(Validator.GetAllSkills),asyncHandler(RoadmapControllers.GetAllSkills))
 
-router.get('/UpdatedSkill/:Skillid',asyncHandler(RoadmapControllers.GetUpdatedSkill))
-
+// router.get('/UpdatedSkill/:Skillid',asyncHandler(RoadmapControllers.GetUpdatedSkill))
+router.get('/UpdatedSkill/:JobId/skill/:Skillid', asyncHandler(RoadmapControllers.GetUpdatedSkill));
 //ADmin Only
 router.post('/AddSkillToRoadmap', isAuth(RoadmapsApiRoles.AddSkillToRoadmap),ValidationCoreFunction(Validator.AddSkillToRoadmap),asyncHandler(RoadmapControllers.AddSkillToRoadmap))
 router.delete('/deleteNode',isAuth(RoadmapsApiRoles.DeleteSkillFromRoadmap),ValidationCoreFunction(Validator.DeleteSkillFromRoadmap),asyncHandler(RoadmapControllers.DeleteSkillFromRoadmap))
