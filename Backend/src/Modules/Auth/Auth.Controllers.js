@@ -431,7 +431,7 @@ const token = generateToken({
     signature: process.env.RESET_PASS_TOKEN,
     expiresIn: '1h',
 })
-const ResetPasswordLink = `${req.protocol}s://${req.headers.host}/Auth/reset/${token}`
+const ResetPasswordLink = `${req.headers.origin}/reset-password2`
 console.log(req.protocol)
 console.log(req.headers.host)
 // const ResetPasswordLink = `https://career-y-production.up.railway.app/Auth/reset/${token}`
@@ -461,7 +461,7 @@ const updatedUser = result.records[0].get('u').properties;
 session.close();
 
 
-res.status(200).json({ Message: 'Done', updatedUser,ForgetPassToken:token, ResetPasswordLink })
+res.status(200).json({ Message: 'Done', updatedUser, ForgetPassToken:token ,ResetPasswordLink })
 }
 
 
@@ -512,7 +512,7 @@ res.status(200).json({ Message: 'Done', updatedUser,ForgetPassToken:token, Reset
 // };
 
 export const reset = async (req, res, next) => {
-    const { token } = req.params;
+    const { token } = req.query;
     const { NewPassword } = req.body;
     const decoded = VerifyToken({ token, signature: process.env.RESET_PASS_TOKEN });
     let session;

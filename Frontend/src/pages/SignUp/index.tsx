@@ -1,6 +1,7 @@
-import React from "react";
-import { useState } from "react";
+// src/SignupForm.jsx
+import React, { useState } from "react";
 import { httpPost } from "../../axios/axiosUtils";
+import "./SignupForm.css";
 
 const SignupForm = () => {
   const [username, setUsername] = useState("");
@@ -26,14 +27,12 @@ const SignupForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Perform signup logic here
     httpPost("Auth/SignUp", {
       UserName: username,
       Email: email,
       password,
       ConfirmPassword: confirmPassword,
     });
-    // Reset form fields
     setUsername("");
     setEmail("");
     setPassword("");
@@ -48,38 +47,38 @@ const SignupForm = () => {
           <p>Fill in the fields below to sign up for an account</p>
         </div>
         <input
+          className="signup-input"
           type="text"
           value={username}
           onChange={handleUsernameChange}
           placeholder="Username"
         />
         <input
+          className="signup-input"
           type="text"
           value={email}
           onChange={handleEmailChange}
           placeholder="Email"
         />
         <input
+          className="signup-input"
           type="password"
           value={password}
           onChange={handlePasswordChange}
           placeholder="Password"
         />
         <input
+          className="signup-input"
           type="password"
           value={confirmPassword}
           onChange={handleConfirmPasswordChange}
           placeholder="Confirm Password"
         />
-        <button type="submit">Sign Up</button>
-        <p>
-          Already have an account?{" "}
-          <a
-            href="/login"
-            style={{ color: "rgba(241, 193, 17, 1)", textDecoration: "none" }}
-          >
-            Sign in
-          </a>
+        <button type="submit" className="signup-button">
+          Sign Up
+        </button>
+        <p className="signin-link">
+          Already have an account? <a href="/login">Sign in</a>
         </p>
       </form>
     </div>
