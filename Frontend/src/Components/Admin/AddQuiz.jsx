@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { httpPost } from "../../axios/axiosUtils";
+import "../../Styles/AdminAddQuiz.css";
 
 const AdminAddQuiz = () => {
   const [jobId, setJobId] = useState("");
   const [quizName, setQuizName] = useState("");
   const [message, setMessage] = useState("");
   const [success, setSuccess] = useState(false);
+  const session = JSON.parse(sessionStorage.getItem('session'));
 
   const handleQuizSubmit = async (e) => {
     e.preventDefault();
@@ -15,7 +17,7 @@ const AdminAddQuiz = () => {
     try {
       const response = await httpPost(`Quiz/AddQuiz?JobId=${jobId}`, {
         QuizName: quizName,
-      });
+      }, {headers: {token: session.token}});
       const { success, message, Quiz } = response;
       setMessage(message);
       setSuccess(success);
@@ -36,32 +38,36 @@ const AdminAddQuiz = () => {
   };
 
   return (
-    <div>
-      <h1>Add Quiz</h1>
-      <form onSubmit={handleQuizSubmit}>
-        <div>
-          <label>Job ID:</label>
-          <input
-            type="text"
-            value={jobId}
-            onChange={(e) => setJobId(e.target.value)}
-            required
-          />
-        </div>
-        <div>
-          <label>Quiz Name:</label>
-          <input
-            type="text"
-            value={quizName}
-            onChange={(e) => setQuizName(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit">Add Quiz</button>
-      </form>
-      {message && (
-        <div style={{ color: success ? "green" : "red" }}>{message}</div>
-      )}
+    <div className="add-quiz-page">
+      <div className="add-quiz-modal">
+        <h1 className="add-quiz-title">Add Quiz</h1>
+        <form onSubmit={handleQuizSubmit} className="add-quiz-form">
+          <div className="form-group">
+            <label className="form-label">Job ID:</label>
+            <input
+              type="text"
+              value={jobId}
+              onChange={(e) => setJobId(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <div>
+            <label className="form-label">Quiz Name:</label>
+            <input
+              type="text"
+              value={quizName}
+              onChange={(e) => setQuizName(e.target.value)}
+              required
+              className="form-input"
+            />
+          </div>
+          <button type="submit" className="add-quiz-submit-button">Add Quiz</button>
+        </form>
+        {message && (
+          <div style={{ color: success ? "green" : "red" }} className="add-quiz-message">{message}</div>
+        )}
+      </div>
     </div>
   );
 };

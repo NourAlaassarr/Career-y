@@ -6,6 +6,10 @@ body {
 }
 
 .add-quiz-page {
+  height: 100vh;
+}
+
+.add-quiz-modal {
   padding: 20px;
   max-width: 600px;
   margin: 0 auto;
@@ -13,6 +17,7 @@ body {
   background-color: white;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 15%;
 }
 
 .add-quiz-title {
@@ -40,7 +45,7 @@ body {
 }
 
 .form-input {
-  width: 100%;
+  width: 80%;
   padding: 10px;
   border: 1px solid #0c8195;
   border-radius: 5px;
@@ -55,7 +60,7 @@ body {
   outline: none;
 }
 
-.submit-button {
+.add-quiz-submit-button {
   padding: 10px 20px;
   background-color: #0c8195;
   color: white;
@@ -63,13 +68,14 @@ body {
   border-radius: 5px;
   cursor: pointer;
   font-size: 16px;
+  margin-top: 16px;
 }
 
 .submit-button:hover {
   background-color: #f1c111;
 }
 
-.message {
+.add-quiz-message {
   margin-top: 20px;
   font-size: 16px;
   padding: 10px;
