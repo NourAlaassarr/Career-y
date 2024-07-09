@@ -117,6 +117,7 @@ const AddSkillsPage = () => {
       // Clear selected skills
       setSelectedSkills([]);
       setNewSkills(false);
+      setExistingSkills([...existingSkills,...selectedSkills]);
       // Navigate to CareerGoalPage after a short delay
       setTimeout(() => {
         navigate("/career-goal"); // Adjust the path as per your route setup

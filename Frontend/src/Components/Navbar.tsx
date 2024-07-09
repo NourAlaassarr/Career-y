@@ -45,97 +45,139 @@ export const Navbar = () => {
         position="sticky"
       >
         <Toolbar>
-          <Button color="inherit" component={Link} to="/">
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Home
-            </Typography>
-          </Button>
-          <NavHashLink to="/#About" smooth style={{ textDecoration: "none" }}>
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-              color="#057a8d"
-            >
-              About
-            </Typography>
-          </NavHashLink>
-          {/* <Button color="inherit" component={NavHashLink} to="#About">
-          <Typography
-            textTransform="capitalize"
-            fontWeight="bold"
-            fontSize="16px"
-          >
-            About
-          </Typography>
-        </Button> */}
-          <Button color="inherit" component={Link} to="/quiz">
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Quiz
-            </Typography>
-          </Button>
-          <Button color="inherit" component={Link} to="/add-skills">
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Add SKills
-            </Typography>
-          </Button>
-          <Button color="inherit" component={Link} to="/roadmaps">
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Roadmaps
-            </Typography>
-          </Button>
-          <Button color="inherit" component={Link} to="/career-guidance">
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Career Guidance
-            </Typography>
-          </Button>
-          <img
-            src={Logo}
-            width="50px"
-            height="50px"
-            style={{ position: "absolute", marginLeft: "50%" }}
-          />
-          <Button
-            color="inherit"
-            component={Link}
-            to="/login"
-            onClick={() => handleLogout()}
-            sx={{ marginLeft: "auto" }}
-          >
-            <Typography
-              textTransform="capitalize"
-              fontWeight="bold"
-              fontSize="16px"
-            >
-              Sign Out
-            </Typography>
-          </Button>
-          <Button
-            startIcon={<FaUser />}
-            color="inherit"
-            component={Link}
-            to="/user-profile"
-          />
+          {session.role != "admin" ? (
+            <>
+              <Button color="inherit" component={Link} to="/">
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Home
+                </Typography>
+              </Button>
+              <NavHashLink
+                to="/#About"
+                smooth
+                style={{ textDecoration: "none" }}
+              >
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                  color="#057a8d"
+                >
+                  About
+                </Typography>
+              </NavHashLink>
+              <Button color="inherit" component={Link} to="/quiz">
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Quiz
+                </Typography>
+              </Button>
+              <Button color="inherit" component={Link} to="/add-skills">
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Add SKills
+                </Typography>
+              </Button>
+              <Button color="inherit" component={Link} to="/roadmaps">
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Roadmaps
+                </Typography>
+              </Button>
+              <Button color="inherit" component={Link} to="/career-guidance">
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Career Guidance
+                </Typography>
+              </Button>
+              <img
+                src={Logo}
+                width="50px"
+                height="50px"
+                style={{ position: "absolute", marginLeft: "50%" }}
+              />
+              <Button
+                color="inherit"
+                component={Link}
+                to="/login"
+                onClick={() => handleLogout()}
+                sx={{ marginLeft: "auto" }}
+              >
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Sign Out
+                </Typography>
+              </Button>
+              <Button
+                startIcon={<FaUser />}
+                color="inherit"
+                component={Link}
+                to="/user-profile"
+              />
+            </>
+          ) : (
+            <>
+            <Button
+                color="inherit"
+                component={Link}
+                to="/admin"
+              >
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Admin
+                </Typography>
+              </Button>
+              <img
+                src={Logo}
+                width="50px"
+                height="50px"
+                style={{ position: "absolute", marginLeft: "50%" }}
+              />
+              <Button
+                color="inherit"
+                component={Link}
+                to="/login"
+                onClick={() => handleLogout()}
+                sx={{ marginLeft: "auto" }}
+              >
+                <Typography
+                  textTransform="capitalize"
+                  fontWeight="bold"
+                  fontSize="16px"
+                >
+                  Sign Out
+                </Typography>
+              </Button>
+              <Button
+                startIcon={<FaUser />}
+                color="inherit"
+                component={Link}
+                to="/user-profile"
+              />
+            </>
+          )}
         </Toolbar>
       </AppBar>
     </HideOnScroll>

@@ -1,6 +1,6 @@
 // //mn 8er el api
 import React from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   Accordion,
   AccordionDetails,
@@ -16,6 +16,7 @@ const TrackQuizGradePage = () => {
   const location = useLocation();
   const { result } = location.state;
   const navigate = useNavigate();
+  const {id} = useParams();
 
   return (
     <div className="track-quiz-grade-page">
@@ -82,7 +83,7 @@ const TrackQuizGradePage = () => {
                       xs={12}
                       className="lastItem"
                       onClick={() =>
-                        navigate(`skill/${skill.Nodeid}`)
+                        navigate(`../../roadmaps/${id}/skill/${skill.Nodeid}`)
                       }
                       sx={{
                         cursor: "pointer",

@@ -265,7 +265,7 @@ export const HeroSection = () => {
               </Typography>
             </Box>
           </S.StyledLink>
-          <S.StyledLink to={`/courses`}>
+          <S.StyledLink to={`/jobs`}>
             <Box
               display="flex"
               flexDirection="column"
