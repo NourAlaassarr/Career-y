@@ -109,31 +109,107 @@ const TrackQuizGradePage = () => {
       {result.jobs && (
         <div>
           <h2>Job Offers:</h2>
-          <ul>
-            {result.jobs.map((job) => (
-              <li key={job.Nodeid}>
-                {job.title}
-                <ul>
-                  <li>
-                    <strong>Company Name:</strong> {job.CompanyName}
-                  </li>
-                  <li>
-                    <strong>Employment Type:</strong> {job.employment_type}
-                  </li>
-                  <li>
-                    <strong>Salary Range:</strong> {job.salary_range}
-                  </li>
-                  {/* <li><strong>Date Posted:</strong> {job.date_posted}</li> */}
-                  <li>
-                    <strong>Job Description:</strong> {job.JobDescription}
-                  </li>
-                  <li>
-                    <strong>Job Requirements:</strong> {job.JobRequirements}
-                  </li>
-                </ul>
-              </li>
-            ))}
-          </ul>
+          {result.jobs.map((job) => (
+            <Grid item xs={12} key={job.jobOfferId} paddingTop={2}>
+              <Accordion key={job.jobOfferId} defaultExpanded={false}>
+                <S.BorderBox>
+                  <S.StyledAccordionSummary
+                    sx={{
+                      flexDirection: "row-reverse",
+                      padding: "8px 16px",
+                    }}
+                    expandIcon={
+                      <svg
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M20.1316 17.5117L21.9016 15.7417L12.0016 5.84172L2.10156 15.7417L3.87156 17.5117L12.0016 9.38172L20.1316 17.5117Z"
+                          fill="#4E4B66"
+                        />
+                      </svg>
+                    }
+                  >
+                    <Box padding="8px" />
+                    <Typography color="#057a8d" variant="h5">
+                      {job.title}
+                    </Typography>
+                  </S.StyledAccordionSummary>
+                </S.BorderBox>
+                <AccordionDetails sx={{ padding: "0px" }}>
+                  <S.SkillDetailsGrid container>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Company Name</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <Typography>{job.CompanyName}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Salary Range</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={3}
+                      sm={6}
+                      xs={6}
+                      className="lastItem"
+                    >
+                      <Typography>{job.salary_range}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Type</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <Typography>{job.employment_type}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Date Posted</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={3}
+                      sm={6}
+                      xs={6}
+                      className="lastItem"
+                    >
+                      <Typography>{job.date_posted}</Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Description</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={9}
+                      sm={9}
+                      xs={9}
+                      className="lastItem"
+                    >
+                      <Typography padding="8px 0px">
+                        {job.JobDescription}
+                      </Typography>
+                    </S.DetailGrid>
+                    <S.DetailGrid item md={3} sm={6} xs={6}>
+                      <S.KeyTypography>Job Requirments</S.KeyTypography>
+                    </S.DetailGrid>
+                    <S.DetailGrid
+                      item
+                      md={9}
+                      sm={9}
+                      xs={9}
+                      className="lastItem"
+                    >
+                      <Typography padding="8px 0px">
+                        {job.JobRequirements}
+                      </Typography>
+                    </S.DetailGrid>
+                  </S.SkillDetailsGrid>
+                </AccordionDetails>
+              </Accordion>
+            </Grid>
+          ))}
         </div>
       )}
     </div>

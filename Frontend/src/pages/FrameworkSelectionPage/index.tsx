@@ -35,6 +35,7 @@ const FrameworkSelectionPage = () => {
 
         if (response && response.Skills) {
           setFrameworks(response.Skills);
+          localStorage.setItem('front-frameworks', JSON.stringify(response.Skills));
         } else {
           console.error("Unexpected response structure:", response);
         }
@@ -78,8 +79,16 @@ const FrameworkSelectionPage = () => {
 
   return (
     <Box height="100vh">
-      <Typography variant="h2" textAlign="center" color="#0c8195" paddingY={4}>Select Framework</Typography>
-      <Box display="flex" flexWrap="wrap" gap="20px" justifyContent="center" marginX={2}>
+      <Typography variant="h2" textAlign="center" color="#0c8195" paddingY={4}>
+        Select Framework
+      </Typography>
+      <Box
+        display="flex"
+        flexWrap="wrap"
+        gap="20px"
+        justifyContent="center"
+        marginX={2}
+      >
         {frameworks.map((framework) => (
           <div key={framework.SkillId} className="framework-link">
             {/* Use onClick to fetch quiz for backend frameworks */}
@@ -95,7 +104,14 @@ const FrameworkSelectionPage = () => {
                 </div>
               </Link>
             ) : (
-              <S.StyledLink key={framework.Nodeid} to={`${framework.Nodeid}`}>
+              <S.StyledBox
+                key={framework.Nodeid}
+                onClick={() =>
+                  navigate(
+                    `../track/${jobId}/skill/${framework.Nodeid}/assessment`
+                  )
+                }
+              >
                 <Box
                   display="flex"
                   flexDirection="column"
@@ -131,7 +147,7 @@ const FrameworkSelectionPage = () => {
                     {framework.name}
                   </Typography>
                 </Box>
-              </S.StyledLink>
+              </S.StyledBox>
             )}
           </div>
         ))}

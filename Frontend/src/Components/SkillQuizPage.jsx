@@ -146,6 +146,7 @@ const SkillQuizPage = () => {
           <p>Your Grade: {grade}%</p>
         </div>
       )}
+      {message && <div style={{ color: "red" }}>{message}</div>}
     </div>
   );
 };
