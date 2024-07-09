@@ -8,6 +8,7 @@ import{AuthRolesApi}from'./Auth.endpoints.js'
 const router = Router()
 
 //Admin
+router.post('/instructor',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.InstructorSignUp))
 router.post('/AdminSignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.AdminSignUp))
 router.post('/SignUp',ValidationCoreFunction(Validator.SignUp),asyncHandler(AuthControllers.SignUp))
 router.post('/SignIn',ValidationCoreFunction(Validator.SignIn),asyncHandler(AuthControllers.signIn))

@@ -7,4 +7,5 @@ export const SystemRoles ={
     Female:'Female',
     Male:'Male',
     Not_Specified:'not specified',
+    Instructor:'instructor',
 }
