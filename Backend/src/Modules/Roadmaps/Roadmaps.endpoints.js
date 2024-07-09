@@ -2,13 +2,13 @@ import { SystemRoles } from "../../utils/SystemRoles.js"
 
 
 export const RoadmapsApiRoles={
-    GetRoadmap:[SystemRoles.Admin,SystemRoles.User],
-    GetAllTracks:[SystemRoles.Admin,SystemRoles.User],
-    SkillResources:[SystemRoles.Admin,SystemRoles.User],
-    AllSkills:[SystemRoles.Admin,SystemRoles.User],
-    UpdatedSkill:[SystemRoles.Admin,SystemRoles.User],
+    GetRoadmap:[SystemRoles.Admin,SystemRoles.User,SystemRoles.Instructor],
+    GetAllTracks:[SystemRoles.Admin,SystemRoles.User,SystemRoles.Instructor],
+    SkillResources:[SystemRoles.Admin,SystemRoles.User,SystemRoles.Instructor],
+    AllSkills:[SystemRoles.Admin,SystemRoles.User,SystemRoles.Instructor],
+    UpdatedSkill:[SystemRoles.Admin,SystemRoles.User,SystemRoles.Instructor],
     
-    AddSkillToRoadmap:[SystemRoles.Admin],
-    DeleteSkillFromRoadmap:[SystemRoles.Admin],
-    UpdateResource:[SystemRoles.Admin],
+    AddSkillToRoadmap:[SystemRoles.Admin,SystemRoles.Instructor],
+    DeleteSkillFromRoadmap:[SystemRoles.Admin,SystemRoles.Instructor],
+    UpdateResource:[SystemRoles.Admin,SystemRoles.Instructor],
 }
