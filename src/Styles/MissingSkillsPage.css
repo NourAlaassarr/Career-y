@@ -1,0 +1,184 @@
+:root {
+  --primary-color: #0c8195;
+  --secondary-color: #f11111;
+  --accent-color: #00c853;
+  --background-color: #ffffff;
+  --dark-bg: #333;
+  --light-text: #f5f5f5;
+  --font-family: "Arial", sans-serif;
+  --border-radius: 10px;
+  --box-shadow-strong: 0 6px 20px rgb(0, 0, 0, 0.2);
+  --box-shadow-light: 0 2px 6px rgb(0, 0, 0, 0.1);
+  --transition-fast: 0.2s;
+  --transition-normal: 0.4s;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+}
+
+.missing-skills-page {
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 20px; /* Added margin-top to create space from the navbar */
+}
+
+.missing-skills-page h2 {
+  color: var(--primary-color);
+  font-size: 26px;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+/* Styling for skill and track containers with subtle animations */
+.gap-skills-container,
+.recommended-tracks-container {
+  width: 100%;
+  background: var(--light-text);
+  padding: 25px;
+  margin-bottom: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow-light);
+  transition: all var(--transition-normal) ease;
+  transform: scale(1);
+}
+
+.gap-skill,
+.recommended-track {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  transition: background-color var(--transition-fast), color var(--transition-fast), box-shadow var(--transition-fast);
+  cursor: pointer;
+}
+
+.gap-skill:hover,
+.recommended-track:hover {
+  background-color: var(--primary-color);
+  border: solid 2px var(--primary-color);
+  color: var(--light-text);
+  box-shadow: var(--box-shadow-strong);
+}
+
+/* Default styles for gap skills */
+.gap-skill {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: var(--border-radius);
+  background-color: var(--background-color);
+  transition: background-color var(--transition-fast),
+    color var(--transition-fast);
+  cursor: pointer;
+  font-size: 18px; /* Increased font size */
+  font-weight: bold; /* Make text bold */
+}
+
+/* Hover effect for gap skills */
+.gap-skill:hover {
+  border: solid 2px var(--primary-color);
+  color: var(--light-text);
+}
+
+
+.gap-skill:focus,
+.recommended-track:focus {
+  outline: none;
+  border: 2px solid var(--accent-color);
+}
+
+/* Dynamic labels with animation for added emphasis */
+/* Default styles for labels */
+.mandatory-label,
+.optional-label {
+  padding: 8px 16px;
+  border-radius: 20px;
+  color: var(--dark-bg); /* Updated color for better contrast */
+  font-size: 14px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: var(--background-color); /* Added background color for visibility */
+  border: 2px solid transparent; /* Start with transparent border */
+  transition: border-color var(--transition-fast), background-color var(--transition-fast); /* Smooth transition for border and background */
+  animation: pulse 1.5s infinite;
+}
+
+/* Styles for mandatory labels */
+.mandatory-label {
+  border-color: var(--secondary-color); /* Ensure border color is visible */
+}
+
+/* Styles for optional labels */
+.optional-label {
+  border-color: var(--accent-color); /* Ensure border color is visible */
+}
+
+/* Hover effect for labels */
+.mandatory-label:hover,
+.optional-label:hover {
+  background-color: var(--primary-color); /* Change background on hover */
+  color: var(--light-text); /* Change text color on hover for better readability */
+  border-color: var(--light-text); /* Change border color on hover */
+}
+
+/* Keyframe animations for pulsing effect on labels */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+/* Responsive adjustments for better mobile experience */
+@media (max-width: 768px) {
+  .gap-skills-container,
+  .recommended-tracks-container {
+    width: 95%;
+    padding: 20px;
+  }
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .gap-skill,
+  .recommended-track {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* Support for dark mode */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #424242;
+    --dark-bg: #e0e0e0;
+    --light-text: #f5f5f5;
+  }
+
+  body {
+    background-color: var(--background-color);
+  }
+
+  .gap-skills-container,
+  .recommended-tracks-container {
+    background: var(--dark-bg);
+    color: var(--light-text);
+  }
+}

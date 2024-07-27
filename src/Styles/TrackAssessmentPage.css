@@ -1,0 +1,215 @@
+/* TrackAssessmentPage.css */
+
+.track-assessment-page {
+  font-family: 'Arial', sans-serif;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  background: #f9f9f9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+}
+
+.track-assessment-page h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.timer-container {
+  text-align: center;
+  font-size: 1.2em;
+  color: #e74c3c;
+  margin-bottom: 20px;
+}
+
+.quiz-container {
+  margin-bottom: 20px;
+}
+
+.question-block {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.question-block h2 {
+  font-size: 1.1em;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.question-block p {
+  font-size: 1em;
+  color: #555;
+}
+
+.question-block ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.question-block ul li {
+  margin-bottom: 10px;
+}
+
+.question-block ul li label {
+  font-size: 1em;
+  color: #333;
+  cursor: pointer;
+}
+
+.question-block ul li input[type="radio"] {
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+.nav-btn {
+  padding: 8px 16px; /* Base padding for larger screens */
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 0.9em; /* Base font size for larger screens */
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.nav-btn:disabled {
+  background: #95a5a6;
+  cursor: not-allowed;
+}
+
+.nav-btn:hover:not(:disabled) {
+  background: #2980b9;
+}
+
+.submit-btn {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: #3498db;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.submit-btn:hover {
+  background: #2980b9;
+}
+
+.submit-btn:active {
+  background: #1f6ba6;
+}
+
+.submit-btn:focus {
+  outline: none;
+}
+
+/* Responsive Styles */
+
+@media (max-width: 1024px) {
+  .track-assessment-page {
+    padding: 15px;
+  }
+
+  .timer-container {
+    font-size: 1.1em;
+  }
+
+  .question-block h2 {
+    font-size: 1em;
+  }
+
+  .question-block p {
+    font-size: 0.9em;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+  }
+
+  .nav-btn {
+    padding: 6px 12px; /* Smaller padding for medium screens */
+    font-size: 0.8em; /* Smaller font size for medium screens */
+  }
+
+  .submit-btn {
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 768px) {
+  .track-assessment-page {
+    padding: 10px;
+  }
+
+  .timer-container {
+    font-size: 1em;
+  }
+
+  .question-block h2 {
+    font-size: 0.9em;
+  }
+
+  .question-block p {
+    font-size: 0.8em;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+  }
+
+  .nav-btn {
+    padding: 4px 8px; /* Further reduced padding for smaller tablets */
+    font-size: 0.7em; /* Further reduced font size for smaller tablets */
+  }
+
+  .submit-btn {
+    padding: 8px;
+    font-size: 0.8em;
+  }
+}
+
+@media (max-width: 480px) {
+  .track-assessment-page {
+    padding: 5px;
+  }
+
+  .timer-container {
+    font-size: 0.9em;
+  }
+
+  .question-block {
+    padding: 10px;
+  }
+
+  .question-block h2 {
+    font-size: 0.8em;
+  }
+
+  .question-block p {
+    font-size: 0.7em;
+  }
+
+  .nav-btn {
+    padding: 2px 6px; /* Minimal padding for mobile screens */
+    font-size: 0.6em; /* Minimal font size for mobile screens */
+  }
+
+  .submit-btn {
+    padding: 6px;
+    font-size: 0.7em;
+  }
+}

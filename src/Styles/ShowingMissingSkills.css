@@ -1,0 +1,80 @@
+.showing-missing-skills {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  padding: 40px;
+  background-color: #ffffff;
+  max-width: 600px;
+  margin: 20px auto 0 auto; /* Added margin-top to create space from the navbar */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  border: 2px solid #0c8195;
+  box-sizing: border-box;
+}
+
+.showing-missing-skills h1 {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.showing-missing-skills p {
+  font-size: 16px;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.show-missing-skills-button {
+  padding: 10px 20px;
+  background-color: #0c8195;
+  color: white;
+  font-size: 16px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.show-missing-skills-button:hover {
+  background-color: #0056b3;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .showing-missing-skills {
+    padding: 30px;
+    max-width: 90%;
+  }
+
+  .showing-missing-skills h1 {
+    font-size: 22px;
+  }
+
+  .showing-missing-skills p {
+    font-size: 14px;
+  }
+
+  .show-missing-skills-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .showing-missing-skills {
+    padding: 20px;
+    max-width: 95%;
+  }
+
+  .showing-missing-skills h1 {
+    font-size: 20px;
+  }
+
+  .showing-missing-skills p {
+    font-size: 12px;
+  }
+
+  .show-missing-skills-button {
+    padding: 6px 12px;
+    font-size: 12px;
+  }
+}

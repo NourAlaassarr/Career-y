@@ -1,0 +1,155 @@
+/* General Styles */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+/* Page Container Styles */
+.career-guidance-page {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* Search Input */
+.search-input {
+  width: 100%;
+  max-width: 500px;
+  padding: 10px;
+  font-size: 16px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+}
+
+/* Instruction Text */
+.instruction-text {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Tracks Container */
+.tracks-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+}
+
+/* Track Link */
+.track-link {
+  text-decoration: none;
+  color: inherit;
+  width: calc(50% - 10px);
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
+}
+
+/* Track Item */
+.track-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: #f1f1f1;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+/* Hover Effects for Track Link */
+.track-link:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+  border: solid 8px #0c8195;
+  border-radius: 8px;
+  color: #f1c111;
+}
+
+/* Track Image */
+.track-image {
+  flex: 0 0 30%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.track-img {
+  width: 80%;
+  height: auto;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+/* Track Text */
+.track-text {
+  flex: 0 0 70%;
+  padding-left: 10px;
+}
+
+.track-link:hover .track-img {
+  transform: scale(1.1);
+}
+
+/* Track Details */
+.track-details {
+  padding: 10px;
+}
+
+/* Track Name */
+.track-name {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+/* Track Description */
+.track-description {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1024px) {
+  .track-link {
+    width: calc(50% - 10px);
+  }
+}
+
+@media (max-width: 768px) {
+  .track-link {
+    width: 100%;
+  }
+
+  .track-name {
+    font-size: 16px;
+  }
+
+  .track-description {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .track-link {
+    padding: 8px;
+  }
+
+  .track-name {
+    font-size: 14px;
+  }
+
+  .track-description {
+    font-size: 10px;
+  }
+}

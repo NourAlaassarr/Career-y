@@ -1,0 +1,98 @@
+/* TrackQuizGradePage.css */
+
+.track-quiz-grade-page {
+    font-family: 'Arial', sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+.track-quiz-grade-page h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.track-quiz-grade-page p {
+    font-size: 1.2em;
+    color: #333;
+}
+
+.track-quiz-grade-page h2 {
+    font-size: 1.1em;
+    color: #2c3e50;
+    margin-top: 20px;
+}
+
+.track-quiz-grade-page ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.track-quiz-grade-page ul li {
+    font-size: 1em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+/* Responsive Styles */
+
+/* For tablets and smaller screens (up to 1024px) */
+@media (max-width: 1024px) {
+    .track-quiz-grade-page {
+        padding: 15px;
+    }
+
+    .track-quiz-grade-page p {
+        font-size: 1.1em;
+    }
+
+    .track-quiz-grade-page h2 {
+        font-size: 1em;
+    }
+
+    .track-quiz-grade-page ul li {
+        font-size: 0.9em;
+    }
+}
+
+/* For mobile screens (up to 768px) */
+@media (max-width: 768px) {
+    .track-quiz-grade-page {
+        padding: 10px;
+    }
+
+    .track-quiz-grade-page p {
+        font-size: 1em;
+    }
+
+    .track-quiz-grade-page h2 {
+        font-size: 0.9em;
+    }
+
+    .track-quiz-grade-page ul li {
+        font-size: 0.8em;
+    }
+}
+
+/* For very small mobile screens (up to 480px) */
+@media (max-width: 480px) {
+    .track-quiz-grade-page {
+        padding: 5px;
+    }
+
+    .track-quiz-grade-page p {
+        font-size: 0.9em;
+    }
+
+    .track-quiz-grade-page h2 {
+        font-size: 0.8em;
+    }
+
+    .track-quiz-grade-page ul li {
+        font-size: 0.7em;
+    }
+}

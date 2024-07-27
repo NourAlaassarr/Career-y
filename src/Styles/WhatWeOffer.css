@@ -1,0 +1,122 @@
+/* Reset default margin and padding for the body */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+}
+
+/* Main container styling */
+.what-we-offer {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Title styling */
+.title {
+  font-size: 2rem; /* Use rem units for scalability */
+  margin-bottom: 1rem;
+  color: #0c8195;
+  text-align: center; /* Center align text */
+}
+
+/* Error message styling */
+.error-message {
+  color: red;
+  font-size: 1rem; /* Use rem units */
+}
+
+/* Courses list styling */
+.courses-list {
+  width: 100%;
+  max-width: 90%; /* Adjust to fit within screen width */
+  margin: 0 auto;
+}
+
+.courses-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Course item styling */
+.course-item {
+  background-color: #ffffff;
+  border: 2px solid #0c8195;
+  border-radius: 5px;
+  margin-bottom: 1.5rem; /* Use rem units */
+  padding: 1rem; /* Use rem units */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Course name styling */
+.course-name {
+  font-size: 1.5rem; /* Use rem units */
+  margin-bottom: 0.5rem;
+  color: #0c8195;
+}
+
+/* Course description, prerequisites, and duration styling */
+.course-description,
+.course-prerequisites,
+.course-duration {
+  font-size: 1rem; /* Use rem units */
+  margin-bottom: 0.5rem;
+  color: #333;
+}
+
+/* Course link styling */
+.course-link {
+  display: inline-block;
+  padding: 0.5rem 1rem; /* Use rem units */
+  background-color: #0c8195;
+  color: #ffffff;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.course-link:hover {
+  background-color: #086775;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .title {
+    font-size: 1.5rem; /* Adjust for smaller screens */
+  }
+
+  .course-name {
+    font-size: 1.25rem; /* Adjust for smaller screens */
+  }
+
+  .course-item {
+    padding: 1rem;
+    margin-bottom: 1rem; /* Reduce space between items */
+  }
+
+  .course-link {
+    padding: 0.4rem 0.8rem; /* Adjust padding for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 1.25rem; /* Further adjust for very small screens */
+  }
+
+  .course-name {
+    font-size: 1rem; /* Further adjust for very small screens */
+  }
+
+  .course-item {
+    padding: 0.8rem; /* Further adjust padding */
+    margin-bottom: 0.8rem; /* Further adjust space between items */
+  }
+
+  .course-link {
+    padding: 0.3rem 0.6rem; /* Further adjust padding */
+  }
+}

@@ -1,0 +1,160 @@
+
+  /* Base styles */
+.skill-quiz-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 20px;
+  background-color: #f0f0f0;
+}
+
+.skill-quiz-page {
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  margin: 0 auto;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid #0c8195;
+}
+
+.skill-quiz-page h1 {
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.question-container {
+  margin-bottom: 20px;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+}
+
+.options label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.options input[type="radio"] {
+  margin-right: 10px;
+  /* Hide the default radio button */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #0c8195;
+  border-radius: 50%;
+  outline: none;
+  cursor: pointer;
+}
+
+.options input[type="radio"]:checked {
+  background-color: #0c8195;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.navigation-buttons button {
+  padding: 10px 20px;
+  background-color: #0c8195;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  font-size: 14px;
+}
+
+.navigation-buttons button:hover {
+  background-color: #065c73;
+}
+
+.skill-quiz-submit-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.skill-quiz-submit-button:hover {
+  background-color: #218838;
+}
+
+.grade-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.grade-container p {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+@media (max-width: 768px) {
+  .skill-quiz-page {
+    padding: 15px;
+  }
+
+  .skill-quiz-page h1 {
+    font-size: 20px;
+  }
+
+  .options label {
+    font-size: 14px;
+  }
+
+  .navigation-buttons {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .navigation-buttons button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+
+  .skill-quiz-submit-button {
+    margin-top: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .skill-quiz-page {
+    padding: 10px;
+  }
+
+  .skill-quiz-page h1 {
+    font-size: 18px;
+  }
+
+  .options label {
+    font-size: 12px;
+  }
+
+  .navigation-buttons button {
+    font-size: 12px;
+    padding: 8px;
+  }
+
+  .skill-quiz-submit-button {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
+
